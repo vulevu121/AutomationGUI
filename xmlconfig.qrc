@@ -2,6 +2,12 @@
   <qresource prefix="background">
     <file>graphics/revero_800.png</file>
   </qresource>
+  <qresource prefix="checkbox">
+    <file>graphics/checkbox_hover.png</file>
+    <file>graphics/checkbox_unchecked.png</file>
+    <file>graphics/checkbox_xchecked.png</file>
+    <file>graphics/checkbox_checked.png</file>
+  </qresource>
   <qresource prefix="icon">
     <file>graphics/development_python_32px_540419_easyicon.net.png</file>
   </qresource>
