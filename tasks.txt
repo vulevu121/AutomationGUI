@@ -1,0 +1,12 @@
+# config file path -> call function path
+# report folder path -> csv report file
+# beta/rc release -> checkbox for hw and sw version
+# polling -> execution
+# additional signals for full logging
+# compare signals with variablepool for validity
+# define where the variablepool folder (simulation folder)
+# revert logging mode back to default (execution only)
+# ability to save profile
+# disable dtc ex list by default
+config file path, chosen by user
+allow user to save as a copy, save as a copy button

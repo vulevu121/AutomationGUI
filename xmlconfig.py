@@ -201,7 +201,10 @@ class Ui_MainWindow(object):
 "    border: 1px solid gray;\n"
 "    border-radius: 10px;\n"
 "}\n"
-"")
+"\n"
+"QPushButton#reloadVariablePoolBtn {\n"
+"    font: 8pt \"MS Shell Dlg 2\";\n"
+"}")
         MainWindow.setIconSize(QtCore.QSize(32, 32))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setEnabled(True)
@@ -400,7 +403,7 @@ class Ui_MainWindow(object):
         self.browseCallFunctionBtn.setText(_translate("MainWindow", "Browse"))
         self.label_2.setText(_translate("MainWindow", "CSV Report Folder"))
         self.browseCsvReportBtn.setText(_translate("MainWindow", "Browse"))
-        self.reloadVariablePoolBtn.setText(_translate("MainWindow", "Reload Variable\n"
+        self.reloadVariablePoolBtn.setText(_translate("MainWindow", "Load Variable\n"
 "Pool File"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "General"))
         self.logRadioBtn1.setText(_translate("MainWindow", "Execution with Filtered Logging"))

@@ -361,29 +361,30 @@ class App(QMainWindow, Ui_MainWindow):
 
         self.addSignalModel.clear()
         try:
-            signalList = self.profileDict['Profile']['Log']['Signal']
-            print(signalList)
-            # if signalList is a single string then we don't need to iterate
-            if isinstance(signalList, str):
-                self.addSignalModel.appendRow(QStandardItem(str(signalList)))
-            # else if signalList is a list, then iterate
-            elif isinstance(signalList, list):
-                for s in signalList:
-                    self.addSignalModel.appendRow(QStandardItem(str(s)))
+            temp = self.profileDict['Profile']['Log']['Signal']
+            signalList = []
+            if isinstance(temp, list):
+                signalList.extend(x for x in temp)
+            else:
+                signalList.append(temp)
+
+            for s in signalList:
+                self.addSignalModel.appendRow(QStandardItem(str(s)))
         except KeyError:
             # self.addSignalModel.clear()
             if self.debug: print('Signal list is empty')
 
         self.dtcExModel.clear()
         try:
-            dtcExList = self.profileDict['Profile']['DTC']['Except']
-            # if dtcExList is a string then we don't need to iterate
-            if isinstance(dtcExList, str):
-                self.dtcExModel.appendRow(QStandardItem(dtcExList))
-            # else if dtcExList is a list, then iterate
-            elif isinstance(dtcExList, list):
-                for d in dtcExList:
-                    self.dtcExModel.appendRow(QStandardItem(str(d)))
+            temp = self.profileDict['Profile']['DTC']['Except']
+            dtcExList = []
+            if isinstance(temp, list):
+                dtcExList.extend(x for x in temp)
+            else:
+                dtcExList.append(temp)
+
+            for s in dtcExList:
+                self.dtcExModel.appendRow(QStandardItem(str(s)))
         except KeyError:
             # self.dtcExModel.clear()
             if self.debug: print('DTCs exception list is empty')
