@@ -371,7 +371,7 @@ class App(QMainWindow, Ui_MainWindow):
                 for s in signalList:
                     self.addSignalModel.appendRow(QStandardItem(str(s)))
         except KeyError:
-            self.addSignalModel.clear()
+            # self.addSignalModel.clear()
             if self.debug: print('Signal list is empty')
 
         self.dtcExModel.clear()
@@ -385,7 +385,7 @@ class App(QMainWindow, Ui_MainWindow):
                 for d in dtcExList:
                     self.dtcExModel.appendRow(QStandardItem(str(d)))
         except KeyError:
-            self.dtcExModel.clear()
+            # self.dtcExModel.clear()
             if self.debug: print('DTCs exception list is empty')
 
     def loadConfig(self):
