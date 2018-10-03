@@ -386,7 +386,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuHelp.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(0)
         self.saveBtn.clicked.connect(self.actionSave.trigger)
         self.saveAsBtn.clicked.connect(self.actionSaveAs.trigger)
         self.exitButton.clicked.connect(self.actionExit.trigger)
