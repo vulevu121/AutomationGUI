@@ -391,6 +391,7 @@ class App(QMainWindow, Ui_MainWindow):
                     model.setStringList(self.variablePool)
                     completer = QCompleter()
                     completer.setModel(model)
+                    completer.setCaseSensitivity(0)
                     self.addSignalEdit.setCompleter(completer)
                     self.statusbar.showMessage(self.variable_pool_loaded_success)
             except FileNotFoundError:
