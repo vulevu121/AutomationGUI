@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -40,43 +40,49 @@
   </property>
   <property name="styleSheet">
    <string notr="true">QMainWindow {
-	color: black;
+	background-color: black;
+}
+
+QFrame {
+	background-color: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.7, fx:0.5, fy:0.5, stop:0 rgba(150, 153, 158, 255), stop:1 rgba(0, 0, 0, 255));
 }
 
 QWidget {
-	color: rgb(218, 218, 218);
+	color: rgba(0, 0, 0, 0.8);
 	font: 10pt &quot;MS Shell Dlg 2&quot;;
 }
 
 QLabel {
-	background-color: transparent;
+	background-color: rgba(255, 255, 255, 0.5);
+	padding: 2px;
+	border-radius: 10px;
+}
+
+QLineEdit {
+	background-color: white;
+	color: black;
+	border: 1px solid green;
+	border-radius: 10px;
+	min-height: 30px;
+	padding: 2px;
 }
 
 QPushButton {
-	background-color: rgb(59, 56, 56, 80);
-	height: 40px;
+	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:1, stop:0 rgba(174, 209, 96, 1), stop:1 rgba(108, 144, 27, 1));
+	border: 0px;
+	border-radius: 15px;
+	min-height: 40px;
 	padding: 0px 5px 0px 5px;
-}
-
-QPushButton {
-	background-color: transparent;
-	border: 1px solid gray;
-	border-radius: 5px;
-}
-
-QPushButton:flat {
-	border: 1px solid gray;
-	border-radius: 5px;
-}
-
-QPushButton:pressed {
-	background-color: gray;
-	color: rgb(255, 255, 255);
+	border-bottom: 1px solid rgba(0, 0, 0, 0.5);
+	border-right: 1px solid  rgba(0, 0, 0, 0.5);
 }
 
 QPushButton:hover {
-	border: 1px solid white;
-	border-radius: 5px;
+	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:1, stop:0 rgba(174, 209, 96, 1), stop:1 rgba(108, 144, 27, 0.8));
+}
+
+QPushButton:pressed {
+	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:1, stop:0 rgba(174, 209, 96, 0.8), stop:1 rgba(108, 144, 27, 0.8));
 }
 
 QGroupBox {
@@ -94,133 +100,105 @@ QGroupBox::title {
 }
 
 QStatusBar {
-	background: black;
+	color: lightgray;
+	background:  rgb(20, 21, 23);
 }
 
-
-QTabWidget::pane {
-	background-color: transparent;
-	border: 1px solid lightgray;
-	border-radius: 10px;
+QStackedWidget, QTabWidget::pane {
+	background-color: rgb(229, 229, 229);
+	border-top-left-radius: 0px;
+	border-top-right-radius: 10px;
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	border-bottom: 1px solid  rgba(0, 0, 0, 0.2);
+	border-right: 1px solid rgba(0, 0, 0, 0.2);
 }
 
-QTabWidget::tab-bar {
-	left: 0px;
-}
 
 QTabBar::tab {
-	background-color: transparent;
-	border: 1px solid gray;
+	border: 0px;
 	padding: 10px;
-	min-width: 150px;
+	min-width: 120px;
 	top: 2px;
 	border-top-left-radius: 10px;
 	border-top-right-radius: 10px;
 }
 
-QTabBar::tab:selected, QTabBar::tab:hover {
-	background-color: transparent;
-	border: 1px solid lightgray;
+QTabBar::tab:selected {
+	background-color: rgb(229, 229, 229);
 }
 
 QTabBar::tab:!selected {
-    background-color: transparent;
-	border
-}
-
-QStackedWidget {
-	background-color: transparent;
-}
-
-QRadioButton::indicator {
-	width: 32px;
-	height: 32px;
-}
-
-QRadioButton::indicator::unchecked, QRadioButton::indicator:unchecked:pressed {
-    image: url(:/checkbox/graphics/checkbox_unchecked.png);
-}
-
-QRadioButton::indicator::checked, QRadioButton::indicator:checked:pressed, QRadioButton::indicator:checked:hover {
-    image: url(:/checkbox/graphics/checkbox_checked.png);
-}
-
-QRadioButton::indicator:unchecked:hover {
-	image: url(:/checkbox/graphics/checkbox_hover.png);
+	color: rgb(229, 229, 229);
+	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:1, stop:0 rgba(91, 93, 98, 1), stop:1 rgba(75, 77, 81, 1));
 }
 
 QComboBox {
-	background-color: rgb(59, 56, 56);
+	background-color: rgb(20, 21, 23);
 }
 
 QComboBox QAbstractItemView {
-	background-color: rgb(59, 56, 56);
+	background-color: rgb(20, 21, 23);
 	selection-background-color: lightgray;
 }
 
-QProgressBar{
-	background-color: rgb(59, 56, 56);
-}
-
-QLineEdit {
-	background-color: transparent;
-	color: white;
-	border: 1px solid gray;
-	border-radius: 5px;
-	min-height: 30px;
-}
 
 QLCDNumber {
 	border:1px solid gray;
 	border-radius: 5px;
 }
 
-QMenu, QMenu::item {
-	background-color: rgb(59, 56, 56);
-}
-
-QMenuBar {
-	background-color: rgb(59, 56, 56);
-}
-
-QMenuBar::item {
-	background: rgb(59, 56, 56);
+QMenu, QMenu::item, QMenuBar, QMenuBar::item {
+	color: lightgray;
+	background-color: rgb(20, 21, 23);
+	border-radius: 5px;
+	padding: 5px;
 }
 
 QMenuBar::item:selected, QMenu::item:selected {
-	background-color: gray;
+	color: rgb(20, 21, 23);
+	background-color: rgb(229, 229, 229);
+	border-radius: 5px;
+	padding: 5px;
 }
 
 QDialog {
-	background-color: rgb(59, 56, 56);
-}
-
-QCheckBox::indicator {
-	width: 32px;
-	height: 32px;
-}
-
-QCheckBox::indicator::unchecked, QCheckBox::indicator:unchecked:pressed {
-    image: url(:/checkbox/graphics/checkbox_unchecked.png);
-}
-
-QCheckBox::indicator::checked, QCheckBox::indicator:checked:pressed, QCheckBox::indicator:checked:hover {
-    image: url(:/checkbox/graphics/checkbox_checked.png);
-}
-
-QCheckBox::indicator:unchecked:hover {
-	image: url(:/checkbox/graphics/checkbox_hover.png);
+	background-color: rgb(20, 21, 23);
 }
 
 QListView {
-	background-color: transparent;
-	border: 1px solid gray;
+	background-color: white;
+	border: 1px solid green;
 	border-radius: 10px;
 }
 
 QPushButton#reloadVariablePoolBtn {
 	font: 8pt &quot;MS Shell Dlg 2&quot;;
-}</string>
+}
+
+QRadioButton::indicator, QCheckBox::indicator {
+    width: 24px;
+    height: 24px;
+}
+
+QRadioButton, QCheckBox {
+	background-color: rgba(255, 255, 255, 0.5);
+	padding: 5px;
+	border-radius: 10px;
+}
+
+QCheckBox::indicator::unchecked, QRadioButton::indicator::unchecked {
+    image: url(:/checkbox/graphics/baseline_radio_button_unchecked_black_24dp.png);
+}
+
+QCheckBox::indicator::checked, QCheckBox::indicator:checked:pressed {
+    image: url(:/checkbox/graphics/baseline_check_circle_black_24dp.png);
+}
+
+QRadioButton::indicator::checked, QRadioButton::indicator:checked:pressed {
+	image: url(:/checkbox/graphics/baseline_radio_button_checked_black_24dp.png);
+}
+</string>
   </property>
   <property name="iconSize">
    <size>
@@ -232,19 +210,6 @@ QPushButton#reloadVariablePoolBtn {
    <property name="enabled">
     <bool>true</bool>
    </property>
-   <widget class="QLabel" name="bgLabel">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>800</width>
-      <height>480</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;:/background/graphics/revero_800.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-   </widget>
    <widget class="QTabWidget" name="tabWidget">
     <property name="enabled">
      <bool>true</bool>
@@ -254,13 +219,14 @@ QPushButton#reloadVariablePoolBtn {
       <x>20</x>
       <y>20</y>
       <width>761</width>
-      <height>351</height>
+      <height>331</height>
      </rect>
     </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
     <property name="styleSheet">
-     <string notr="true">QWidget {
-	background-color: transparent;
-}</string>
+     <string notr="true"/>
     </property>
     <property name="currentIndex">
      <number>0</number>
@@ -279,13 +245,16 @@ QPushButton#reloadVariablePoolBtn {
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="horizontalSpacing">
+        <number>15</number>
+       </property>
        <item row="2" column="2">
         <widget class="QPushButton" name="browseVariablePoolBtn">
          <property name="text">
           <string>Browse</string>
-         </property>
-         <property name="flat">
-          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -301,6 +270,12 @@ QPushButton#reloadVariablePoolBtn {
        </item>
        <item row="4" column="1">
         <widget class="QCheckBox" name="versionCheckBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="text">
           <string>Include HW &amp;&amp; SW Version</string>
          </property>
@@ -338,9 +313,6 @@ QPushButton#reloadVariablePoolBtn {
          <property name="text">
           <string>Browse</string>
          </property>
-         <property name="flat">
-          <bool>true</bool>
-         </property>
         </widget>
        </item>
        <item row="3" column="2">
@@ -348,6 +320,9 @@ QPushButton#reloadVariablePoolBtn {
          <property name="text">
           <string>Load Variable
 Pool File</string>
+         </property>
+         <property name="flat">
+          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -363,7 +338,7 @@ Pool File</string>
        <rect>
         <x>20</x>
         <y>20</y>
-        <width>321</width>
+        <width>291</width>
         <height>151</height>
        </rect>
       </property>
@@ -385,6 +360,12 @@ and Additional Signals</string>
        </item>
        <item row="0" column="0">
         <widget class="QRadioButton" name="logRadioBtn0">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="text">
           <string>Execution Only (Default)</string>
          </property>
@@ -392,146 +373,216 @@ and Additional Signals</string>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="layoutWidget">
+     <widget class="QGroupBox" name="addSignalGroupBox">
       <property name="geometry">
        <rect>
-        <x>360</x>
-        <y>20</y>
-        <width>371</width>
-        <height>271</height>
+        <x>330</x>
+        <y>10</y>
+        <width>411</width>
+        <height>261</height>
        </rect>
       </property>
-      <layout class="QGridLayout" name="gridLayout_3">
-       <item row="1" column="0" colspan="2">
-        <widget class="QListView" name="addSignalListView">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Sunken</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0" colspan="2">
-        <widget class="QLineEdit" name="addSignalEdit"/>
-       </item>
-       <item row="3" column="0">
-        <widget class="QPushButton" name="addSignalBtn">
-         <property name="text">
-          <string>Add</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QPushButton" name="removeSignalBtn">
-         <property name="text">
-          <string>Remove</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="addSignalLabel">
-         <property name="layoutDirection">
-          <enum>Qt::LeftToRight</enum>
-         </property>
-         <property name="text">
-          <string>Additional Signal List:</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      <property name="title">
+       <string>Additional Signal List</string>
+      </property>
+      <widget class="QWidget" name="layoutWidget">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>30</y>
+         <width>281</width>
+         <height>211</height>
+        </rect>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="2" column="0">
+         <widget class="QLineEdit" name="addSignalEdit"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QListView" name="addSignalListView">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Sunken</enum>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="layoutWidget">
+       <property name="geometry">
+        <rect>
+         <x>310</x>
+         <y>30</y>
+         <width>91</width>
+         <height>91</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QPushButton" name="addSignalBtn">
+          <property name="text">
+           <string>Add</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="removeSignalBtn">
+          <property name="text">
+           <string>Remove</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </widget>
     <widget class="QWidget" name="tab_3">
      <attribute name="title">
       <string>DTC</string>
      </attribute>
-     <widget class="QWidget" name="layoutWidget">
+     <widget class="QGroupBox" name="dtcExGroupBox">
       <property name="geometry">
        <rect>
-        <x>40</x>
-        <y>60</y>
-        <width>681</width>
-        <height>211</height>
+        <x>140</x>
+        <y>20</y>
+        <width>521</width>
+        <height>251</height>
        </rect>
       </property>
-      <layout class="QGridLayout" name="gridLayout_4">
-       <item row="1" column="0" colspan="2">
-        <widget class="QLineEdit" name="addDtcExEdit"/>
-       </item>
-       <item row="2" column="0">
-        <widget class="QPushButton" name="addDtcExBtn">
-         <property name="text">
-          <string>Add</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QPushButton" name="removeDtcExBtn">
-         <property name="text">
-          <string>Remove</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0" colspan="2">
-        <widget class="QListView" name="dtcExListView"/>
-       </item>
-      </layout>
+      <property name="title">
+       <string>DTC Exception List</string>
+      </property>
+      <widget class="QWidget" name="layoutWidget">
+       <property name="geometry">
+        <rect>
+         <x>410</x>
+         <y>30</y>
+         <width>91</width>
+         <height>127</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QPushButton" name="addDtcExBtn">
+          <property name="text">
+           <string>Add</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="removeDtcExBtn">
+          <property name="text">
+           <string>Remove</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="layoutWidget">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>30</y>
+         <width>391</width>
+         <height>211</height>
+        </rect>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_4">
+        <item row="1" column="0" colspan="2">
+         <widget class="QLineEdit" name="addDtcExEdit"/>
+        </item>
+        <item row="0" column="0" colspan="2">
+         <widget class="QListView" name="dtcExListView"/>
+        </item>
+       </layout>
+      </widget>
      </widget>
      <widget class="QCheckBox" name="dtcExCheckBox">
       <property name="geometry">
        <rect>
-        <x>40</x>
+        <x>20</x>
         <y>20</y>
-        <width>336</width>
-        <height>32</height>
+        <width>111</width>
+        <height>31</height>
        </rect>
       </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="text">
-       <string>Enabled DTC Exception</string>
+       <string>Enable</string>
       </property>
      </widget>
     </widget>
    </widget>
-   <widget class="QWidget" name="layoutWidget">
+   <widget class="QFrame" name="frame">
     <property name="geometry">
      <rect>
-      <x>460</x>
-      <y>380</y>
-      <width>321</width>
-      <height>44</height>
+      <x>0</x>
+      <y>0</y>
+      <width>800</width>
+      <height>418</height>
      </rect>
     </property>
-    <layout class="QGridLayout" name="gridLayout_5">
-     <item row="0" column="0">
-      <widget class="QPushButton" name="saveAsBtn">
-       <property name="text">
-        <string>Save Profile As</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QPushButton" name="saveBtn">
-       <property name="text">
-        <string>Save Profile</string>
-       </property>
-       <property name="flat">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QPushButton" name="exitButton">
-       <property name="text">
-        <string>Continue</string>
-       </property>
-       <property name="flat">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>460</x>
+       <y>360</y>
+       <width>321</width>
+       <height>52</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_5">
+      <item row="0" column="0">
+       <widget class="QPushButton" name="saveAsBtn">
+        <property name="text">
+         <string>Save Profile As</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="saveBtn">
+        <property name="text">
+         <string>Save Profile</string>
+        </property>
+        <property name="flat">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="exitButton">
+        <property name="text">
+         <string>Continue</string>
+        </property>
+        <property name="flat">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </widget>
+   <zorder>frame</zorder>
+   <zorder>tabWidget</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="enabled">
@@ -542,7 +593,7 @@ and Additional Signals</string>
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>27</height>
+     <height>42</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

@@ -1,16 +1,11 @@
 <RCC>
-  <qresource prefix="background">
-    <file>graphics/revero_800.png</file>
-  </qresource>
-  <qresource prefix="led">
-    <file>graphics/green_led.png</file>
-    <file>graphics/red_led.png</file>
-  </qresource>
   <qresource prefix="checkbox">
-    <file>graphics/checkbox_hover.png</file>
-    <file>graphics/checkbox_unchecked.png</file>
-    <file>graphics/checkbox_xchecked.png</file>
-    <file>graphics/checkbox_checked.png</file>
+    <file>graphics/baseline_check_circle_white_24dp.png</file>
+    <file>graphics/baseline_check_circle_black_24dp.png</file>
+    <file>graphics/baseline_radio_button_checked_black_24dp.png</file>
+    <file>graphics/baseline_radio_button_unchecked_black_24dp.png</file>
+    <file>graphics/baseline_radio_button_checked_white_24dp.png</file>
+    <file>graphics/baseline_radio_button_unchecked_white_24dp.png</file>
   </qresource>
   <qresource prefix="icon">
     <file>graphics/development_python_32px_540419_easyicon.net.png</file>

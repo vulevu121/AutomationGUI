@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox, QListView
+from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox, QListView, QCompleter
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
+from PyQt5.QtCore import QStringListModel
 import xmltodict
 from pathlib import Path
 from xmlconfig import *
@@ -107,19 +108,12 @@ class App(QMainWindow, Ui_MainWindow):
     # def mousePressEvent(self, event):
     #     print(event.button())
 
+
     def hideAddSignal(self):
-        self.addSignalLabel.hide()
-        self.addSignalListView.hide()
-        self.addSignalBtn.hide()
-        self.addSignalEdit.hide()
-        self.removeSignalBtn.hide()
+        self.addSignalGroupBox.hide()
 
     def showAddSignal(self):
-        self.addSignalLabel.show()
-        self.addSignalListView.show()
-        self.addSignalBtn.show()
-        self.addSignalEdit.show()
-        self.removeSignalBtn.show()
+        self.addSignalGroupBox.show()
 
     def dtcExToggle(self):
         if self.dtcExCheckBox.isChecked():
@@ -128,16 +122,10 @@ class App(QMainWindow, Ui_MainWindow):
             self.hideDtcException()
 
     def hideDtcException(self):
-        self.dtcExListView.hide()
-        self.addDtcExEdit.hide()
-        self.addDtcExBtn.hide()
-        self.removeDtcExBtn.hide()
+        self.dtcExGroupBox.hide()
 
     def showDtcException(self):
-        self.dtcExListView.show()
-        self.addDtcExEdit.show()
-        self.addDtcExBtn.show()
-        self.removeDtcExBtn.show()
+        self.dtcExGroupBox.show()
 
     def addSignalListViewChanged(self):
         print(self.addSignalListView.currentIndex().row())
@@ -318,51 +306,32 @@ class App(QMainWindow, Ui_MainWindow):
 
     # use the profile dictionary to update the gui
     def updateGUI(self):
-        self.callFunctionEdit.setText(self.profileDict['Profile']['CallFunctionFolder'])
-        self.csvReportEdit.setText(self.profileDict['Profile']['CSVReportFolder'])
-        self.variablePoolEdit.setText(self.profileDict['Profile']['VariablePoolPath'])
-        self.versionCheckBox.setChecked(eval(self.profileDict['Profile']['IncludeVersion']))
+        try:
+            self.callFunctionEdit.setText(self.profileDict['Profile']['CallFunctionFolder'])
+        except KeyError:
+            self.callFunctionEdit.setText('')
 
-        # self.versionCheckBox.setChecked(self.profileDict['Profile']['IncludeVersion'])
+        try:
+            self.csvReportEdit.setText(self.profileDict['Profile']['CSVReportFolder'])
+        except KeyError:
+            self.csvReportEdit.setText('')
 
-        # def betaRelease():
-        #     self.betaRadioBtn.setChecked(True)
-        #
-        # def rcRelease():
-        #     self.rcRadioBtn.setChecked(True)
-        #
-        # def showRelease(arg):
-        #     switcher = {
-        #         'beta': betaRelease,
-        #         'rc': rcRelease
-        #     }
-        #     switcher.get(arg)()
-        #
-        # showRelease(self.profileDict['Config']['release'])
+        try:
+            self.variablePoolEdit.setText(self.profileDict['Profile']['VariablePoolPath'])
+        except KeyError:
+            self.variablePoolEdit.setText('')
 
-        # def logMode0():
-        #     self.logRadioBtn0.setChecked(True)
-        #
-        # def logMode1():
-        #     self.logRadioBtn1.setChecked(True)
-        #
-        # def logMode2():
-        #     self.logRadioBtn2.setChecked(True)
-        #
-        # def showLogMode(arg):
-        #     switcher = {
-        #         '0': logMode0,
-        #         '1': logMode1,
-        #         '2': logMode2
-        #     }
-        #     switcher.get(arg)()
-        #
-        # showLogMode(self.profileDict['Profile']['logMode'])
+        try:
+            checkbox = self.profileDict['Profile']['IncludeVersion']
+            self.versionCheckBox.setChecked(eval(checkbox))
+        except:
+            self.versionCheckBox.setChecked(False)
 
         self.addSignalModel.clear()
         try:
             temp = self.profileDict['Profile']['Log']['Signal']
             signalList = []
+            # if temp is a list we iterate and add, else we append a single element
             if isinstance(temp, list):
                 signalList.extend(x for x in temp)
             else:
@@ -378,6 +347,7 @@ class App(QMainWindow, Ui_MainWindow):
         try:
             temp = self.profileDict['Profile']['DTC']['Except']
             dtcExList = []
+            # if temp is a list we iterate and add, else we append a single element
             if isinstance(temp, list):
                 dtcExList.extend(x for x in temp)
             else:
@@ -398,7 +368,7 @@ class App(QMainWindow, Ui_MainWindow):
                         try:
                             self.profilePath = Path(self.configDict['Config']['LastProfile'])
                             self.loadProfile()
-                        except KeyError:
+                        except:
                             self.statusbar.showMessage(self.profile_notfound_config)
                 except KeyError:
                     self.statusbar.showMessage(self.config_invalid)
@@ -416,6 +386,12 @@ class App(QMainWindow, Ui_MainWindow):
                 with open(str(variablePoolPath)) as f:
                     self.variablePool = []
                     self.variablePool.extend(row['VariableName'] for row in csv.DictReader(f))
+
+                    model = QStringListModel()
+                    model.setStringList(self.variablePool)
+                    completer = QCompleter()
+                    completer.setModel(model)
+                    self.addSignalEdit.setCompleter(completer)
                     self.statusbar.showMessage(self.variable_pool_loaded_success)
             except FileNotFoundError:
                 self.statusbar.showMessage(self.variable_pool_notfound)
@@ -431,12 +407,12 @@ class App(QMainWindow, Ui_MainWindow):
                 'CallFunctionFolder': '',
                 'CSVReportFolder': '',
                 'VariablePoolPath': '',
-                'IncludeVersion': 'False',
+                'IncludeVersion': '',
                 'Log': {
-                    '@mode': '0'
+                    '@mode': ''
                 },
                 'DTC': {
-                    '@enable': 'False'
+                    '@enable': ''
                 }
             }
         }
@@ -470,6 +446,7 @@ def main():
     form = App()
     form.show()
     app.exec_()
+    # return the profile dict to caller such as AutomoationDesk
     return form.profileDict
 
 

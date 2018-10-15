@@ -1,0 +1,175 @@
+QMainWindow {
+	background-color: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0 rgba(91, 93, 98, 255), stop:1 rgba(75, 77, 81, 255));
+}
+
+QWidget {
+	color: rgb(218, 218, 218);
+	font: 10pt "MS Shell Dlg 2";
+}
+
+QLabel {
+	background-color: transparent;
+}
+
+QPushButton {
+	background-color: rgba(59, 56, 56, 90);
+	border: 1px solid gray;
+	border-radius: 5px;
+	height: 40px;
+	padding: 0px 5px 0px 5px;
+}
+
+QPushButton:pressed {
+	background-color: gray;
+	color: rgb(255, 255, 255);
+}
+
+QPushButton:hover {
+	border: 1px solid white;
+	border-radius: 5px;
+}
+
+QGroupBox {
+	background-color: transparent;
+    border: 1px solid gray;
+	border-radius: 10px;
+	margin-top: 10px;
+}
+
+QGroupBox::title {
+	subcontrol-origin: margin;
+	subcontrol-position: top left;
+	padding: 0px 10px 0px 10px;
+	left: 10px;
+}
+
+QStatusBar {
+	background: black;
+}
+
+QTabWidget {
+	background-color: transparent;
+}
+
+QTabWidget::pane {
+	border: 1px solid lightgray;
+	border-radius: 10px;
+}
+
+QTabWidget::tab-bar {
+	left: 0px;
+}
+
+QTabBar::tab {
+	background-color: transparent;
+	border: 1px solid gray;
+	padding: 10px;
+	min-width: 150px;
+	top: 2px;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+}
+
+QTabBar::tab:selected, QTabBar::tab:hover {
+	background-color: transparent;
+	border: 1px solid lightgray;
+}
+
+QTabBar::tab:!selected {
+    background-color: transparent;
+	border
+}
+
+QStackedWidget {
+	background-color: transparent;
+}
+
+QRadioButton::indicator {
+	width: 32px;
+	height: 32px;
+}
+
+QRadioButton::indicator::unchecked, QRadioButton::indicator:unchecked:pressed {
+    image: url(:/checkbox/graphics/checkbox_unchecked.png);
+}
+
+QRadioButton::indicator::checked, QRadioButton::indicator:checked:pressed, QRadioButton::indicator:checked:hover {
+    image: url(:/checkbox/graphics/checkbox_checked.png);
+}
+
+QRadioButton::indicator:unchecked:hover {
+	image: url(:/checkbox/graphics/checkbox_hover.png);
+}
+
+QComboBox {
+	background-color: rgb(59, 56, 56);
+}
+
+QComboBox QAbstractItemView {
+	background-color: rgb(59, 56, 56);
+	selection-background-color: lightgray;
+}
+
+QProgressBar{
+	background-color: rgb(59, 56, 56);
+}
+
+QLineEdit {
+	background-color: transparent;
+	color: white;
+	border: 1px solid gray;
+	border-radius: 5px;
+	min-height: 30px;
+}
+
+QLCDNumber {
+	border:1px solid gray;
+	border-radius: 5px;
+}
+
+QMenu, QMenu::item {
+	background-color: rgb(59, 56, 56);
+}
+
+QMenuBar {
+	background-color: rgb(59, 56, 56);
+}
+
+QMenuBar::item {
+	background: rgb(59, 56, 56);
+}
+
+QMenuBar::item:selected, QMenu::item:selected {
+	background-color: gray;
+}
+
+QDialog {
+	background-color: rgb(59, 56, 56);
+}
+
+QCheckBox::indicator {
+	width: 32px;
+	height: 32px;
+}
+
+QCheckBox::indicator::unchecked, QCheckBox::indicator:unchecked:pressed {
+    image: url(:/checkbox/graphics/checkbox_unchecked.png);
+}
+
+QCheckBox::indicator::checked, QCheckBox::indicator:checked:pressed, QCheckBox::indicator:checked:hover {
+    image: url(:/checkbox/graphics/checkbox_checked.png);
+}
+
+QCheckBox::indicator:unchecked:hover {
+	image: url(:/checkbox/graphics/checkbox_hover.png);
+}
+
+QListView {
+	background-color: transparent;
+	border: 1px solid gray;
+	border-radius: 10px;
+}
+
+QPushButton#reloadVariablePoolBtn {
+	font: 8pt "MS Shell Dlg 2";
+}
