@@ -10,6 +10,7 @@ from xmlconfig import *
 import os
 import sys
 import csv
+import subprocess
 
 if sys.version_info[0] < 3:
     FileNotFoundError = IOError
@@ -67,8 +68,6 @@ class App(QMainWindow, Ui_MainWindow):
         self.dtcExModel = QStandardItemModel()
         self.dtcExListView.setModel(self.dtcExModel)
 
-        # self.addSignalListView.clicked.connect(self.addSignalListViewChanged)
-
         # signals and slots for menus, buttons, etc
         self.callFunctionEdit.textChanged.connect(self.unsavedChanges)
         self.csvReportEdit.textChanged.connect(self.unsavedChanges)
@@ -97,6 +96,7 @@ class App(QMainWindow, Ui_MainWindow):
         self.actionSaveAs.triggered.connect(self.saveAsProfile)
         self.actionAbout.triggered.connect(self.about)
         self.actionExit.triggered.connect(self.exit)
+        self.actionOpenConfigFolder.triggered.connect(self.openConfigFolder)
 
         self.logRadioBtn0.clicked.connect(self.hideAddSignal)
         self.logRadioBtn1.clicked.connect(self.hideAddSignal)
@@ -115,6 +115,11 @@ class App(QMainWindow, Ui_MainWindow):
     # def mousePressEvent(self, event):
     #     print(event.button())
 
+
+    def openConfigFolder(self):
+        configFolder = os.path.dirname(self.configPath)
+        param = 'explorer "{}"'.format(configFolder)
+        subprocess.Popen(param)
 
     def hideAddSignal(self):
         self.addSignalGroupBox.hide()
