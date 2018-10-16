@@ -16,7 +16,7 @@ QLabel {
 QLineEdit {
 	background-color: white;
 	color: black;
-	border: 1px solid  rgb(191, 205, 219);
+	border: 1px solid  rgba(0, 0, 0, 0.2);
 	border-radius: 8px;
 	min-height: 30px;
 	padding: 2px;
@@ -44,7 +44,7 @@ QPushButton:pressed {
 
 QGroupBox {
 	background-color: transparent;
-    border: 1px solid gray;
+    border: 1px solid rgba(0, 0, 0, 0.2);
 	border-radius: 8px;
 	margin-top: 10px;
 }
@@ -75,7 +75,7 @@ QTabWidget::pane {
 }
 
 QStackedWidget {
-	background-color: rgb(220, 231, 245);
+	background-color: rgb(245, 245, 245);
 }
 
 
@@ -92,7 +92,7 @@ QTabBar::tab {
 }
 
 QTabBar::tab:selected {
-	background-color: rgb(220, 231, 245);
+	background-color:rgb(245, 245, 245);
 }
 
 QTabBar::tab:!selected {
@@ -135,7 +135,7 @@ QDialog {
 
 QListView {
 	background-color: white;
-	border: 1px solid  rgb(191, 205, 219);
+	border: 1px solid  rgba(0, 0, 0, 0.2);
 	border-radius: 8px;
 }
 

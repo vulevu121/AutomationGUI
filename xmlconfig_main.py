@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox, QListView, QCompleter
+from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox, QListView, QCompleter, QGraphicsDropShadowEffect
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
 from PyQt5.QtCore import QStringListModel
 import xmltodict
@@ -23,6 +23,13 @@ class App(QMainWindow, Ui_MainWindow):
 
         # create a frameless window without titlebar
         # self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+
+        # gui effects
+        dropShadow = QGraphicsDropShadowEffect()
+        dropShadow.setXOffset(1)
+        dropShadow.setYOffset(1)
+        dropShadow.setBlurRadius(6)
+        self.tabWidget.setGraphicsEffect(dropShadow)
 
         # use these strings for messages
         self.config_invalid = 'Invalid config file detected.'
@@ -164,8 +171,8 @@ class App(QMainWindow, Ui_MainWindow):
             self.variablePoolEdit.setText(str(Path(filePath)))
 
     def newConfig(self):
-        self.setDefaultConfig()
-        self.unsavedChanges()
+        self.setDefaultConfigDict()
+
 
     def saveProfile(self):
         if self.defaultProfile:
@@ -227,24 +234,15 @@ class App(QMainWindow, Ui_MainWindow):
         #     '@enable': self.dtcExCheckBox.isChecked(),
         #     'Except': dtcExList
         # }
-        
-        self.profileDict = {
-            'Profile': {
-                '@version': '1.0',
-                'CallFunctionFolder': self.callFunctionEdit.text(),
-                'CSVReportFolder': self.csvReportEdit.text(),
-                'VariablePoolPath': self.variablePoolEdit.text(),
-                'IncludeVersion': self.versionCheckBox.isChecked(),
-                'Log': {
-                    '@mode': logMode,
-                    'Signal': signalList
-                },
-                'DTC': {
-                    '@enable': self.dtcExCheckBox.isChecked(),
-                    'Except': dtcExList
-                }
-            }
-        }
+
+        self.setProfileDict(callfolder=self.callFunctionEdit.text(),
+                            csvfolder=self.csvReportEdit.text(),
+                            varpoolpath=self.variablePoolEdit.text(),
+                            inccludeversion=self.versionCheckBox.isChecked(),
+                            logmode=logMode,
+                            signallist=signalList,
+                            dtcenable=self.dtcExCheckBox.isChecked(),
+                            dtcexlist=dtcExList)
 
     def addSignal(self):
         signal = self.addSignalEdit.text()
@@ -374,7 +372,7 @@ class App(QMainWindow, Ui_MainWindow):
                     self.statusbar.showMessage(self.config_invalid)
         except FileNotFoundError:
             self.statusbar.showMessage(self.config_notfound)
-            self.setDefaultConfig()
+            self.setDefaultConfigDict()
             self.setDefaultProfile()
             self.setTitle(self.untitled_profile)
 
@@ -400,31 +398,54 @@ class App(QMainWindow, Ui_MainWindow):
     def setTitle(self, profilePath):
         self.setWindowTitle('[' + str(profilePath) + '] - XMLConfig')
 
-    def setDefaultProfile(self):
-        self.defaultProfile = True
+
+    def setProfileDict(self,
+                       callfolder='',
+                       csvfolder='',
+                       varpoolpath='',
+                       inccludeversion='False',
+                       logmode='0',
+                       signallist=[],
+                       dtcenable='False',
+                       dtcexlist=[]):
+
         self.profileDict = {
             'Profile': {
                 '@version': '1.0',
-                'CallFunctionFolder': '',
-                'CSVReportFolder': '',
-                'VariablePoolPath': '',
-                'IncludeVersion': '',
+                'CallFunctionFolder': callfolder,
+                'CSVReportFolder': csvfolder,
+                'VariablePoolPath': varpoolpath,
+                'IncludeVersion': inccludeversion,
                 'Log': {
-                    '@mode': ''
+                    '@mode': logmode,
+                    'Signal': signallist
                 },
                 'DTC': {
-                    '@enable': ''
+                    '@enable': dtcenable,
+                    'Except': dtcexlist
                 }
             }
         }
 
-    def setDefaultConfig(self):
+    def setDefaultProfile(self):
+        self.defaultProfile = True
+        # load default profile if no params are given
+        self.setProfileDict()
+
+
+    def setConfigDict(self, lastprofile=''):
         self.configDict = {
             'Config': {
                 '@version': '1.0',
-                'LastProfile': ''
+                'LastProfile': lastprofile
             }
         }
+
+    def setDefaultConfigDict(self):
+        self.unsavedChanges()
+        # load default config if no params are given
+        self.setConfigDict()
+
 
     def exit(self):
         if not self.changesSaved:
