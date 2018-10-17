@@ -31,6 +31,8 @@ class App(QMainWindow, Ui_MainWindow):
         dropShadow.setBlurRadius(6)
         self.tabWidget.setGraphicsEffect(dropShadow)
 
+        self.size
+
         # use these strings for messages
         self.config_invalid = 'Invalid config file detected.'
         self.config_notfound = 'Config filse not found. Default config and profile loaded.'
@@ -80,6 +82,10 @@ class App(QMainWindow, Ui_MainWindow):
         self.browseCsvReportBtn.clicked.connect(self.browseCsvReport)
         self.browseVariablePoolBtn.clicked.connect(self.browseVariablePool)
 
+        self.openCallFunctionFolderButton.clicked.connect(self.openCallFunctionFolder)
+        self.openCsvReportFolderButton.clicked.connect(self.openCsvReportFolder)
+        self.openVarPoolFolderButton.clicked.connect(self.openVarPoolFolder)
+
         self.addSignalBtn.clicked.connect(self.addSignal)
         self.addSignalEdit.returnPressed.connect(self.addSignal)
         self.removeSignalBtn.clicked.connect(self.removeSignal)
@@ -113,6 +119,18 @@ class App(QMainWindow, Ui_MainWindow):
     # def mousePressEvent(self, event):
     #     print(event.button())
 
+    def openCallFunctionFolder(self):
+        callfunctionpath = Path(self.callFunctionEdit.text())
+        os.startfile(str(callfunctionpath))
+
+    def openCsvReportFolder(self):
+        csvreportpath = Path(self.csvReportEdit.text())
+        os.startfile(str(csvreportpath))
+
+    def openVarPoolFolder(self):
+        varpoolpath = Path(self.variablePoolEdit.text())
+        dirname = os.path.dirname(str(varpoolpath))
+        os.startfile(str(dirname))
 
     def openConfigFolder(self):
         configfolder = os.path.dirname(str(self.configFile))

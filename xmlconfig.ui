@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -45,7 +45,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="xmlconfig.qrc">
-    <normaloff>:/icon/graphics/development_python_32px_540419_easyicon.net.png</normaloff>:/icon/graphics/development_python_32px_540419_easyicon.net.png</iconset>
+    <normaloff>:/icon/graphics/baseline_menu_black_24dp.png</normaloff>:/icon/graphics/baseline_menu_black_24dp.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">QMainWindow, QFrame {
@@ -245,6 +245,12 @@ QMessageBox {
       <height>331</height>
      </rect>
     </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
     <property name="autoFillBackground">
      <bool>false</bool>
     </property>
@@ -255,6 +261,11 @@ QMessageBox {
      <number>0</number>
     </property>
     <widget class="QWidget" name="tab">
+     <attribute name="icon">
+      <iconset resource="xmlconfig.qrc">
+       <normaloff>:/icon/graphics/baseline_tab_unselected_black_24dp.png</normaloff>
+       <normalon>graphics/baseline_tab_black_24dp.png</normalon>:/icon/graphics/baseline_tab_unselected_black_24dp.png</iconset>
+     </attribute>
      <attribute name="title">
       <string>General</string>
      </attribute>
@@ -263,33 +274,40 @@ QMessageBox {
        <rect>
         <x>20</x>
         <y>10</y>
-        <width>711</width>
-        <height>271</height>
+        <width>721</width>
+        <height>261</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout">
+       <property name="sizeConstraint">
+        <enum>QLayout::SetMaximumSize</enum>
+       </property>
        <property name="leftMargin">
         <number>0</number>
        </property>
-       <property name="horizontalSpacing">
-        <number>15</number>
-       </property>
        <item row="2" column="2">
         <widget class="QPushButton" name="browseVariablePoolBtn">
-         <property name="text">
+         <property name="toolTip">
           <string>Browse</string>
          </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label">
          <property name="text">
-          <string>VariablePool CSV File</string>
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="xmlconfig.qrc">
+           <normaloff>:/icon/graphics/baseline_folder_open_black_24dp.png</normaloff>:/icon/graphics/baseline_folder_open_black_24dp.png</iconset>
          </property>
         </widget>
        </item>
        <item row="2" column="1">
         <widget class="QLineEdit" name="variablePoolEdit"/>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="variablePoolLabel">
+         <property name="text">
+          <string>VariablePool CSV File:</string>
+         </property>
+        </widget>
        </item>
        <item row="4" column="1">
         <widget class="QCheckBox" name="versionCheckBox">
@@ -305,44 +323,106 @@ QMessageBox {
         </widget>
        </item>
        <item row="0" column="0">
-        <widget class="QLabel" name="label_5">
+        <widget class="QLabel" name="callFunctionLabel">
          <property name="text">
-          <string>Call Function Folder</string>
+          <string>Call Function Folder:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="csvReportLabel">
+         <property name="text">
+          <string>CSV Report Folder:</string>
          </property>
         </widget>
        </item>
        <item row="0" column="2">
         <widget class="QPushButton" name="browseCallFunctionBtn">
-         <property name="text">
+         <property name="toolTip">
           <string>Browse</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="xmlconfig.qrc">
+           <normaloff>:/icon/graphics/baseline_folder_open_black_24dp.png</normaloff>:/icon/graphics/baseline_folder_open_black_24dp.png</iconset>
          </property>
         </widget>
        </item>
        <item row="0" column="1">
         <widget class="QLineEdit" name="callFunctionEdit"/>
        </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>CSV Report Folder</string>
-         </property>
-        </widget>
-       </item>
        <item row="1" column="1">
         <widget class="QLineEdit" name="csvReportEdit"/>
        </item>
        <item row="1" column="2">
         <widget class="QPushButton" name="browseCsvReportBtn">
-         <property name="text">
+         <property name="toolTip">
           <string>Browse</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="xmlconfig.qrc">
+           <normaloff>:/icon/graphics/baseline_folder_open_black_24dp.png</normaloff>:/icon/graphics/baseline_folder_open_black_24dp.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QPushButton" name="openCallFunctionFolderButton">
+         <property name="toolTip">
+          <string>Open Folder</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="xmlconfig.qrc">
+           <normaloff>:/icon/graphics/baseline_open_in_browser_black_24dp.png</normaloff>:/icon/graphics/baseline_open_in_browser_black_24dp.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="3">
+        <widget class="QPushButton" name="openVarPoolFolderButton">
+         <property name="toolTip">
+          <string>Open Folder</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="xmlconfig.qrc">
+           <normaloff>:/icon/graphics/baseline_open_in_browser_black_24dp.png</normaloff>:/icon/graphics/baseline_open_in_browser_black_24dp.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="3">
+        <widget class="QPushButton" name="openCsvReportFolderButton">
+         <property name="toolTip">
+          <string>Open Folder</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="xmlconfig.qrc">
+           <normaloff>:/icon/graphics/baseline_open_in_browser_black_24dp.png</normaloff>:/icon/graphics/baseline_open_in_browser_black_24dp.png</iconset>
          </property>
         </widget>
        </item>
        <item row="3" column="2">
         <widget class="QPushButton" name="reloadVariablePoolBtn">
+         <property name="toolTip">
+          <string>Load Variable Pool</string>
+         </property>
          <property name="text">
-          <string>Load Variable
-Pool File</string>
+          <string>Load</string>
+         </property>
+         <property name="icon">
+          <iconset resource="xmlconfig.qrc">
+           <normaloff>:/icon/graphics/baseline_save_alt_black_24dp.png</normaloff>:/icon/graphics/baseline_save_alt_black_24dp.png</iconset>
          </property>
          <property name="flat">
           <bool>false</bool>
@@ -353,6 +433,11 @@ Pool File</string>
      </widget>
     </widget>
     <widget class="QWidget" name="tab_2">
+     <attribute name="icon">
+      <iconset resource="xmlconfig.qrc">
+       <normaloff>:/icon/graphics/baseline_tab_unselected_black_24dp.png</normaloff>
+       <normalon>:/icon/graphics/baseline_tab_black_24dp.png</normalon>:/icon/graphics/baseline_tab_unselected_black_24dp.png</iconset>
+     </attribute>
      <attribute name="title">
       <string>Logging</string>
      </attribute>
@@ -462,6 +547,11 @@ and Additional Signals</string>
      </widget>
     </widget>
     <widget class="QWidget" name="tab_3">
+     <attribute name="icon">
+      <iconset resource="xmlconfig.qrc">
+       <normaloff>:/icon/graphics/baseline_tab_unselected_black_24dp.png</normaloff>
+       <normalon>:/icon/graphics/baseline_tab_black_24dp.png</normalon>:/icon/graphics/baseline_tab_unselected_black_24dp.png</iconset>
+     </attribute>
      <attribute name="title">
       <string>DTC</string>
      </attribute>
@@ -549,11 +639,11 @@ and Additional Signals</string>
       <x>0</x>
       <y>0</y>
       <width>800</width>
-      <height>418</height>
+      <height>480</height>
      </rect>
     </property>
     <property name="sizePolicy">
-     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
       <horstretch>0</horstretch>
       <verstretch>0</verstretch>
      </sizepolicy>
@@ -567,9 +657,9 @@ and Additional Signals</string>
     <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
-       <x>460</x>
+       <x>390</x>
        <y>360</y>
-       <width>326</width>
+       <width>390</width>
        <height>52</height>
       </rect>
      </property>
@@ -577,14 +667,22 @@ and Additional Signals</string>
       <item row="0" column="0">
        <widget class="QPushButton" name="saveAsBtn">
         <property name="text">
-         <string>Save Profile As</string>
+         <string>Save As</string>
+        </property>
+        <property name="icon">
+         <iconset resource="xmlconfig.qrc">
+          <normaloff>:/icon/graphics/baseline_save_black_24dp.png</normaloff>:/icon/graphics/baseline_save_black_24dp.png</iconset>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
        <widget class="QPushButton" name="saveBtn">
         <property name="text">
-         <string>Save Profile</string>
+         <string>Save</string>
+        </property>
+        <property name="icon">
+         <iconset resource="xmlconfig.qrc">
+          <normaloff>:/icon/graphics/baseline_save_black_24dp.png</normaloff>:/icon/graphics/baseline_save_black_24dp.png</iconset>
         </property>
         <property name="flat">
          <bool>false</bool>
@@ -595,6 +693,10 @@ and Additional Signals</string>
        <widget class="QPushButton" name="exitButton">
         <property name="text">
          <string>Continue</string>
+        </property>
+        <property name="icon">
+         <iconset resource="xmlconfig.qrc">
+          <normaloff>:/icon/graphics/baseline_arrow_forward_black_24dp.png</normaloff>:/icon/graphics/baseline_arrow_forward_black_24dp.png</iconset>
         </property>
         <property name="flat">
          <bool>false</bool>
@@ -686,6 +788,22 @@ and Additional Signals</string>
  </resources>
  <connections>
   <connection>
+   <sender>exitButton</sender>
+   <signal>clicked()</signal>
+   <receiver>actionExit</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>717</x>
+     <y>428</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>saveBtn</sender>
    <signal>clicked()</signal>
    <receiver>actionSave</receiver>
@@ -709,22 +827,6 @@ and Additional Signals</string>
    <hints>
     <hint type="sourcelabel">
      <x>552</x>
-     <y>428</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>exitButton</sender>
-   <signal>clicked()</signal>
-   <receiver>actionExit</receiver>
-   <slot>trigger()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>717</x>
      <y>428</y>
     </hint>
     <hint type="destinationlabel">
