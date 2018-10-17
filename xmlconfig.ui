@@ -31,6 +31,15 @@
     <height>480</height>
    </size>
   </property>
+  <property name="font">
+   <font>
+    <family>Segoe UI</family>
+    <pointsize>10</pointsize>
+    <weight>50</weight>
+    <italic>false</italic>
+    <bold>false</bold>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
@@ -41,11 +50,16 @@
   <property name="styleSheet">
    <string notr="true">QMainWindow, QFrame {
 	background-color: rgb(208, 218, 232);
+	font: 10pt &quot;Segoe UI&quot;;
 }
 
 QWidget {
 	color: rgba(0, 0, 0, 0.8);
-	font: 10pt &quot;MS Shell Dlg 2&quot;;
+	font: 10pt &quot;Segoe UI&quot;;
+}
+
+QPushButton#reloadVariablePoolBtn {
+	font: 8pt &quot;Segoe UI&quot;;
 }
 
 QLabel {
@@ -175,9 +189,7 @@ QDialog {
 	background-color: rgb(20, 21, 23);
 }
 
-QPushButton#reloadVariablePoolBtn {
-	font: 8pt &quot;MS Shell Dlg 2&quot;;
-}
+
 
 QRadioButton::indicator, QCheckBox::indicator {
     width: 24px;
@@ -558,7 +570,7 @@ and Additional Signals</string>
       <rect>
        <x>460</x>
        <y>360</y>
-       <width>321</width>
+       <width>326</width>
        <height>52</height>
       </rect>
      </property>
@@ -605,7 +617,7 @@ and Additional Signals</string>
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>38</height>
+     <height>40</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

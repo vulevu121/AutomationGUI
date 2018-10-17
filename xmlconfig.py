@@ -20,16 +20,28 @@ class Ui_MainWindow(object):
         MainWindow.setSizePolicy(sizePolicy)
         MainWindow.setMinimumSize(QtCore.QSize(800, 480))
         MainWindow.setMaximumSize(QtCore.QSize(800, 480))
+        font = QtGui.QFont()
+        font.setFamily("Segoe UI")
+        font.setPointSize(10)
+        font.setBold(False)
+        font.setItalic(False)
+        font.setWeight(50)
+        MainWindow.setFont(font)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/icon/graphics/development_python_32px_540419_easyicon.net.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
         MainWindow.setStyleSheet("QMainWindow, QFrame {\n"
 "    background-color: rgb(208, 218, 232);\n"
+"    font: 10pt \"Segoe UI\";\n"
 "}\n"
 "\n"
 "QWidget {\n"
 "    color: rgba(0, 0, 0, 0.8);\n"
-"    font: 10pt \"MS Shell Dlg 2\";\n"
+"    font: 10pt \"Segoe UI\";\n"
+"}\n"
+"\n"
+"QPushButton#reloadVariablePoolBtn {\n"
+"    font: 8pt \"Segoe UI\";\n"
 "}\n"
 "\n"
 "QLabel {\n"
@@ -159,9 +171,7 @@ class Ui_MainWindow(object):
 "    background-color: rgb(20, 21, 23);\n"
 "}\n"
 "\n"
-"QPushButton#reloadVariablePoolBtn {\n"
-"    font: 8pt \"MS Shell Dlg 2\";\n"
-"}\n"
+"\n"
 "\n"
 "QRadioButton::indicator, QCheckBox::indicator {\n"
 "    width: 24px;\n"
@@ -355,7 +365,7 @@ class Ui_MainWindow(object):
         self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame.setObjectName("frame")
         self.layoutWidget6 = QtWidgets.QWidget(self.frame)
-        self.layoutWidget6.setGeometry(QtCore.QRect(460, 360, 321, 52))
+        self.layoutWidget6.setGeometry(QtCore.QRect(460, 360, 326, 52))
         self.layoutWidget6.setObjectName("layoutWidget6")
         self.gridLayout_5 = QtWidgets.QGridLayout(self.layoutWidget6)
         self.gridLayout_5.setContentsMargins(0, 0, 0, 0)
@@ -376,7 +386,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setEnabled(True)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 38))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 40))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
