@@ -10,7 +10,6 @@ from xmlconfig import *
 import os
 import sys
 import csv
-import subprocess
 
 if sys.version_info[0] < 3:
     FileNotFoundError = IOError
@@ -20,7 +19,7 @@ class App(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super(self.__class__, self).__init__()
         self.setupUi(self)
-        self.debug = True
+        self.debug = False
 
         # create a frameless window without titlebar
         # self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
@@ -118,8 +117,9 @@ class App(QMainWindow, Ui_MainWindow):
 
     def openConfigFolder(self):
         configFolder = os.path.dirname(self.configPath)
-        param = 'explorer "{}"'.format(configFolder)
-        subprocess.Popen(param)
+        # param = 'explorer "{}"'.format(configFolder)
+        # subprocess.Popen(param)
+        os.startfile(configFolder)
 
     def hideAddSignal(self):
         self.addSignalGroupBox.hide()
@@ -139,9 +139,6 @@ class App(QMainWindow, Ui_MainWindow):
     def showDtcException(self):
         self.dtcExGroupBox.show()
 
-    def addSignalListViewChanged(self):
-        print(self.addSignalListView.currentIndex().row())
-
     def unsavedChanges(self):
         self.changesSaved = False
         self.statusbar.showMessage(self.unsaved_changes)
@@ -150,11 +147,12 @@ class App(QMainWindow, Ui_MainWindow):
         self.setDefaultProfile()
         self.profilePath = ''
         self.setTitle(self.untitled_profile)
-        self.updateGUI()
+        self.updateGuiFromProfileDict()
         self.statusbar.showMessage(self.default_profile_loaded)
 
     def browseProfile(self):
-        filePath, fileType = QFileDialog.getOpenFileName(self, "Open Profile", "","XML Files (*.xml);;All Files (*)")
+        profilefolder = os.path.dirname(self.profilePath)
+        filePath, fileType = QFileDialog.getOpenFileName(self, "Open Profile", profilefolder,"XML Files (*.xml);;All Files (*)")
         if filePath:
             self.profilePath = Path(filePath)
             self.loadProfile()
@@ -180,14 +178,16 @@ class App(QMainWindow, Ui_MainWindow):
 
 
     def saveProfile(self):
+        configfolder = os.path.dirname(self.configPath)
         if self.defaultProfile:
-            filePath, fileType = QFileDialog.getSaveFileName(self, "Save Profile As", "",
+            filePath, fileType = QFileDialog.getSaveFileName(self, "Save Profile As", configfolder,
                                                              "XML Files (*.xml);;All Files (*)")
             if filePath:
                 self.profilePath = Path(filePath)
 
         # save config file as well
         self.saveConfig()
+
         # updates the profile dict before unparsing to xml
         self.updateProfileDict()
 
@@ -203,8 +203,32 @@ class App(QMainWindow, Ui_MainWindow):
         except FileNotFoundError:
             self.statusbar.showMessage(self.profile_save_fail)
 
+        # check all paths exist, prompt accordingly
+        try:
+            callpath = self.profileDict['Profile']['CallFunctionFolder']
+            self.callFunctionEdit.setText(callpath)
+            self.checkFolderExist(callpath)
+        except:
+            self.callFunctionEdit.setText('')
+
+        try:
+            csvpath = self.profileDict['Profile']['CSVReportFolder']
+            self.csvReportEdit.setText(csvpath)
+            self.checkFolderExist(csvpath)
+        except:
+            self.csvReportEdit.setText('')
+
+        try:
+            varpoolpath = self.profileDict['Profile']['VariablePoolPath']
+            self.variablePoolEdit.setText(varpoolpath)
+            self.checkVarPoolExist(varpoolpath)
+        except:
+            self.variablePoolEdit.setText('')
+
+
     def saveAsProfile(self):
-        filePath, fileType = QFileDialog.getSaveFileName(self, "Save Profile As", "","XML Files (*.xml);;All Files (*)")
+        profilefolder = os.path.dirname(self.profilePath)
+        filePath, fileType = QFileDialog.getSaveFileName(self, "Save Profile As", profilefolder,"XML Files (*.xml);;All Files (*)")
 
         if filePath:
             self.profilePath = Path(filePath)
@@ -212,12 +236,7 @@ class App(QMainWindow, Ui_MainWindow):
 
     # updates the profile dict
     def updateProfileDict(self):
-        # updates dictionary and convert to xml for saving
-        # self.profileDict['Profile']['CallFunctionFolder'] = self.callFunctionEdit.text()
-        # self.profileDict['Profile']['CSVReportFolder'] = self.csvReportEdit.text()
-        # self.profileDict['Profile']['VariablePoolPath'] = self.variablePoolEdit.text()
-        # self.profileDict['Profile']['IncludeVersion'] = self.versionCheckBox.isChecked()
-
+        # generate the log mode number based on checkboxes
         logMode = (self.logRadioBtn0.isChecked() + self.logRadioBtn1.isChecked()*2 + self.logRadioBtn2.isChecked()*3) - 1
 
         # update signal list
@@ -225,25 +244,15 @@ class App(QMainWindow, Ui_MainWindow):
         for i in range(0, self.addSignalModel.rowCount()):
             signalList.append(self.addSignalModel.item(i, 0).text())
 
-        # self.profileDict['Profile']['Log'] = {
-        #     '@mode': logMode,
-        #     'Signal': signalList
-        # }
-
         # update dtc exception list
         dtcExList = []
         for i in range(0, self.dtcExModel.rowCount()):
             dtcExList.append(self.dtcExModel.item(i, 0).text())
 
-        # self.profileDict['Profile']['DTC'] = {
-        #     '@enable': self.dtcExCheckBox.isChecked(),
-        #     'Except': dtcExList
-        # }
-
         self.setProfileDict(callfolder=self.callFunctionEdit.text(),
                             csvfolder=self.csvReportEdit.text(),
                             varpoolpath=self.variablePoolEdit.text(),
-                            inccludeversion=self.versionCheckBox.isChecked(),
+                            includeversion=self.versionCheckBox.isChecked(),
                             logmode=logMode,
                             signallist=signalList,
                             dtcenable=self.dtcExCheckBox.isChecked(),
@@ -297,7 +306,7 @@ class App(QMainWindow, Ui_MainWindow):
                     if self.profileDict['Profile']['@version'] == '1.0':
                         # updates the gui after loading a valid profile
                         self.defaultProfile = False
-                        self.updateGUI()
+                        self.updateGuiFromProfileDict()
                         self.loadVariablePool()
                         self.setTitle(self.profilePath)
                         self.statusbar.showMessage(self.profile_loaded_success)
@@ -307,25 +316,53 @@ class App(QMainWindow, Ui_MainWindow):
             self.newProfile()
             self.statusbar.showMessage(self.profile_does_not_exist)
 
+    def checkFolderExist(self, path):
+        basename = os.path.basename(path)
+        if not os.path.exists(path):
+            msgReply = QMessageBox.question(self,
+                                            'Create Folder',
+                                            '\'' + basename + '\'' + ' folder was not found. Would you like to create it?',
+                                            QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+
+            if msgReply == QMessageBox.Yes:
+                os.mkdir(path)
+
+    def checkVarPoolExist(self, path):
+        basename = os.path.basename(path)
+        if not os.path.exists(path):
+            msgReply = QMessageBox.question(self,
+                                            'Not Found',
+                                            '\'' + basename + '\'' + ' file was not found. Would you like to browse for one?',
+                                            QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+
+            if msgReply == QMessageBox.Yes:
+                self.browseVariablePool()
+
     # use the profile dictionary to update the gui
-    def updateGUI(self):
+    def updateGuiFromProfileDict(self):
         try:
-            self.callFunctionEdit.setText(self.profileDict['Profile']['CallFunctionFolder'])
-        except KeyError:
+            callpath = self.profileDict['Profile']['CallFunctionFolder']
+            self.callFunctionEdit.setText(callpath)
+            self.checkFolderExist(callpath)
+        except:
             self.callFunctionEdit.setText('')
 
         try:
-            self.csvReportEdit.setText(self.profileDict['Profile']['CSVReportFolder'])
-        except KeyError:
+            csvpath = self.profileDict['Profile']['CSVReportFolder']
+            self.csvReportEdit.setText(csvpath)
+            self.checkFolderExist(csvpath)
+        except:
             self.csvReportEdit.setText('')
 
         try:
-            self.variablePoolEdit.setText(self.profileDict['Profile']['VariablePoolPath'])
-        except KeyError:
+            varpoolpath = self.profileDict['Profile']['VariablePoolPath']
+            self.variablePoolEdit.setText(varpoolpath)
+            self.checkVarPoolExist(varpoolpath)
+        except:
             self.variablePoolEdit.setText('')
 
         try:
-            checkbox = self.profileDict['Profile']['IncludeVersion']
+            checkbox = self.profileDict['Profile']['Version']['@include']
             self.versionCheckBox.setChecked(eval(checkbox))
         except:
             self.versionCheckBox.setChecked(False)
@@ -408,7 +445,7 @@ class App(QMainWindow, Ui_MainWindow):
                        callfolder='',
                        csvfolder='',
                        varpoolpath='',
-                       inccludeversion='False',
+                       includeversion='False',
                        logmode='0',
                        signallist=[],
                        dtcenable='False',
@@ -420,7 +457,9 @@ class App(QMainWindow, Ui_MainWindow):
                 'CallFunctionFolder': callfolder,
                 'CSVReportFolder': csvfolder,
                 'VariablePoolPath': varpoolpath,
-                'IncludeVersion': inccludeversion,
+                'Version': {
+                    '@include': includeversion
+                },
                 'Log': {
                     '@mode': logmode,
                     'Signal': signallist
@@ -437,7 +476,6 @@ class App(QMainWindow, Ui_MainWindow):
         # load default profile if no params are given
         self.setProfileDict()
 
-
     def setConfigDict(self, lastprofile=''):
         self.configDict = {
             'Config': {
@@ -450,7 +488,6 @@ class App(QMainWindow, Ui_MainWindow):
         self.unsavedChanges()
         # load default config if no params are given
         self.setConfigDict()
-
 
     def exit(self):
         if not self.changesSaved:
@@ -473,7 +510,7 @@ def main():
     form = App()
     form.show()
     app.exec_()
-    # return the profile dict to caller such as AutomoationDesk
+    # return the profile dict to caller such as AutomationDesk
     return form.profileDict
 
 

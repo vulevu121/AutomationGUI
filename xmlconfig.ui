@@ -55,15 +55,17 @@ QLabel {
 }
 
 QLineEdit {
-	background-color: white;
-	color: black;
-	border: 1px solid  rgba(0, 0, 0, 0.2);
-	border-radius: 8px;
 	min-height: 30px;
 	padding: 2px;
 }
 
-QLineEdit:hover {
+QLineEdit,  QListView{
+	background-color: white;
+	border: 1px solid  rgba(0, 0, 0, 0.2);
+	border-radius: 8px;
+}
+
+QLineEdit:hover, QListView:hover {
 	border: 1px solid  rgba(0, 0, 0, 0.4);
 }
 
@@ -80,7 +82,6 @@ QPushButton {
 QPushButton:hover, QPushButton:pressed {
 	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:1, stop:0 rgba(253, 236, 218, 255), stop:0.4 rgba(253, 223, 186, 255), stop:0.42 rgba(255, 206, 105, 255), stop:0.9 rgba(255, 206, 105, 255), stop:1 rgba(255, 255, 215, 255));
 }
-
 
 QGroupBox {
 	background-color: transparent;
@@ -102,7 +103,6 @@ QStatusBar {
 	background-color: rgb(208, 218, 232);
 }
 
-
 QTabWidget::pane, QStackedWidget {
 	border-bottom-left-radius: 6px;
 	border-bottom-right-radius: 6px;
@@ -118,7 +118,6 @@ QTabWidget::pane {
 QStackedWidget {
 	background-color: rgb(245, 245, 245);
 }
-
 
 QTabBar::tab {
 	border: 0px;
@@ -150,13 +149,10 @@ QComboBox QAbstractItemView {
 	selection-background-color: lightgray;
 }
 
-
 QLCDNumber {
 	border:1px solid gray;
 	border-radius: 5px;
 }
-
-
 
 QMenu, QMenu::item, QMenuBar, QMenuBar::item {
 	color: black;
@@ -179,12 +175,6 @@ QDialog {
 	background-color: rgb(20, 21, 23);
 }
 
-QListView {
-	background-color: white;
-	border: 1px solid  rgba(0, 0, 0, 0.2);
-	border-radius: 8px;
-}
-
 QPushButton#reloadVariablePoolBtn {
 	font: 8pt &quot;MS Shell Dlg 2&quot;;
 }
@@ -201,7 +191,7 @@ QRadioButton, QCheckBox {
 }
 
 QRadioButton:hover, QCheckBox:hover {
-	background-color: rgba(255, 255, 255, 0.8);
+	background-color: rgba(255, 255, 255, 1.0);
 }
 
 QCheckBox::indicator::unchecked, QRadioButton::indicator::unchecked {
@@ -215,6 +205,11 @@ QCheckBox::indicator::checked, QCheckBox::indicator:checked:pressed {
 QRadioButton::indicator::checked, QRadioButton::indicator:checked:pressed {
 	image: url(:/checkbox/graphics/baseline_radio_button_checked_black_24dp.png);
 }
+
+QMessageBox {
+	background-color: rgb(245, 245, 245);
+}
+
 </string>
   </property>
   <property name="iconSize">

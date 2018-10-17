@@ -14,12 +14,18 @@ QLabel {
 }
 
 QLineEdit {
-	background-color: white;
-	color: black;
-	border: 1px solid  rgba(0, 0, 0, 0.2);
-	border-radius: 8px;
 	min-height: 30px;
 	padding: 2px;
+}
+
+QLineEdit,  QListView{
+	background-color: white;
+	border: 1px solid  rgba(0, 0, 0, 0.2);
+	border-radius: 8px;
+}
+
+QLineEdit:hover, QListView:hover {
+	border: 1px solid  rgba(0, 0, 0, 0.4);
 }
 
 QPushButton {
@@ -32,12 +38,7 @@ QPushButton {
 	border-right: 1px solid  rgba(255, 206, 105, 0.8);
 }
 
-QPushButton:hover {
-	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:1, stop:0 rgba(253, 236, 218, 0.8), stop:0.4 rgba(253, 223, 186, 0.8), stop:0.42 rgba(255, 206, 105, 0.8), stop:0.9 rgba(255, 206, 105, 0.8), stop:1 rgba(255, 255, 215, 0.8));
-}
-
-
-QPushButton:pressed {
+QPushButton:hover, QPushButton:pressed {
 	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:1, stop:0 rgba(253, 236, 218, 255), stop:0.4 rgba(253, 223, 186, 255), stop:0.42 rgba(255, 206, 105, 255), stop:0.9 rgba(255, 206, 105, 255), stop:1 rgba(255, 255, 215, 255));
 }
 
@@ -58,9 +59,9 @@ QGroupBox::title {
 
 QStatusBar {
 	color: black;
-	background: rgb(208, 218, 232);
+	border-top: 1px solid rgba(0, 0, 0, 0.2);
+	background-color: rgb(208, 218, 232);
 }
-
 
 QTabWidget::pane, QStackedWidget {
 	border-bottom-left-radius: 6px;
@@ -77,7 +78,6 @@ QTabWidget::pane {
 QStackedWidget {
 	background-color: rgb(245, 245, 245);
 }
-
 
 QTabBar::tab {
 	border: 0px;
@@ -109,7 +109,6 @@ QComboBox QAbstractItemView {
 	selection-background-color: lightgray;
 }
 
-
 QLCDNumber {
 	border:1px solid gray;
 	border-radius: 5px;
@@ -117,27 +116,25 @@ QLCDNumber {
 
 QMenu, QMenu::item, QMenuBar, QMenuBar::item {
 	color: black;
-	background-color: rgb(208, 218, 232);
-	border-radius: 8px;
-	padding: 5px;
+	background-color: rgb(245, 245, 245);
+	padding: 4px;
+	border-radius: 4px;
 }
 
 QMenuBar::item:selected, QMenu::item:selected {
 	color: black;
-	background-color:  rgb(220, 231, 245);
-	border-radius: 8px;
+	background-color:  rgba(0, 0, 0, 0.1);
 	padding: 4px;
+}
+
+QMenuBar {
+	border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 QDialog {
 	background-color: rgb(20, 21, 23);
 }
 
-QListView {
-	background-color: white;
-	border: 1px solid  rgba(0, 0, 0, 0.2);
-	border-radius: 8px;
-}
 
 QPushButton#reloadVariablePoolBtn {
 	font: 8pt "MS Shell Dlg 2";
@@ -149,9 +146,13 @@ QRadioButton::indicator, QCheckBox::indicator {
 }
 
 QRadioButton, QCheckBox {
-	background-color: rgba(255, 255, 255, 0.5);
+	background-color: rgba(255, 255, 255, 0.4);
 	padding: 5px;
 	border-radius: 8px;
+}
+
+QRadioButton:hover, QCheckBox:hover {
+	background-color: rgba(255, 255, 255, 1.0);
 }
 
 QCheckBox::indicator::unchecked, QRadioButton::indicator::unchecked {
@@ -165,3 +166,8 @@ QCheckBox::indicator::checked, QCheckBox::indicator:checked:pressed {
 QRadioButton::indicator::checked, QRadioButton::indicator:checked:pressed {
 	image: url(:/checkbox/graphics/baseline_radio_button_checked_black_24dp.png);
 }
+
+QMessageBox {
+	background-color: rgb(245, 245, 245);
+}
+
