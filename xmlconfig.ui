@@ -171,14 +171,13 @@ QLCDNumber {
 QMenu, QMenu::item, QMenuBar, QMenuBar::item {
 	color: black;
 	background-color: rgb(245, 245, 245);
-	padding: 4px;
+	padding: 4px 10px 4px 10px;
 	border-radius: 4px;
 }
 
 QMenuBar::item:selected, QMenu::item:selected {
 	color: black;
 	background-color:  rgba(0, 0, 0, 0.1);
-	padding: 4px;
 }
 
 QMenuBar {

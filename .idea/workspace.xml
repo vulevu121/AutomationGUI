@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a315e363-4d6f-448a-8093-5fd7b0a7caa5" name="Default Changelist" comment="Changed configPath to configFile and profilePath to profileFile">
+    <list default="true" id="a315e363-4d6f-448a-8093-5fd7b0a7caa5" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graphics/Karma-logo.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/graphics/background-light.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/graphics/background-noise.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/graphics/green_led.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/graphics/red_led.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/xmlconfig_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/xmlconfig_main.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -32,14 +37,14 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="49" />
-          <entry key="py" value="2078" />
-          <entry key="txt" value="219" />
+          <entry key="py" value="2080" />
+          <entry key="txt" value="295" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PLAIN_TEXT" value="268" />
-          <entry key="Python" value="2078" />
+          <entry key="PLAIN_TEXT" value="344" />
+          <entry key="Python" value="2080" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.vcs.git.usages">
@@ -54,15 +59,15 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/xmlconfig_main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="111">
-              <caret line="328" column="38" lean-forward="true" selection-start-line="328" selection-start-column="38" selection-end-line="328" selection-end-column="38" />
+            <state relative-caret-position="323">
+              <caret line="503" column="50" selection-start-line="503" selection-start-column="50" selection-end-line="503" selection-end-column="50" />
               <folding>
                 <element signature="e#47#176#0" expanded="true" />
-                <marker date="1539798878516" expanded="true" signature="4938:4978" ph="..." />
-                <marker date="1539798878516" expanded="true" signature="12687:13674" ph="..." />
-                <marker date="1539798878516" expanded="true" signature="18924:19084" ph="..." />
-                <marker date="1539798878516" expanded="true" signature="19198:19233" ph="..." />
-                <marker date="1539798878516" expanded="true" signature="19248:19257" ph="..." />
+                <marker date="1539799843229" expanded="true" signature="4938:4978" ph="..." />
+                <marker date="1539799843229" expanded="true" signature="12687:13674" ph="..." />
+                <marker date="1539799843229" expanded="true" signature="18924:19084" ph="..." />
+                <marker date="1539799843229" expanded="true" signature="19198:19233" ph="..." />
+                <marker date="1539799843229" expanded="true" signature="19248:19257" ph="..." />
               </folding>
             </state>
           </provider>
@@ -206,7 +211,21 @@
       <option name="project" value="LOCAL" />
       <updated>1539797776626</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Fixed splitting strings with WindowsPath">
+      <created>1539798911542</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1539798911542</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Update GUI layout">
+      <created>1539799354282</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1539799354282</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -240,7 +259,9 @@
     <MESSAGE value="Added open config folder function" />
     <MESSAGE value="Added checking for paths exist" />
     <MESSAGE value="Changed configPath to configFile and profilePath to profileFile" />
-    <option name="LAST_COMMIT_MESSAGE" value="Changed configPath to configFile and profilePath to profileFile" />
+    <MESSAGE value="Fixed splitting strings with WindowsPath" />
+    <MESSAGE value="Update GUI layout" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update GUI layout" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/xmlconfig.py">
@@ -252,15 +273,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/xmlconfig_main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="111">
-          <caret line="328" column="38" lean-forward="true" selection-start-line="328" selection-start-column="38" selection-end-line="328" selection-end-column="38" />
+        <state relative-caret-position="323">
+          <caret line="503" column="50" selection-start-line="503" selection-start-column="50" selection-end-line="503" selection-end-column="50" />
           <folding>
             <element signature="e#47#176#0" expanded="true" />
-            <marker date="1539798878516" expanded="true" signature="4938:4978" ph="..." />
-            <marker date="1539798878516" expanded="true" signature="12687:13674" ph="..." />
-            <marker date="1539798878516" expanded="true" signature="18924:19084" ph="..." />
-            <marker date="1539798878516" expanded="true" signature="19198:19233" ph="..." />
-            <marker date="1539798878516" expanded="true" signature="19248:19257" ph="..." />
+            <marker date="1539799843229" expanded="true" signature="4938:4978" ph="..." />
+            <marker date="1539799843229" expanded="true" signature="12687:13674" ph="..." />
+            <marker date="1539799843229" expanded="true" signature="18924:19084" ph="..." />
+            <marker date="1539799843229" expanded="true" signature="19198:19233" ph="..." />
+            <marker date="1539799843229" expanded="true" signature="19248:19257" ph="..." />
           </folding>
         </state>
       </provider>

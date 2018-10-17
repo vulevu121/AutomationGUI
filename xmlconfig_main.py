@@ -501,7 +501,7 @@ class App(QMainWindow, Ui_MainWindow):
         self.close()
 
     def about(self):
-        QMessageBox.about(self, 'About', 'Version 1.0\nAuthor: Vu Le')
+        QMessageBox.about(self, 'About', 'Version 1.12\nAuthor: Vu Le')
 
 
 def main():
