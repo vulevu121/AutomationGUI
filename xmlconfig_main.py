@@ -53,8 +53,8 @@ class App(QMainWindow, Ui_MainWindow):
         self.defaultProfile = True
 
         # set default xml config file path
-        self.configFile = Path('C:/DS_Config/config.xml')
-        self.profileFile = Path('C:/DS_Config/profile1.xml')
+        self.configFile = 'C:/DS_Config/config.xml'
+        self.profileFile = 'C:/DS_Config/profile1.xml'
 
         self.configDict = {}
         self.profileDict = {}
@@ -115,10 +115,10 @@ class App(QMainWindow, Ui_MainWindow):
 
 
     def openConfigFolder(self):
-        configFolder = os.path.dirname(self.configFile)
+        configfolder = os.path.dirname(str(self.configFile))
         # param = 'explorer "{}"'.format(configFolder)
         # subprocess.Popen(param)
-        os.startfile(configFolder)
+        os.startfile(configfolder)
 
     def hideAddSignal(self):
         self.addSignalGroupBox.hide()
@@ -150,7 +150,7 @@ class App(QMainWindow, Ui_MainWindow):
         self.statusbar.showMessage(self.default_profile_loaded)
 
     def browseProfile(self):
-        profilefolder = os.path.dirname(self.profileFile)
+        profilefolder = os.path.dirname(str(self.profileFile))
         filePath, fileType = QFileDialog.getOpenFileName(self, "Open Profile", profilefolder,"XML Files (*.xml);;All Files (*)")
         if filePath:
             self.profileFile = Path(filePath)
@@ -177,7 +177,7 @@ class App(QMainWindow, Ui_MainWindow):
 
 
     def saveProfile(self):
-        configfolder = os.path.dirname(self.configFile)
+        configfolder = os.path.dirname(str(self.configFile))
         if self.defaultProfile:
             filePath, fileType = QFileDialog.getSaveFileName(self, "Save Profile As", configfolder,
                                                              "XML Files (*.xml);;All Files (*)")
@@ -226,7 +226,7 @@ class App(QMainWindow, Ui_MainWindow):
 
 
     def saveAsProfile(self):
-        profilefolder = os.path.dirname(self.profileFile)
+        profilefolder = os.path.dirname(str(self.profileFile))
         filePath, fileType = QFileDialog.getSaveFileName(self, "Save Profile As", profilefolder,"XML Files (*.xml);;All Files (*)")
 
         if filePath:
@@ -316,7 +316,7 @@ class App(QMainWindow, Ui_MainWindow):
             self.statusbar.showMessage(self.profile_does_not_exist)
 
     def checkFolderExist(self, path):
-        basename = os.path.basename(path)
+        basename = os.path.basename(str(path))
         if not os.path.exists(path):
             msgReply = QMessageBox.question(self,
                                             'Create Folder',
@@ -327,7 +327,7 @@ class App(QMainWindow, Ui_MainWindow):
                 os.mkdir(path)
 
     def checkVarPoolExist(self, path):
-        basename = os.path.basename(path)
+        basename = os.path.basename(str(path))
         if not os.path.exists(path):
             msgReply = QMessageBox.question(self,
                                             'Not Found',
@@ -419,10 +419,10 @@ class App(QMainWindow, Ui_MainWindow):
 
     # load the variable pool from csv file and extract variable names only
     def loadVariablePool(self):
-        variablePoolPath = Path(self.variablePoolEdit.text())
-        if len(str(variablePoolPath)) > 1:
+        varpoolfile = Path(self.variablePoolEdit.text())
+        if len(str(varpoolfile)) > 1:
             try:
-                with open(str(variablePoolPath)) as f:
+                with open(str(varpoolfile)) as f:
                     self.variablePool = []
                     self.variablePool.extend(row['VariableName'] for row in csv.DictReader(f))
 
