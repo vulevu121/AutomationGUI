@@ -203,7 +203,6 @@ class App(QMainWindow, Ui_MainWindow):
     def newConfig(self):
         self.setDefaultConfigDict()
 
-
     def saveProfile(self):
         configfolder = os.path.dirname(str(self.configFile))
         if self.defaultProfile:
@@ -251,7 +250,6 @@ class App(QMainWindow, Ui_MainWindow):
             self.checkVarPoolExist(varpoolpath)
         except:
             self.variablePoolEdit.setText('')
-
 
     def saveAsProfile(self):
         profilefolder = os.path.dirname(str(self.profileFile))
@@ -314,7 +312,8 @@ class App(QMainWindow, Ui_MainWindow):
 
     def saveConfig(self):
         # update the config dict
-        self.configDict['Config']['LastProfile'] = str(self.profileFile)
+        self.setConfigDict(str(self.profileFile), self.width(), self.height())
+
 
         # if config folder not found, create one
         dirname = os.path.dirname(str(self.configFile))
@@ -431,6 +430,9 @@ class App(QMainWindow, Ui_MainWindow):
             with open(str(self.configFile), 'rb') as f:
                 self.configDict = xmltodict.parse(f.read())
                 try:
+                    width = int(self.configDict['Config']['Width'])
+                    height = int(self.configDict['Config']['Height'])
+                    self.resize(width, height)
                     if self.configDict['Config']['@version'] == '1.0':
                         try:
                             self.profileFile = Path(self.configDict['Config']['LastProfile'])
@@ -503,11 +505,13 @@ class App(QMainWindow, Ui_MainWindow):
         # load default profile if no params are given
         self.setProfileDict()
 
-    def setConfigDict(self, lastprofile=''):
+    def setConfigDict(self, lastprofile='', width=800, height=480):
         self.configDict = {
             'Config': {
                 '@version': '1.0',
-                'LastProfile': lastprofile
+                'LastProfile': lastprofile,
+                'Width': width,
+                'Height': height
             }
         }
 
@@ -529,7 +533,9 @@ class App(QMainWindow, Ui_MainWindow):
         self.close()
 
     def about(self):
-        QMessageBox.about(self, 'About', 'Version 1.12\nAuthor: Vu Le')
+        QMessageBox.about(self,
+                          'About',
+                          'Version 1.12\nAuthor: Vu Le\nCopyright 2018')
 
 
 def main():

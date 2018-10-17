@@ -12,7 +12,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setEnabled(True)
-        MainWindow.resize(854, 514)
+        MainWindow.resize(800, 480)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -449,7 +449,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setEnabled(True)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 854, 40))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 40))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
@@ -486,7 +486,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuHelp.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         self.exitButton.clicked.connect(self.actionExit.trigger)
         self.saveBtn.clicked.connect(self.actionSave.trigger)
         self.saveAsBtn.clicked.connect(self.actionSaveAs.trigger)
