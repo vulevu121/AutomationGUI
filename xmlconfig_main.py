@@ -53,9 +53,8 @@ class App(QMainWindow, Ui_MainWindow):
         self.defaultProfile = True
 
         # set default xml config file path
-        self.configPath = Path('C:/DS_Config/config.xml')
-        self.profilePath = Path('')
-        self.variablePoolPath = Path('')
+        self.configFile = Path('C:/DS_Config/config.xml')
+        self.profileFile = Path('C:/DS_Config/profile1.xml')
 
         self.configDict = {}
         self.profileDict = {}
@@ -116,7 +115,7 @@ class App(QMainWindow, Ui_MainWindow):
 
 
     def openConfigFolder(self):
-        configFolder = os.path.dirname(self.configPath)
+        configFolder = os.path.dirname(self.configFile)
         # param = 'explorer "{}"'.format(configFolder)
         # subprocess.Popen(param)
         os.startfile(configFolder)
@@ -145,16 +144,16 @@ class App(QMainWindow, Ui_MainWindow):
 
     def newProfile(self):
         self.setDefaultProfile()
-        self.profilePath = ''
+        self.profileFile = ''
         self.setTitle(self.untitled_profile)
         self.updateGuiFromProfileDict()
         self.statusbar.showMessage(self.default_profile_loaded)
 
     def browseProfile(self):
-        profilefolder = os.path.dirname(self.profilePath)
+        profilefolder = os.path.dirname(self.profileFile)
         filePath, fileType = QFileDialog.getOpenFileName(self, "Open Profile", profilefolder,"XML Files (*.xml);;All Files (*)")
         if filePath:
-            self.profilePath = Path(filePath)
+            self.profileFile = Path(filePath)
             self.loadProfile()
             self.saveConfig()
 
@@ -178,12 +177,12 @@ class App(QMainWindow, Ui_MainWindow):
 
 
     def saveProfile(self):
-        configfolder = os.path.dirname(self.configPath)
+        configfolder = os.path.dirname(self.configFile)
         if self.defaultProfile:
             filePath, fileType = QFileDialog.getSaveFileName(self, "Save Profile As", configfolder,
                                                              "XML Files (*.xml);;All Files (*)")
             if filePath:
-                self.profilePath = Path(filePath)
+                self.profileFile = Path(filePath)
 
         # save config file as well
         self.saveConfig()
@@ -193,10 +192,10 @@ class App(QMainWindow, Ui_MainWindow):
 
         # save the profile from profile dict
         try:
-            with open(str(self.profilePath), 'wb') as f:
-                if self.debug: print(str(self.profilePath))
+            with open(str(self.profileFile), 'wb') as f:
+                if self.debug: print(str(self.profileFile))
                 f.write(bytearray(xmltodict.unparse(self.profileDict, pretty=True), encoding='utf-8'))
-                self.setTitle(self.profilePath)
+                self.setTitle(self.profileFile)
                 self.defaultProfile = False
                 self.changesSaved = True
                 self.statusbar.showMessage(self.profile_save_success)
@@ -227,11 +226,11 @@ class App(QMainWindow, Ui_MainWindow):
 
 
     def saveAsProfile(self):
-        profilefolder = os.path.dirname(self.profilePath)
+        profilefolder = os.path.dirname(self.profileFile)
         filePath, fileType = QFileDialog.getSaveFileName(self, "Save Profile As", profilefolder,"XML Files (*.xml);;All Files (*)")
 
         if filePath:
-            self.profilePath = Path(filePath)
+            self.profileFile = Path(filePath)
             self.saveProfile()
 
     # updates the profile dict
@@ -287,20 +286,20 @@ class App(QMainWindow, Ui_MainWindow):
 
     def saveConfig(self):
         # update the config dict
-        self.configDict['Config']['LastProfile'] = str(self.profilePath)
+        self.configDict['Config']['LastProfile'] = str(self.profileFile)
 
         # if config folder not found, create one
-        dirname = os.path.dirname(str(self.configPath))
+        dirname = os.path.dirname(str(self.configFile))
 
         if not os.path.exists(dirname):
             os.mkdir(dirname)
 
-        with open(str(self.configPath), 'wb') as f:
+        with open(str(self.configFile), 'wb') as f:
             f.write(bytearray(xmltodict.unparse(self.configDict, pretty=True), encoding='utf-8'))
 
     def loadProfile(self):
         try:
-            with open(str(self.profilePath), 'rb') as f:
+            with open(str(self.profileFile), 'rb') as f:
                 self.profileDict = xmltodict.parse(f.read())
                 try:
                     if self.profileDict['Profile']['@version'] == '1.0':
@@ -308,7 +307,7 @@ class App(QMainWindow, Ui_MainWindow):
                         self.defaultProfile = False
                         self.updateGuiFromProfileDict()
                         self.loadVariablePool()
-                        self.setTitle(self.profilePath)
+                        self.setTitle(self.profileFile)
                         self.statusbar.showMessage(self.profile_loaded_success)
                 except KeyError:
                     self.statusbar.showMessage(self.profile_invalid)
@@ -401,12 +400,12 @@ class App(QMainWindow, Ui_MainWindow):
 
     def loadConfig(self):
         try:
-            with open(str(self.configPath), 'rb') as f:
+            with open(str(self.configFile), 'rb') as f:
                 self.configDict = xmltodict.parse(f.read())
                 try:
                     if self.configDict['Config']['@version'] == '1.0':
                         try:
-                            self.profilePath = Path(self.configDict['Config']['LastProfile'])
+                            self.profileFile = Path(self.configDict['Config']['LastProfile'])
                             self.loadProfile()
                         except:
                             self.statusbar.showMessage(self.profile_notfound_config)
