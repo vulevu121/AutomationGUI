@@ -3,7 +3,7 @@
 
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox, QListView, QCompleter, QGraphicsDropShadowEffect
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
-from PyQt5.QtCore import QStringListModel
+from PyQt5.QtCore import QStringListModel, Qt
 import xmltodict
 from pathlib import Path
 from xmlconfig import *
@@ -24,14 +24,18 @@ class App(QMainWindow, Ui_MainWindow):
         # create a frameless window without titlebar
         # self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
 
-        # gui effects
+        # gui layout related
         dropShadow = QGraphicsDropShadowEffect()
         dropShadow.setXOffset(1)
         dropShadow.setYOffset(1)
         dropShadow.setBlurRadius(6)
         self.tabWidget.setGraphicsEffect(dropShadow)
 
-        self.size
+        self.bottombuttonsLayout.setAlignment(Qt.AlignRight)
+        self.generalLayout.setAlignment(Qt.AlignTop)
+        self.loggingTabLayout.setAlignment(Qt.AlignLeft)
+        self.dtcTabLayout.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+        self.logmodeLayout.setAlignment(Qt.AlignTop)
 
         # use these strings for messages
         self.config_invalid = 'Invalid config file detected.'
@@ -118,6 +122,12 @@ class App(QMainWindow, Ui_MainWindow):
 
     # def mousePressEvent(self, event):
     #     print(event.button())
+
+    # def resizeEvent(self, event):
+    #     self.tabWidget.setFixedHeight(self.height()-160)
+    #     self.tabWidget.setFixedWidth(self.width()-40)
+    #     self.gridLayout.width
+    #     # QtGui.QMainWindow.resizeEvent(self, event)
 
     def openCallFunctionFolder(self):
         callfunctionpath = Path(self.callFunctionEdit.text())
