@@ -3,10 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="a315e363-4d6f-448a-8093-5fd7b0a7caa5" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/xmlconfig.py" beforeDir="false" afterPath="$PROJECT_DIR$/xmlconfig.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/xmlconfig.ui" beforeDir="false" afterPath="$PROJECT_DIR$/xmlconfig.ui" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/xmlconfig_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/xmlconfig_main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/xmlconfig_rc.py" beforeDir="false" afterPath="$PROJECT_DIR$/xmlconfig_rc.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -36,14 +33,14 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="49" />
-          <entry key="py" value="3181" />
-          <entry key="txt" value="295" />
+          <entry key="py" value="3542" />
+          <entry key="txt" value="297" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PLAIN_TEXT" value="344" />
-          <entry key="Python" value="3181" />
+          <entry key="PLAIN_TEXT" value="346" />
+          <entry key="Python" value="3542" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.vcs.git.usages">
@@ -58,8 +55,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/xmlconfig_main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="40">
-              <caret line="26" column="28" selection-start-line="26" selection-start-column="28" selection-end-line="26" selection-end-column="28" />
+            <state relative-caret-position="220">
+              <caret line="512" column="32" lean-forward="true" selection-start-line="512" selection-start-column="32" selection-end-line="512" selection-end-column="32" />
               <folding>
                 <element signature="e#47#176#0" expanded="true" />
               </folding>
@@ -234,11 +231,25 @@
       <option name="project" value="LOCAL" />
       <updated>1539811105138</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Update GUI layout">
+      <created>1539815771087</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1539815771087</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Updated GUI layout">
+      <created>1539816435756</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1539816435756</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="-7" width="1550" height="838" extended-state="7" />
+    <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15333775" />
@@ -270,7 +281,8 @@
     <MESSAGE value="Changed configPath to configFile and profilePath to profileFile" />
     <MESSAGE value="Fixed splitting strings with WindowsPath" />
     <MESSAGE value="Update GUI layout" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update GUI layout" />
+    <MESSAGE value="Updated GUI layout" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated GUI layout" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/xmlconfig.py">
@@ -282,8 +294,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/xmlconfig_main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="40">
-          <caret line="26" column="28" selection-start-line="26" selection-start-column="28" selection-end-line="26" selection-end-column="28" />
+        <state relative-caret-position="220">
+          <caret line="512" column="32" lean-forward="true" selection-start-line="512" selection-start-column="32" selection-end-line="512" selection-end-column="32" />
           <folding>
             <element signature="e#47#176#0" expanded="true" />
           </folding>

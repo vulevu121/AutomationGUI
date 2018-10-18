@@ -469,7 +469,6 @@ class App(QMainWindow, Ui_MainWindow):
     def setTitle(self, profilePath):
         self.setWindowTitle('[' + str(profilePath) + '] - XMLConfig')
 
-
     def setProfileDict(self,
                        callfolder='',
                        csvfolder='',
