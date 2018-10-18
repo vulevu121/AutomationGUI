@@ -19,7 +19,7 @@ class App(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super(self.__class__, self).__init__()
         self.setupUi(self)
-        self.debug = False
+        self.debug = True
 
         # create a frameless window without titlebar
         # self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
@@ -229,27 +229,18 @@ class App(QMainWindow, Ui_MainWindow):
         except FileNotFoundError:
             self.statusbar.showMessage(self.profile_save_fail)
 
-        # check all paths exist, prompt accordingly
-        try:
-            callpath = self.profileDict['Profile']['CallFunctionFolder']
-            self.callFunctionEdit.setText(callpath)
+        # update and check all paths exist, prompt accordingly
+        callpath = self.callFunctionEdit.text()
+        if callpath != '':
             self.checkFolderExist(callpath)
-        except:
-            self.callFunctionEdit.setText('')
 
-        try:
-            csvpath = self.profileDict['Profile']['CSVReportFolder']
+        csvpath = self.csvReportEdit.text()
+        if csvpath != '':
             self.csvReportEdit.setText(csvpath)
-            self.checkFolderExist(csvpath)
-        except:
-            self.csvReportEdit.setText('')
 
-        try:
-            varpoolpath = self.profileDict['Profile']['VariablePoolPath']
-            self.variablePoolEdit.setText(varpoolpath)
+        varpoolpath = self.variablePoolEdit.text()
+        if varpoolpath != '':
             self.checkVarPoolExist(varpoolpath)
-        except:
-            self.variablePoolEdit.setText('')
 
     def saveAsProfile(self):
         profilefolder = os.path.dirname(str(self.profileFile))
@@ -312,8 +303,9 @@ class App(QMainWindow, Ui_MainWindow):
 
     def saveConfig(self):
         # update the config dict
-        self.setConfigDict(str(self.profileFile), self.width(), self.height())
-
+        self.setConfigDict(lastprofile=str(self.profileFile),
+                           width=self.width(),
+                           height=self.height())
 
         # if config folder not found, create one
         dirname = os.path.dirname(str(self.configFile))
@@ -321,22 +313,24 @@ class App(QMainWindow, Ui_MainWindow):
         if not os.path.exists(dirname):
             os.mkdir(dirname)
 
-        with open(str(self.configFile), 'wb') as f:
-            f.write(bytearray(xmltodict.unparse(self.configDict, pretty=True), encoding='utf-8'))
+        try:
+            with open(str(self.configFile), 'wb') as f:
+                f.write(bytearray(xmltodict.unparse(self.configDict, pretty=True), encoding='utf-8'))
+        except FileNotFoundError:
+            self.statusbar.showMessage(self.config_notfound)
 
     def loadProfile(self):
         try:
             with open(str(self.profileFile), 'rb') as f:
                 self.profileDict = xmltodict.parse(f.read())
-                try:
-                    if self.profileDict['Profile']['@version'] == '1.0':
-                        # updates the gui after loading a valid profile
-                        self.defaultProfile = False
-                        self.updateGuiFromProfileDict()
-                        self.loadVariablePool()
-                        self.setTitle(self.profileFile)
-                        self.statusbar.showMessage(self.profile_loaded_success)
-                except KeyError:
+                if self.profileDict.get('Profile').get('@version') == '1.0':
+                    # updates the gui after loading a valid profile
+                    self.defaultProfile = False
+                    self.updateGuiFromProfileDict()
+                    self.loadVariablePool()
+                    self.setTitle(self.profileFile)
+                    self.statusbar.showMessage(self.profile_loaded_success)
+                else:
                     self.statusbar.showMessage(self.profile_invalid)
         except FileNotFoundError:
             self.newProfile()
@@ -366,80 +360,83 @@ class App(QMainWindow, Ui_MainWindow):
 
     # use the profile dictionary to update the gui
     def updateGuiFromProfileDict(self):
-        try:
-            callpath = self.profileDict['Profile']['CallFunctionFolder']
+        callpath = self.profileDict.get('Profile').get('CallFunctionFolder')
+        if callpath:
             self.callFunctionEdit.setText(callpath)
             self.checkFolderExist(callpath)
-        except:
+        else:
             self.callFunctionEdit.setText('')
 
-        try:
-            csvpath = self.profileDict['Profile']['CSVReportFolder']
+        csvpath = self.profileDict.get('Profile').get('CSVReportFolder')
+        if csvpath:
             self.csvReportEdit.setText(csvpath)
             self.checkFolderExist(csvpath)
-        except:
+        else:
             self.csvReportEdit.setText('')
 
-        try:
-            varpoolpath = self.profileDict['Profile']['VariablePoolPath']
+        varpoolpath = self.profileDict.get('Profile').get('VariablePoolPath')
+        if varpoolpath:
             self.variablePoolEdit.setText(varpoolpath)
             self.checkVarPoolExist(varpoolpath)
-        except:
+        else:
             self.variablePoolEdit.setText('')
 
-        try:
-            checkbox = self.profileDict['Profile']['Version']['@include']
+        checkbox = self.profileDict.get('Profile').get('Version').get('@include')
+        if checkbox:
             self.versionCheckBox.setChecked(eval(checkbox))
-        except:
+        else:
             self.versionCheckBox.setChecked(False)
 
         self.addSignalModel.clear()
-        try:
-            temp = self.profileDict['Profile']['Log']['Signal']
+        templist = self.profileDict.get('Profile').get('Log').get('Signal')
+        if templist:
             signalList = []
             # if temp is a list we iterate and add, else we append a single element
-            if isinstance(temp, list):
-                signalList.extend(x for x in temp)
+            if isinstance(templist, list):
+                signalList.extend(x for x in templist)
             else:
-                signalList.append(temp)
+                signalList.append(templist)
 
             for s in signalList:
                 self.addSignalModel.appendRow(QStandardItem(str(s)))
-        except KeyError:
-            # self.addSignalModel.clear()
+        else:
             if self.debug: print('Signal list is empty')
 
         self.dtcExModel.clear()
-        try:
-            temp = self.profileDict['Profile']['DTC']['Except']
-            dtcExList = []
-            # if temp is a list we iterate and add, else we append a single element
-            if isinstance(temp, list):
-                dtcExList.extend(x for x in temp)
-            else:
-                dtcExList.append(temp)
 
+        # if temp is a list we iterate and add, else we append a single element
+        exceptlist = self.profileDict.get('Profile').get('DTC').get('Except')
+
+        if exceptlist:
+            dtcExList = []
+            if isinstance(exceptlist, list):
+                dtcExList.extend(x for x in exceptlist)
+            else:
+                dtcExList.append(exceptlist)
+
+            # add rows into qt list widget
             for s in dtcExList:
                 self.dtcExModel.appendRow(QStandardItem(str(s)))
-        except KeyError:
-            # self.dtcExModel.clear()
+        else:
             if self.debug: print('DTCs exception list is empty')
 
     def loadConfig(self):
         try:
             with open(str(self.configFile), 'rb') as f:
                 self.configDict = xmltodict.parse(f.read())
-                try:
-                    width = int(self.configDict['Config']['Width'])
-                    height = int(self.configDict['Config']['Height'])
-                    self.resize(width, height)
-                    if self.configDict['Config']['@version'] == '1.0':
-                        try:
-                            self.profileFile = Path(self.configDict['Config']['LastProfile'])
-                            self.loadProfile()
-                        except:
-                            self.statusbar.showMessage(self.profile_notfound_config)
-                except KeyError:
+
+                if self.configDict.get('Config').get('@version') == '1.0':
+                    width = self.configDict.get('Config').get('Width')
+                    height = self.configDict.get('Config').get('Height')
+                    if width and height:
+                        self.resize(int(width), int(height))
+
+                    self.profileFile = Path(self.configDict.get('Config').get('LastProfile'))
+                    if os.path.exists(self.profileFile):
+                        self.loadProfile()
+                    else:  # profile not found
+                        self.statusbar.showMessage(self.profile_notfound_config)
+                else:  # key error
                     self.statusbar.showMessage(self.config_invalid)
         except FileNotFoundError:
             self.statusbar.showMessage(self.config_notfound)

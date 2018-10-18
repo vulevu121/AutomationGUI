@@ -32,15 +32,15 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="dummy" value="49" />
-          <entry key="py" value="3542" />
-          <entry key="txt" value="297" />
+          <entry key="dummy" value="64" />
+          <entry key="py" value="4425" />
+          <entry key="txt" value="337" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PLAIN_TEXT" value="346" />
-          <entry key="Python" value="3542" />
+          <entry key="PLAIN_TEXT" value="401" />
+          <entry key="Python" value="4425" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.vcs.git.usages">
@@ -55,8 +55,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/xmlconfig_main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="220">
-              <caret line="512" column="32" lean-forward="true" selection-start-line="512" selection-start-column="32" selection-end-line="512" selection-end-column="32" />
+            <state relative-caret-position="100">
+              <caret line="231" selection-start-line="231" selection-end-line="231" />
               <folding>
                 <element signature="e#47#176#0" expanded="true" />
               </folding>
@@ -71,17 +71,21 @@
       <find>QMessage</find>
       <find>inccludeversion</find>
       <find>updateguifro</find>
-      <find>saveprofile(</find>
       <find>print</find>
       <find>saveprofile</find>
       <find>path(</find>
       <find>dirname(</find>
       <find>basename(</find>
       <find>Btn</find>
+      <find>loadconfig(</find>
+      <find>['Profile']['Log']['Signal']</find>
+      <find>get'Profile').get('Log').get('Signal')</find>
+      <find>saveprofile(</find>
     </findStrings>
     <replaceStrings>
       <replace>includeversion</replace>
       <replace>str\(Path\([a-zA-Z]+\)\)</replace>
+      <replace>.get'Profile').get('Log').get('Signal')</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -245,7 +249,14 @@
       <option name="project" value="LOCAL" />
       <updated>1539816435756</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Added resizing and size save">
+      <created>1539899927812</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1539899927812</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -282,7 +293,8 @@
     <MESSAGE value="Fixed splitting strings with WindowsPath" />
     <MESSAGE value="Update GUI layout" />
     <MESSAGE value="Updated GUI layout" />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated GUI layout" />
+    <MESSAGE value="Added resizing and size save" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added resizing and size save" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/xmlconfig.py">
@@ -294,8 +306,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/xmlconfig_main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="512" column="32" lean-forward="true" selection-start-line="512" selection-start-column="32" selection-end-line="512" selection-end-column="32" />
+        <state relative-caret-position="100">
+          <caret line="231" selection-start-line="231" selection-end-line="231" />
           <folding>
             <element signature="e#47#176#0" expanded="true" />
           </folding>
