@@ -456,7 +456,7 @@ class App(QMainWindow, Ui_MainWindow):
                         try:
                             profilepath = self.configDict['Config']['LastProfile']
                             self.profileFile = Path(profilepath)
-                            if os.path.exists(self.profileFile):
+                            if os.path.exists(str(self.profileFile)):
                                 self.loadProfile()
                         except:  # profile not found
                             self.statusbar.showMessage(self.profile_notfound_config)
