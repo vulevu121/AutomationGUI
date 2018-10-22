@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
+ <author>Vu Le</author>
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
   <property name="enabled">
@@ -158,11 +159,25 @@ QLCDNumber {
 	border-radius: 5px;
 }
 
-QMenu, QMenu::item, QMenuBar, QMenuBar::item {
+QMenuBar, QMenuBar::item {
 	color: black;
 	background-color: rgb(245, 245, 245);
-	padding: 4px 10px 4px 10px;
+	padding: 4px 8px 4px 8px;
 	border-radius: 4px;
+}
+
+QMenu {
+	color: black;
+	background-color: rgb(245, 245, 245);
+	border-radius: 4px;
+	padding: 8px 8px 8px 8px;
+}
+
+QMenu::item {
+	color: black;
+	background-color: rgb(245, 245, 245);
+	border-radius: 4px;
+	padding: 4px 4px 4px 28px;
 }
 
 QMenuBar::item:selected, QMenu::item:selected {
@@ -174,10 +189,23 @@ QMenuBar {
 	border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 }
 
+QMenu::indicator {
+    width: 24px;
+    height: 24px;
+}
+
+
+QMenu::indicator:non-exclusive:unchecked {
+	image: url(:/checkbox/graphics/baseline_radio_button_unchecked_black_24dp.png);
+}
+
+QMenu::indicator:non-exclusive:checked {
+    image: url(:/checkbox/graphics/baseline_check_circle_black_24dp.png);
+}
+
 QDialog {
 	background-color: rgb(20, 21, 23);
 }
-
 
 
 QRadioButton::indicator, QCheckBox::indicator {
@@ -210,7 +238,6 @@ QRadioButton::indicator::checked, QRadioButton::indicator:checked:pressed {
 QMessageBox {
 	background-color: rgb(245, 245, 245);
 }
-
 </string>
   </property>
   <property name="iconSize">
@@ -268,7 +295,7 @@ QMessageBox {
              <string>Browse</string>
             </property>
             <property name="text">
-             <string/>
+             <string>Open</string>
             </property>
             <property name="icon">
              <iconset resource="xmlconfig.qrc">
@@ -306,7 +333,7 @@ QMessageBox {
              <string>Browse</string>
             </property>
             <property name="text">
-             <string/>
+             <string>Open</string>
             </property>
             <property name="icon">
              <iconset resource="xmlconfig.qrc">
@@ -326,7 +353,7 @@ QMessageBox {
              <string>Browse</string>
             </property>
             <property name="text">
-             <string/>
+             <string>Open</string>
             </property>
             <property name="icon">
              <iconset resource="xmlconfig.qrc">
@@ -382,7 +409,7 @@ QMessageBox {
              <string>Load Variable Pool</string>
             </property>
             <property name="text">
-             <string>Load</string>
+             <string>Load VP</string>
             </property>
             <property name="icon">
              <iconset resource="xmlconfig.qrc">
@@ -668,7 +695,7 @@ and Additional Signals</string>
         </property>
         <property name="icon">
          <iconset resource="xmlconfig.qrc">
-          <normaloff>:/icon/graphics/baseline_arrow_forward_black_24dp.png</normaloff>:/icon/graphics/baseline_arrow_forward_black_24dp.png</iconset>
+          <normaloff>:/icon/graphics/baseline_exit_to_app_black_24dp.png</normaloff>:/icon/graphics/baseline_exit_to_app_black_24dp.png</iconset>
         </property>
         <property name="flat">
          <bool>false</bool>
@@ -709,7 +736,20 @@ and Additional Signals</string>
     </property>
     <addaction name="actionAbout"/>
    </widget>
+   <widget class="QMenu" name="menuOptions">
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="title">
+     <string>Options</string>
+    </property>
+    <addaction name="actionShow_Debug_Messages"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuOptions"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar">
@@ -718,38 +758,74 @@ and Additional Signals</string>
    </property>
   </widget>
   <action name="actionSave">
+   <property name="icon">
+    <iconset resource="xmlconfig.qrc">
+     <normaloff>:/icon/graphics/baseline_save_black_24dp.png</normaloff>:/icon/graphics/baseline_save_black_24dp.png</iconset>
+   </property>
    <property name="text">
     <string>Save</string>
    </property>
   </action>
   <action name="actionExit">
+   <property name="icon">
+    <iconset resource="xmlconfig.qrc">
+     <normaloff>:/icon/graphics/baseline_exit_to_app_black_24dp.png</normaloff>:/icon/graphics/baseline_exit_to_app_black_24dp.png</iconset>
+   </property>
    <property name="text">
     <string>Exit</string>
    </property>
   </action>
   <action name="actionAbout">
+   <property name="icon">
+    <iconset resource="xmlconfig.qrc">
+     <normaloff>:/icon/graphics/baseline_info_black_24dp.png</normaloff>:/icon/graphics/baseline_info_black_24dp.png</iconset>
+   </property>
    <property name="text">
     <string>About</string>
    </property>
   </action>
   <action name="actionOpenConfigFolder">
+   <property name="icon">
+    <iconset resource="xmlconfig.qrc">
+     <normaloff>:/icon/graphics/baseline_open_in_browser_black_24dp.png</normaloff>:/icon/graphics/baseline_open_in_browser_black_24dp.png</iconset>
+   </property>
    <property name="text">
     <string>Open Config Folder</string>
    </property>
   </action>
   <action name="actionLoad">
+   <property name="icon">
+    <iconset resource="xmlconfig.qrc">
+     <normaloff>:/icon/graphics/baseline_folder_open_black_24dp.png</normaloff>:/icon/graphics/baseline_folder_open_black_24dp.png</iconset>
+   </property>
    <property name="text">
     <string>Load</string>
    </property>
   </action>
   <action name="actionSaveAs">
+   <property name="icon">
+    <iconset resource="xmlconfig.qrc">
+     <normaloff>:/icon/graphics/baseline_save_black_24dp.png</normaloff>:/icon/graphics/baseline_save_black_24dp.png</iconset>
+   </property>
    <property name="text">
     <string>Save As</string>
    </property>
   </action>
   <action name="actionNew">
+   <property name="icon">
+    <iconset resource="xmlconfig.qrc">
+     <normaloff>:/icon/graphics/baseline_file_copy_black_24dp.png</normaloff>:/icon/graphics/baseline_file_copy_black_24dp.png</iconset>
+   </property>
    <property name="text">
     <string>New</string>
+   </property>
+  </action>
+  <action name="actionShow_Debug_Messages">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Debug Messages</string>
    </property>
   </action>
  </widget>

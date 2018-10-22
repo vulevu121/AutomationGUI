@@ -145,11 +145,25 @@ class Ui_MainWindow(object):
 "    border-radius: 5px;\n"
 "}\n"
 "\n"
-"QMenu, QMenu::item, QMenuBar, QMenuBar::item {\n"
+"QMenuBar, QMenuBar::item {\n"
 "    color: black;\n"
 "    background-color: rgb(245, 245, 245);\n"
-"    padding: 4px 10px 4px 10px;\n"
+"    padding: 4px 8px 4px 8px;\n"
 "    border-radius: 4px;\n"
+"}\n"
+"\n"
+"QMenu {\n"
+"    color: black;\n"
+"    background-color: rgb(245, 245, 245);\n"
+"    border-radius: 4px;\n"
+"    padding: 8px 8px 8px 8px;\n"
+"}\n"
+"\n"
+"QMenu::item {\n"
+"    color: black;\n"
+"    background-color: rgb(245, 245, 245);\n"
+"    border-radius: 4px;\n"
+"    padding: 4px 4px 4px 28px;\n"
 "}\n"
 "\n"
 "QMenuBar::item:selected, QMenu::item:selected {\n"
@@ -161,10 +175,23 @@ class Ui_MainWindow(object):
 "    border-bottom: 1px solid rgba(0, 0, 0, 0.2);\n"
 "}\n"
 "\n"
+"QMenu::indicator {\n"
+"    width: 24px;\n"
+"    height: 24px;\n"
+"}\n"
+"\n"
+"\n"
+"QMenu::indicator:non-exclusive:unchecked {\n"
+"    image: url(:/checkbox/graphics/baseline_radio_button_unchecked_black_24dp.png);\n"
+"}\n"
+"\n"
+"QMenu::indicator:non-exclusive:checked {\n"
+"    image: url(:/checkbox/graphics/baseline_check_circle_black_24dp.png);\n"
+"}\n"
+"\n"
 "QDialog {\n"
 "    background-color: rgb(20, 21, 23);\n"
 "}\n"
-"\n"
 "\n"
 "\n"
 "QRadioButton::indicator, QCheckBox::indicator {\n"
@@ -197,7 +224,6 @@ class Ui_MainWindow(object):
 "QMessageBox {\n"
 "    background-color: rgb(245, 245, 245);\n"
 "}\n"
-"\n"
 "")
         MainWindow.setIconSize(QtCore.QSize(32, 32))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -224,7 +250,6 @@ class Ui_MainWindow(object):
         self.generalLayout.setContentsMargins(0, -1, -1, -1)
         self.generalLayout.setObjectName("generalLayout")
         self.browseVariablePoolBtn = QtWidgets.QPushButton(self.tab)
-        self.browseVariablePoolBtn.setText("")
         icon1 = QtGui.QIcon()
         icon1.addPixmap(QtGui.QPixmap(":/icon/graphics/baseline_folder_open_black_24dp.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.browseVariablePoolBtn.setIcon(icon1)
@@ -243,7 +268,6 @@ class Ui_MainWindow(object):
         self.csvReportLabel.setObjectName("csvReportLabel")
         self.generalLayout.addWidget(self.csvReportLabel, 1, 0, 1, 1)
         self.browseCallFunctionBtn = QtWidgets.QPushButton(self.tab)
-        self.browseCallFunctionBtn.setText("")
         self.browseCallFunctionBtn.setIcon(icon1)
         self.browseCallFunctionBtn.setObjectName("browseCallFunctionBtn")
         self.generalLayout.addWidget(self.browseCallFunctionBtn, 0, 2, 1, 1)
@@ -254,7 +278,6 @@ class Ui_MainWindow(object):
         self.csvReportEdit.setObjectName("csvReportEdit")
         self.generalLayout.addWidget(self.csvReportEdit, 1, 1, 1, 1)
         self.browseCsvReportBtn = QtWidgets.QPushButton(self.tab)
-        self.browseCsvReportBtn.setText("")
         self.browseCsvReportBtn.setIcon(icon1)
         self.browseCsvReportBtn.setObjectName("browseCsvReportBtn")
         self.generalLayout.addWidget(self.browseCsvReportBtn, 1, 2, 1, 1)
@@ -448,7 +471,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.exitButton.sizePolicy().hasHeightForWidth())
         self.exitButton.setSizePolicy(sizePolicy)
         icon7 = QtGui.QIcon()
-        icon7.addPixmap(QtGui.QPixmap(":/icon/graphics/baseline_arrow_forward_black_24dp.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon7.addPixmap(QtGui.QPixmap(":/icon/graphics/baseline_exit_to_app_black_24dp.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.exitButton.setIcon(icon7)
         self.exitButton.setFlat(False)
         self.exitButton.setObjectName("exitButton")
@@ -463,25 +486,46 @@ class Ui_MainWindow(object):
         self.menuFile.setObjectName("menuFile")
         self.menuHelp = QtWidgets.QMenu(self.menubar)
         self.menuHelp.setObjectName("menuHelp")
+        self.menuOptions = QtWidgets.QMenu(self.menubar)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.menuOptions.sizePolicy().hasHeightForWidth())
+        self.menuOptions.setSizePolicy(sizePolicy)
+        self.menuOptions.setObjectName("menuOptions")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setSizeGripEnabled(True)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
         self.actionSave = QtWidgets.QAction(MainWindow)
+        self.actionSave.setIcon(icon6)
         self.actionSave.setObjectName("actionSave")
         self.actionExit = QtWidgets.QAction(MainWindow)
+        self.actionExit.setIcon(icon7)
         self.actionExit.setObjectName("actionExit")
         self.actionAbout = QtWidgets.QAction(MainWindow)
+        icon8 = QtGui.QIcon()
+        icon8.addPixmap(QtGui.QPixmap(":/icon/graphics/baseline_info_black_24dp.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionAbout.setIcon(icon8)
         self.actionAbout.setObjectName("actionAbout")
         self.actionOpenConfigFolder = QtWidgets.QAction(MainWindow)
+        self.actionOpenConfigFolder.setIcon(icon2)
         self.actionOpenConfigFolder.setObjectName("actionOpenConfigFolder")
         self.actionLoad = QtWidgets.QAction(MainWindow)
+        self.actionLoad.setIcon(icon1)
         self.actionLoad.setObjectName("actionLoad")
         self.actionSaveAs = QtWidgets.QAction(MainWindow)
+        self.actionSaveAs.setIcon(icon6)
         self.actionSaveAs.setObjectName("actionSaveAs")
         self.actionNew = QtWidgets.QAction(MainWindow)
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(QtGui.QPixmap(":/icon/graphics/baseline_file_copy_black_24dp.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionNew.setIcon(icon9)
         self.actionNew.setObjectName("actionNew")
+        self.actionShow_Debug_Messages = QtWidgets.QAction(MainWindow)
+        self.actionShow_Debug_Messages.setCheckable(True)
+        self.actionShow_Debug_Messages.setObjectName("actionShow_Debug_Messages")
         self.menuFile.addAction(self.actionNew)
         self.menuFile.addAction(self.actionLoad)
         self.menuFile.addAction(self.actionSave)
@@ -490,7 +534,9 @@ class Ui_MainWindow(object):
         self.menuFile.addAction(self.actionOpenConfigFolder)
         self.menuFile.addAction(self.actionExit)
         self.menuHelp.addAction(self.actionAbout)
+        self.menuOptions.addAction(self.actionShow_Debug_Messages)
         self.menubar.addAction(self.menuFile.menuAction())
+        self.menubar.addAction(self.menuOptions.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
 
         self.retranslateUi(MainWindow)
@@ -504,16 +550,19 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.browseVariablePoolBtn.setToolTip(_translate("MainWindow", "Browse"))
+        self.browseVariablePoolBtn.setText(_translate("MainWindow", "Open"))
         self.variablePoolLabel.setText(_translate("MainWindow", "VariablePool CSV File:"))
         self.callFunctionLabel.setText(_translate("MainWindow", "Call Function Folder:"))
         self.csvReportLabel.setText(_translate("MainWindow", "CSV Report Folder:"))
         self.browseCallFunctionBtn.setToolTip(_translate("MainWindow", "Browse"))
+        self.browseCallFunctionBtn.setText(_translate("MainWindow", "Open"))
         self.browseCsvReportBtn.setToolTip(_translate("MainWindow", "Browse"))
+        self.browseCsvReportBtn.setText(_translate("MainWindow", "Open"))
         self.openCallFunctionFolderButton.setToolTip(_translate("MainWindow", "Open Folder"))
         self.openVarPoolFolderButton.setToolTip(_translate("MainWindow", "Open Folder"))
         self.openCsvReportFolderButton.setToolTip(_translate("MainWindow", "Open Folder"))
         self.reloadVariablePoolBtn.setToolTip(_translate("MainWindow", "Load Variable Pool"))
-        self.reloadVariablePoolBtn.setText(_translate("MainWindow", "Load"))
+        self.reloadVariablePoolBtn.setText(_translate("MainWindow", "Load VP"))
         self.versionCheckBox.setText(_translate("MainWindow", "Include HW && SW Version"))
         self.fullMessagesCheckbox.setText(_translate("MainWindow", "Show Full Call Function Messages"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "General"))
@@ -536,6 +585,7 @@ class Ui_MainWindow(object):
         self.exitButton.setText(_translate("MainWindow", "Continue"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.menuHelp.setTitle(_translate("MainWindow", "Help"))
+        self.menuOptions.setTitle(_translate("MainWindow", "Options"))
         self.actionSave.setText(_translate("MainWindow", "Save"))
         self.actionExit.setText(_translate("MainWindow", "Exit"))
         self.actionAbout.setText(_translate("MainWindow", "About"))
@@ -543,5 +593,6 @@ class Ui_MainWindow(object):
         self.actionLoad.setText(_translate("MainWindow", "Load"))
         self.actionSaveAs.setText(_translate("MainWindow", "Save As"))
         self.actionNew.setText(_translate("MainWindow", "New"))
+        self.actionShow_Debug_Messages.setText(_translate("MainWindow", "Show Debug Messages"))
 
 import xmlconfig_rc
