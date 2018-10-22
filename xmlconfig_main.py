@@ -488,7 +488,7 @@ class App(QMainWindow, Ui_MainWindow):
                 self.statusbar.showMessage(self.variable_pool_notfound)
 
     def setTitle(self, profilePath):
-        self.setWindowTitle('[' + str(profilePath) + '] - XMLConfig')
+        self.setWindowTitle('[' + str(profilePath) + '] - AutomationDesk GUI')
 
     def setProfileDict(self,
                        callfolder='',
