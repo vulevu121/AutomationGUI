@@ -19,7 +19,9 @@ class App(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super(self.__class__, self).__init__()
         self.setupUi(self)
-        self.debug = True
+        self.debug = False
+
+
 
         # create a frameless window without titlebar
         # self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
@@ -106,6 +108,7 @@ class App(QMainWindow, Ui_MainWindow):
         self.actionAbout.triggered.connect(self.about)
         self.actionExit.triggered.connect(self.exit)
         self.actionOpenConfigFolder.triggered.connect(self.openConfigFolder)
+        self.actionShow_Debug_Messages.triggered.connect(self.toggleDebug)
 
         self.logRadioBtn0.clicked.connect(self.hideAddSignal)
         self.logRadioBtn1.clicked.connect(self.hideAddSignal)
@@ -129,6 +132,14 @@ class App(QMainWindow, Ui_MainWindow):
     #     self.tabWidget.setFixedWidth(self.width()-40)
     #     self.gridLayout.width
     #     # QtGui.QMainWindow.resizeEvent(self, event)
+
+    def toggleDebug(self):
+        if self.actionShow_Debug_Messages.isChecked():
+            self.debug = True
+            print('Debug ON')
+        else:
+            self.debug = False
+            print('Debug OFF')
 
     def openCallFunctionFolder(self):
         callfunctionpath = Path(self.callFunctionEdit.text())
