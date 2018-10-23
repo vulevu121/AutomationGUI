@@ -566,7 +566,7 @@ class App(QMainWindow, Ui_MainWindow):
     def about(self):
         QMessageBox.about(self,
                           'About',
-                          'Version 1.12\nAuthor: Vu Le\nCopyright 2018')
+                          'Version 1.12\nAuthor: Vu Le\nCopyright (C) 2018\nKarma Automotive')
 
 
 def main():
