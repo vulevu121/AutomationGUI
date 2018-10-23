@@ -568,12 +568,12 @@ class App(QMainWindow, Ui_MainWindow):
 
     def about(self):
         about = QMessageBox()
-        about.setWindowIcon(QIcon(':/icon/graphics/karmalogo.png'))
+        about.setWindowIcon(QIcon(':/logo/graphics/karmalogo_48dp.png'))
         about.setWindowTitle('About')
         about.setText('Version 1.12\nAuthor: Vu Le')
         about.setInformativeText('Copyright (C) 2018\nKarma Automotive')
-        about.setIconPixmap(QPixmap(':/icon/graphics/karmalogo.png'))
-        about.exec()
+        about.setIconPixmap(QPixmap(':/logo/graphics/karmalogo_48dp.png'))
+        about.exec_()
 
 def main():
     app = QApplication(sys.argv)

@@ -7,13 +7,14 @@
     <file>graphics/baseline_radio_button_checked_white_24dp.png</file>
     <file>graphics/baseline_radio_button_unchecked_white_24dp.png</file>
   </qresource>
+  <qresource prefix="logo">
+    <file>graphics/karmalogo_48dp.png</file>
+  </qresource>
   <qresource prefix="icon">
-    <file>graphics/development_python_32px_540419_easyicon.net.png</file>
     <file>graphics/baseline_open_in_browser_black_24dp.png</file>
     <file>graphics/baseline_menu_black_24dp.png</file>
     <file>graphics/baseline_info_black_24dp.png</file>
     <file>graphics/baseline_file_copy_black_24dp.png</file>
-    <file>graphics/karmalogo.png</file>
     <file>graphics/baseline_folder_black_24dp.png</file>
     <file>graphics/baseline_save_black_24dp.png</file>
     <file>graphics/baseline_tab_black_24dp.png</file>
