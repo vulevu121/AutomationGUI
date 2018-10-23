@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a315e363-4d6f-448a-8093-5fd7b0a7caa5" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/graphics/development_python_32px_540419_easyicon.net.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/xmlconfig.py" beforeDir="false" afterPath="$PROJECT_DIR$/xmlconfig.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/xmlconfig.qrc" beforeDir="false" afterPath="$PROJECT_DIR$/xmlconfig.qrc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/xmlconfig.ui" beforeDir="false" afterPath="$PROJECT_DIR$/xmlconfig.ui" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/xmlconfig_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/xmlconfig_main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/design/graphics.pptx" beforeDir="false" afterPath="$PROJECT_DIR$/design/graphics.pptx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/xmlconfig_rc.py" beforeDir="false" afterPath="$PROJECT_DIR$/xmlconfig_rc.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -338,7 +333,14 @@
       <option name="project" value="LOCAL" />
       <updated>1540330923761</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="Added Karma logo">
+      <created>1540334518547</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1540334518547</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="ToolWindowManager">
