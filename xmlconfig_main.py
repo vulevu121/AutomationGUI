@@ -202,17 +202,20 @@ class App(QMainWindow, Ui_MainWindow):
             self.saveConfig()
 
     def browseCallFunction(self):
-        folderPath = QFileDialog.getExistingDirectory(self, "Select Call Function Directory", "")
+        callFunctionFolder = self.callFunctionEdit.text()
+        folderPath = QFileDialog.getExistingDirectory(self, "Select Call Function Directory", callFunctionFolder)
         if folderPath:
             self.callFunctionEdit.setText(str(Path(folderPath)))
 
     def browseCsvReport(self):
-        folderPath = QFileDialog.getExistingDirectory(self, "Select CSV Report Directory", "")
+        csvReportFolder = self.csvReportEdit.text()
+        folderPath = QFileDialog.getExistingDirectory(self, "Select CSV Report Directory", csvReportFolder)
         if len(str(folderPath)):
             self.csvReportEdit.setText(str(Path(folderPath)))
 
     def browseVariablePool(self):
-        filePath, fileType = QFileDialog.getOpenFileName(self, "Open Variable Pool", "","CSV Files (*.csv);;All Files (*)")
+        varPoolFolder = str(os.path.dirname(self.variablePoolEdit.text()))
+        filePath, fileType = QFileDialog.getOpenFileName(self, "Open Variable Pool", varPoolFolder,"CSV Files (*.csv);;All Files (*)")
         if filePath:
             self.variablePoolEdit.setText(str(Path(filePath)))
 
