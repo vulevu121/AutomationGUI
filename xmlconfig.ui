@@ -40,7 +40,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="xmlconfig.qrc">
-    <normaloff>:/icon/graphics/baseline_menu_black_24dp.png</normaloff>:/icon/graphics/baseline_menu_black_24dp.png</iconset>
+    <normaloff>:/icon/graphics/karmalogo.png</normaloff>:/icon/graphics/karmalogo.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">QMainWindow, QFrame {

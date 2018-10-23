@@ -27,7 +27,7 @@ class Ui_MainWindow(object):
         font.setWeight(50)
         MainWindow.setFont(font)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/icon/graphics/baseline_menu_black_24dp.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/icon/graphics/karmalogo.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
         MainWindow.setStyleSheet("QMainWindow, QFrame {\n"
 "    background-color: rgb(208, 218, 232);\n"

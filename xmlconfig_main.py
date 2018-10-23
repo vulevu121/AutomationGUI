@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox, QListView, QCompleter, QGraphicsDropShadowEffect
-from PyQt5.QtGui import QStandardItem, QStandardItemModel
+from PyQt5.QtGui import QStandardItem, QStandardItemModel, QPixmap, QIcon
 from PyQt5.QtCore import QStringListModel, Qt
 import xmltodict
 from pathlib import Path
@@ -567,10 +567,13 @@ class App(QMainWindow, Ui_MainWindow):
         self.close()
 
     def about(self):
-        QMessageBox.about(self,
-                          'About',
-                          'Version 1.12\nAuthor: Vu Le\nCopyright (C) 2018\nKarma Automotive')
-
+        about = QMessageBox()
+        about.setWindowIcon(QIcon(':/icon/graphics/karmalogo.png'))
+        about.setWindowTitle('About')
+        about.setText('Version 1.12\nAuthor: Vu Le')
+        about.setInformativeText('Copyright (C) 2018\nKarma Automotive')
+        about.setIconPixmap(QPixmap(':/icon/graphics/karmalogo.png'))
+        about.exec()
 
 def main():
     app = QApplication(sys.argv)
