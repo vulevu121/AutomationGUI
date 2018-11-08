@@ -1,3 +1,3 @@
-pyuic5 xmlconfig.ui -o xmlconfig.py
-pyrcc5 xmlconfig.qrc -o xmlconfig_rc.py
+pyuic5 AutomationGUI_ui.ui -o AutomationGUI_ui.py
+pyrcc5 AutomationGUI.qrc -o AutomationGUI_rc.py
 pause

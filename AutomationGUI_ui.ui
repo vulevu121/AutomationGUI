@@ -39,7 +39,7 @@
    <string>MainWindow</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="xmlconfig.qrc">
+   <iconset resource="AutomationGUI.qrc">
     <normaloff>:/logo/graphics/karmalogo_48dp.png</normaloff>:/logo/graphics/karmalogo_48dp.png</iconset>
   </property>
   <property name="styleSheet">
@@ -273,7 +273,7 @@ QMessageBox {
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="icon">
-        <iconset resource="xmlconfig.qrc">
+        <iconset resource="AutomationGUI.qrc">
          <normaloff>:/icon/graphics/baseline_tab_unselected_black_24dp.png</normaloff>
          <normalon>graphics/baseline_tab_black_24dp.png</normalon>:/icon/graphics/baseline_tab_unselected_black_24dp.png</iconset>
        </attribute>
@@ -289,107 +289,75 @@ QMessageBox {
           <property name="leftMargin">
            <number>0</number>
           </property>
-          <item row="2" column="2">
+          <item row="0" column="0">
+           <widget class="QLabel" name="testCaseExcelLabel">
+            <property name="text">
+             <string>Test Case Excel File</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="testCaseExcelEdit"/>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLineEdit" name="variablePoolEdit"/>
+          </item>
+          <item row="3" column="2">
            <widget class="QPushButton" name="browseVariablePoolBtn">
             <property name="toolTip">
              <string>Browse</string>
             </property>
             <property name="text">
-             <string>Open</string>
+             <string>Browse</string>
             </property>
             <property name="icon">
-             <iconset resource="xmlconfig.qrc">
+             <iconset resource="AutomationGUI.qrc">
               <normaloff>:/icon/graphics/baseline_folder_open_black_24dp.png</normaloff>:/icon/graphics/baseline_folder_open_black_24dp.png</iconset>
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
-           <widget class="QLineEdit" name="variablePoolEdit"/>
-          </item>
           <item row="2" column="0">
-           <widget class="QLabel" name="variablePoolLabel">
-            <property name="text">
-             <string>VariablePool CSV File:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="callFunctionLabel">
-            <property name="text">
-             <string>Call Function Folder:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
            <widget class="QLabel" name="csvReportLabel">
             <property name="text">
              <string>CSV Report Folder:</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="2">
-           <widget class="QPushButton" name="browseCallFunctionBtn">
-            <property name="toolTip">
-             <string>Browse</string>
-            </property>
+          <item row="3" column="0">
+           <widget class="QLabel" name="variablePoolLabel">
             <property name="text">
-             <string>Open</string>
-            </property>
-            <property name="icon">
-             <iconset resource="xmlconfig.qrc">
-              <normaloff>:/icon/graphics/baseline_folder_open_black_24dp.png</normaloff>:/icon/graphics/baseline_folder_open_black_24dp.png</iconset>
+             <string>VariablePool CSV File:</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QLineEdit" name="callFunctionEdit"/>
+          <item row="1" column="0">
+           <widget class="QLabel" name="callFunctionLabel">
+            <property name="text">
+             <string>Call Function Folder:</string>
+            </property>
+           </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="csvReportEdit"/>
-          </item>
-          <item row="1" column="2">
+          <item row="2" column="2">
            <widget class="QPushButton" name="browseCsvReportBtn">
             <property name="toolTip">
              <string>Browse</string>
             </property>
             <property name="text">
-             <string>Open</string>
+             <string>Browse</string>
             </property>
             <property name="icon">
-             <iconset resource="xmlconfig.qrc">
+             <iconset resource="AutomationGUI.qrc">
               <normaloff>:/icon/graphics/baseline_folder_open_black_24dp.png</normaloff>:/icon/graphics/baseline_folder_open_black_24dp.png</iconset>
             </property>
            </widget>
           </item>
-          <item row="0" column="3">
-           <widget class="QPushButton" name="openCallFunctionFolderButton">
-            <property name="toolTip">
-             <string>Open Folder</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="xmlconfig.qrc">
-              <normaloff>:/icon/graphics/baseline_open_in_browser_black_24dp.png</normaloff>:/icon/graphics/baseline_open_in_browser_black_24dp.png</iconset>
-            </property>
-           </widget>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="callFunctionEdit"/>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="csvReportEdit"/>
           </item>
           <item row="2" column="3">
-           <widget class="QPushButton" name="openVarPoolFolderButton">
-            <property name="toolTip">
-             <string>Open Folder</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="xmlconfig.qrc">
-              <normaloff>:/icon/graphics/baseline_open_in_browser_black_24dp.png</normaloff>:/icon/graphics/baseline_open_in_browser_black_24dp.png</iconset>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="3">
            <widget class="QPushButton" name="openCsvReportFolderButton">
             <property name="toolTip">
              <string>Open Folder</string>
@@ -398,12 +366,26 @@ QMessageBox {
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="xmlconfig.qrc">
+             <iconset resource="AutomationGUI.qrc">
               <normaloff>:/icon/graphics/baseline_open_in_browser_black_24dp.png</normaloff>:/icon/graphics/baseline_open_in_browser_black_24dp.png</iconset>
             </property>
            </widget>
           </item>
-          <item row="3" column="2">
+          <item row="3" column="3">
+           <widget class="QPushButton" name="openVarPoolFolderButton">
+            <property name="toolTip">
+             <string>Open Folder</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="AutomationGUI.qrc">
+              <normaloff>:/icon/graphics/baseline_open_in_browser_black_24dp.png</normaloff>:/icon/graphics/baseline_open_in_browser_black_24dp.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="2">
            <widget class="QPushButton" name="reloadVariablePoolBtn">
             <property name="toolTip">
              <string>Load Variable Pool</string>
@@ -412,7 +394,7 @@ QMessageBox {
              <string>Load VP</string>
             </property>
             <property name="icon">
-             <iconset resource="xmlconfig.qrc">
+             <iconset resource="AutomationGUI.qrc">
               <normaloff>:/icon/graphics/baseline_save_alt_black_24dp.png</normaloff>:/icon/graphics/baseline_save_alt_black_24dp.png</iconset>
             </property>
             <property name="flat">
@@ -420,7 +402,21 @@ QMessageBox {
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
+          <item row="1" column="3">
+           <widget class="QPushButton" name="openCallFunctionFolderButton">
+            <property name="toolTip">
+             <string>Open Folder</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="AutomationGUI.qrc">
+              <normaloff>:/icon/graphics/baseline_open_in_browser_black_24dp.png</normaloff>:/icon/graphics/baseline_open_in_browser_black_24dp.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
            <widget class="QCheckBox" name="versionCheckBox">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
@@ -433,7 +429,7 @@ QMessageBox {
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
+          <item row="5" column="1">
            <widget class="QCheckBox" name="fullMessagesCheckbox">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -446,13 +442,55 @@ QMessageBox {
             </property>
            </widget>
           </item>
+          <item row="1" column="2">
+           <widget class="QPushButton" name="browseCallFunctionBtn">
+            <property name="toolTip">
+             <string>Browse</string>
+            </property>
+            <property name="text">
+             <string>Browse</string>
+            </property>
+            <property name="icon">
+             <iconset resource="AutomationGUI.qrc">
+              <normaloff>:/icon/graphics/baseline_folder_open_black_24dp.png</normaloff>:/icon/graphics/baseline_folder_open_black_24dp.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QPushButton" name="browseTestCaseExcelBtn">
+            <property name="toolTip">
+             <string>Browse</string>
+            </property>
+            <property name="text">
+             <string>Browse</string>
+            </property>
+            <property name="icon">
+             <iconset resource="AutomationGUI.qrc">
+              <normaloff>:/icon/graphics/baseline_folder_open_black_24dp.png</normaloff>:/icon/graphics/baseline_folder_open_black_24dp.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QPushButton" name="openTestCaseExcelFolderBtn">
+            <property name="toolTip">
+             <string>Open Folder</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="AutomationGUI.qrc">
+              <normaloff>:/icon/graphics/baseline_open_in_browser_black_24dp.png</normaloff>:/icon/graphics/baseline_open_in_browser_black_24dp.png</iconset>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
        </layout>
       </widget>
       <widget class="QWidget" name="tab_2">
        <attribute name="icon">
-        <iconset resource="xmlconfig.qrc">
+        <iconset resource="AutomationGUI.qrc">
          <normaloff>:/icon/graphics/baseline_tab_unselected_black_24dp.png</normaloff>
          <normalon>:/icon/graphics/baseline_tab_black_24dp.png</normalon>:/icon/graphics/baseline_tab_unselected_black_24dp.png</iconset>
        </attribute>
@@ -571,7 +609,7 @@ and Additional Signals</string>
       </widget>
       <widget class="QWidget" name="tab_3">
        <attribute name="icon">
-        <iconset resource="xmlconfig.qrc">
+        <iconset resource="AutomationGUI.qrc">
          <normaloff>:/icon/graphics/baseline_tab_unselected_black_24dp.png</normaloff>
          <normalon>:/icon/graphics/baseline_tab_black_24dp.png</normalon>:/icon/graphics/baseline_tab_unselected_black_24dp.png</iconset>
        </attribute>
@@ -657,7 +695,7 @@ and Additional Signals</string>
          <string>Save As</string>
         </property>
         <property name="icon">
-         <iconset resource="xmlconfig.qrc">
+         <iconset resource="AutomationGUI.qrc">
           <normaloff>:/icon/graphics/baseline_save_black_24dp.png</normaloff>:/icon/graphics/baseline_save_black_24dp.png</iconset>
         </property>
        </widget>
@@ -674,7 +712,7 @@ and Additional Signals</string>
          <string>Save</string>
         </property>
         <property name="icon">
-         <iconset resource="xmlconfig.qrc">
+         <iconset resource="AutomationGUI.qrc">
           <normaloff>:/icon/graphics/baseline_save_black_24dp.png</normaloff>:/icon/graphics/baseline_save_black_24dp.png</iconset>
         </property>
         <property name="flat">
@@ -694,11 +732,27 @@ and Additional Signals</string>
          <string>Continue</string>
         </property>
         <property name="icon">
-         <iconset resource="xmlconfig.qrc">
+         <iconset resource="AutomationGUI.qrc">
           <normaloff>:/icon/graphics/baseline_exit_to_app_black_24dp.png</normaloff>:/icon/graphics/baseline_exit_to_app_black_24dp.png</iconset>
         </property>
         <property name="flat">
          <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="autorunCheckBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Autorun</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -759,7 +813,7 @@ and Additional Signals</string>
   </widget>
   <action name="actionSave">
    <property name="icon">
-    <iconset resource="xmlconfig.qrc">
+    <iconset resource="AutomationGUI.qrc">
      <normaloff>:/icon/graphics/baseline_save_black_24dp.png</normaloff>:/icon/graphics/baseline_save_black_24dp.png</iconset>
    </property>
    <property name="text">
@@ -768,7 +822,7 @@ and Additional Signals</string>
   </action>
   <action name="actionExit">
    <property name="icon">
-    <iconset resource="xmlconfig.qrc">
+    <iconset resource="AutomationGUI.qrc">
      <normaloff>:/icon/graphics/baseline_exit_to_app_black_24dp.png</normaloff>:/icon/graphics/baseline_exit_to_app_black_24dp.png</iconset>
    </property>
    <property name="text">
@@ -777,7 +831,7 @@ and Additional Signals</string>
   </action>
   <action name="actionAbout">
    <property name="icon">
-    <iconset resource="xmlconfig.qrc">
+    <iconset resource="AutomationGUI.qrc">
      <normaloff>:/icon/graphics/baseline_info_black_24dp.png</normaloff>:/icon/graphics/baseline_info_black_24dp.png</iconset>
    </property>
    <property name="text">
@@ -786,7 +840,7 @@ and Additional Signals</string>
   </action>
   <action name="actionOpenConfigFolder">
    <property name="icon">
-    <iconset resource="xmlconfig.qrc">
+    <iconset resource="AutomationGUI.qrc">
      <normaloff>:/icon/graphics/baseline_open_in_browser_black_24dp.png</normaloff>:/icon/graphics/baseline_open_in_browser_black_24dp.png</iconset>
    </property>
    <property name="text">
@@ -795,7 +849,7 @@ and Additional Signals</string>
   </action>
   <action name="actionLoad">
    <property name="icon">
-    <iconset resource="xmlconfig.qrc">
+    <iconset resource="AutomationGUI.qrc">
      <normaloff>:/icon/graphics/baseline_folder_open_black_24dp.png</normaloff>:/icon/graphics/baseline_folder_open_black_24dp.png</iconset>
    </property>
    <property name="text">
@@ -804,7 +858,7 @@ and Additional Signals</string>
   </action>
   <action name="actionSaveAs">
    <property name="icon">
-    <iconset resource="xmlconfig.qrc">
+    <iconset resource="AutomationGUI.qrc">
      <normaloff>:/icon/graphics/baseline_save_black_24dp.png</normaloff>:/icon/graphics/baseline_save_black_24dp.png</iconset>
    </property>
    <property name="text">
@@ -813,7 +867,7 @@ and Additional Signals</string>
   </action>
   <action name="actionNew">
    <property name="icon">
-    <iconset resource="xmlconfig.qrc">
+    <iconset resource="AutomationGUI.qrc">
      <normaloff>:/icon/graphics/baseline_file_copy_black_24dp.png</normaloff>:/icon/graphics/baseline_file_copy_black_24dp.png</iconset>
    </property>
    <property name="text">
@@ -830,7 +884,7 @@ and Additional Signals</string>
   </action>
  </widget>
  <resources>
-  <include location="xmlconfig.qrc"/>
+  <include location="AutomationGUI.qrc"/>
  </resources>
  <connections>
   <connection>

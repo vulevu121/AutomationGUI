@@ -2,8 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a315e363-4d6f-448a-8093-5fd7b0a7caa5" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/design/graphics.pptx" beforeDir="false" afterPath="$PROJECT_DIR$/design/graphics.pptx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/xmlconfig_rc.py" beforeDir="false" afterPath="$PROJECT_DIR$/xmlconfig_rc.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/copytopython27.bat" beforeDir="false" afterPath="$PROJECT_DIR$/copytopython27.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/makegui.bat" beforeDir="false" afterPath="$PROJECT_DIR$/makegui.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/xmlconfig.py" beforeDir="false" afterPath="$PROJECT_DIR$/AutomationGUI_ui.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/xmlconfig.qrc" beforeDir="false" afterPath="$PROJECT_DIR$/AutomationGUI.qrc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/xmlconfig.ui" beforeDir="false" afterPath="$PROJECT_DIR$/AutomationGUI_ui.ui" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/xmlconfig_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/AutomationGUI.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/xmlconfig_rc.py" beforeDir="false" afterPath="$PROJECT_DIR$/AutomationGUI_rc.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -15,6 +21,7 @@
     <session id="1385430813">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
+          <entry key="project.closed" value="1" />
           <entry key="project.open.time.0" value="1" />
           <entry key="project.open.time.4" value="1" />
           <entry key="project.opened" value="2" />
@@ -22,25 +29,25 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="py" value="5" />
+          <entry key="py" value="8" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="Python" value="5" />
+          <entry key="Python" value="8" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="dummy" value="71" />
-          <entry key="py" value="5985" />
+          <entry key="dummy" value="134" />
+          <entry key="py" value="6028" />
           <entry key="txt" value="516" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PLAIN_TEXT" value="587" />
-          <entry key="Python" value="5985" />
+          <entry key="PLAIN_TEXT" value="650" />
+          <entry key="Python" value="6028" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.vcs.git.usages">
@@ -49,27 +56,47 @@
         </counts>
       </usages-collector>
     </session>
+    <session id="1764806281">
+      <usages-collector id="statistics.lifecycle.project">
+        <counts>
+          <entry key="project.open.time.0" value="1" />
+          <entry key="project.opened" value="1" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.open">
+        <counts>
+          <entry key="py" value="2" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.open">
+        <counts>
+          <entry key="Python" value="2" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.edit">
+        <counts>
+          <entry key="py" value="1706" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.edit">
+        <counts>
+          <entry key="Python" value="1706" />
+        </counts>
+      </usages-collector>
+    </session>
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+    <leaf>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/xmlconfig_main.py">
+        <entry file="file://$PROJECT_DIR$/AutomationGUI.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="280">
-              <caret line="574" column="43" selection-start-line="574" selection-start-column="43" selection-end-line="574" selection-end-column="43" />
+            <state relative-caret-position="231">
+              <caret line="414" column="46" lean-forward="true" selection-start-line="414" selection-start-column="46" selection-end-line="414" selection-end-column="46" />
               <folding>
                 <element signature="e#47#176#0" expanded="true" />
-                <marker date="1540334498633" expanded="true" signature="5737:5934" ph="..." />
+                <marker date="1541719566462" expanded="true" signature="6124:6176" ph="..." />
+                <marker date="1541719566462" expanded="true" signature="6229:6323" ph="..." />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../Update_Hw_Sw_Version.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="191">
-              <caret line="113" column="23" lean-forward="true" selection-start-line="113" selection-start-column="23" selection-end-line="113" selection-end-column="23" />
             </state>
           </provider>
         </entry>
@@ -82,7 +109,6 @@
       <find>inccludeversion</find>
       <find>updateguifro</find>
       <find>print</find>
-      <find>saveprofile</find>
       <find>path(</find>
       <find>dirname(</find>
       <find>basename(</find>
@@ -96,9 +122,14 @@
       <find>Dict.get(</find>
       <find>')</find>
       <find>loadprofile</find>
-      <find>read</find>
       <find>browsecsv</find>
       <find>qmessagebox</find>
+      <find>read</find>
+      <find>profile_invalid</find>
+      <find>browsevar</find>
+      <find>saveprof</find>
+      <find>saveprofile()</find>
+      <find>saveprofile</find>
     </findStrings>
     <replaceStrings>
       <replace>includeversion</replace>
@@ -122,12 +153,14 @@
       <list>
         <option value="$PROJECT_DIR$/xmlconfig.py" />
         <option value="$PROJECT_DIR$/xmlconfig_main.py" />
+        <option value="$PROJECT_DIR$/AutomationGUI_ui.py" />
+        <option value="$PROJECT_DIR$/AutomationGUI.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="121" />
-    <option name="y" value="7" />
+    <option name="x" value="120" />
+    <option name="y" value="6" />
     <option name="width" value="1750" />
     <option name="height" value="970" />
   </component>
@@ -136,22 +169,22 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
             <path>
-              <item name="xmlconfig" type="b2602c69:ProjectViewProjectNode" />
-              <item name="xmlconfig" type="462c0819:PsiDirectoryNode" />
+              <item name="AutomationGUI" type="b2602c69:ProjectViewProjectNode" />
+              <item name="AutomationGUI" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/xmlconfig_main.py" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunDashboard">
@@ -179,7 +212,7 @@
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/xmlconfig_main.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/AutomationGUI.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -386,27 +419,28 @@
     <option name="LAST_COMMIT_MESSAGE" value="Added Karma logo" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/xmlconfig.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3863">
-          <caret line="209" column="33" lean-forward="true" selection-start-line="209" selection-start-column="33" selection-end-line="209" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../Update_Hw_Sw_Version.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="191">
-          <caret line="113" column="23" lean-forward="true" selection-start-line="113" selection-start-column="23" selection-end-line="113" selection-end-column="23" />
+          <caret line="113" column="23" selection-start-line="113" selection-start-column="23" selection-end-line="113" selection-end-column="23" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/xmlconfig_main.py">
+    <entry file="file://$PROJECT_DIR$/AutomationGUI_ui.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="280">
-          <caret line="574" column="43" selection-start-line="574" selection-start-column="43" selection-end-line="574" selection-end-column="43" />
+        <state relative-caret-position="245">
+          <caret line="329" column="13" selection-start-line="329" selection-start-column="13" selection-end-line="329" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/AutomationGUI.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="231">
+          <caret line="414" column="46" lean-forward="true" selection-start-line="414" selection-start-column="46" selection-end-line="414" selection-end-column="46" />
           <folding>
             <element signature="e#47#176#0" expanded="true" />
-            <marker date="1540334498633" expanded="true" signature="5737:5934" ph="..." />
+            <marker date="1541719566462" expanded="true" signature="6124:6176" ph="..." />
+            <marker date="1541719566462" expanded="true" signature="6229:6323" ph="..." />
           </folding>
         </state>
       </provider>

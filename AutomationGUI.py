@@ -3,10 +3,10 @@
 
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox, QListView, QCompleter, QGraphicsDropShadowEffect
 from PyQt5.QtGui import QStandardItem, QStandardItemModel, QPixmap, QIcon
-from PyQt5.QtCore import QStringListModel, Qt
+from PyQt5.QtCore import QStringListModel, Qt, QTimer
 import xmltodict
 from pathlib import Path
-from xmlconfig import *
+from AutomationGUI_ui import *
 import os
 import sys
 import csv
@@ -20,8 +20,6 @@ class App(QMainWindow, Ui_MainWindow):
         super(self.__class__, self).__init__()
         self.setupUi(self)
         self.debug = False
-
-
 
         # create a frameless window without titlebar
         # self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
@@ -85,10 +83,12 @@ class App(QMainWindow, Ui_MainWindow):
         self.logRadioBtn1.clicked.connect(self.unsavedChanges)
         self.logRadioBtn2.clicked.connect(self.unsavedChanges)
 
+        self.browseTestCaseExcelBtn.clicked.connect(self.browseTestCaseExcel)
         self.browseCallFunctionBtn.clicked.connect(self.browseCallFunction)
         self.browseCsvReportBtn.clicked.connect(self.browseCsvReport)
         self.browseVariablePoolBtn.clicked.connect(self.browseVariablePool)
 
+        self.openTestCaseExcelFolderBtn.clicked.connect(self.openTestCaseExcelFolder)
         self.openCallFunctionFolderButton.clicked.connect(self.openCallFunctionFolder)
         self.openCsvReportFolderButton.clicked.connect(self.openCsvReportFolder)
         self.openVarPoolFolderButton.clicked.connect(self.openVarPoolFolder)
@@ -124,6 +124,13 @@ class App(QMainWindow, Ui_MainWindow):
         self.loadConfig()
         self.changesSaved = True
 
+        self.startTimer = QTimer()
+        self.startTimer.timeout.connect(self.tick)
+
+        if self.autorunCheckBox.isChecked():
+            self.startTimer.start(1000)
+            self.startTimerCount = 3
+
     # def mousePressEvent(self, event):
     #     print(event.button())
 
@@ -132,6 +139,22 @@ class App(QMainWindow, Ui_MainWindow):
     #     self.tabWidget.setFixedWidth(self.width()-40)
     #     self.gridLayout.width
     #     # QtGui.QMainWindow.resizeEvent(self, event)
+
+    def dprint(self, msg):
+        if self.debug:
+            print(msg)
+
+    def tick(self):
+        if self.startTimerCount > 0:
+            self.exitButton.setText('Continue ({})'.format(self.startTimerCount))
+            self.dprint(self.startTimerCount)
+            self.startTimerCount = self.startTimerCount - 1
+        else:
+            self.startTimer.stop()
+            self.dprint('Timer stop')
+            self.exitButton.setText('Continue')
+            if self.autorunCheckBox.isChecked():
+                self.exit()
 
     def toggleDebug(self):
         if self.actionShow_Debug_Messages.isChecked():
@@ -154,6 +177,12 @@ class App(QMainWindow, Ui_MainWindow):
     def openVarPoolFolder(self):
         varpoolpath = Path(self.variablePoolEdit.text())
         dirname = os.path.dirname(str(varpoolpath))
+        if os.path.exists(str(dirname)):
+            os.startfile(str(dirname))
+
+    def openTestCaseExcelFolder(self):
+        testCaseExcelPath = Path(self.testCaseExcelEdit.text())
+        dirname = os.path.dirname(str(testCaseExcelPath))
         if os.path.exists(str(dirname)):
             os.startfile(str(dirname))
 
@@ -201,23 +230,30 @@ class App(QMainWindow, Ui_MainWindow):
             self.loadProfile()
             self.saveConfig()
 
+    def browseTestCaseExcel(self):
+        self.browseFile(self.testCaseExcelEdit, 'Select Test Case Excel File', 'XLSX Files (*.xlsx)')
+
     def browseCallFunction(self):
-        callFunctionFolder = self.callFunctionEdit.text()
-        folderPath = QFileDialog.getExistingDirectory(self, "Select Call Function Directory", callFunctionFolder)
-        if folderPath:
-            self.callFunctionEdit.setText(str(Path(folderPath)))
+        self.browseFolder(self.callFunctionEdit, 'Select Call Function Directory')
 
     def browseCsvReport(self):
-        csvReportFolder = self.csvReportEdit.text()
-        folderPath = QFileDialog.getExistingDirectory(self, "Select CSV Report Directory", csvReportFolder)
-        if len(str(folderPath)):
-            self.csvReportEdit.setText(str(Path(folderPath)))
+        self.browseFolder(self.csvReportEdit, 'Select CSV Report Directory')
 
     def browseVariablePool(self):
-        varPoolFolder = str(os.path.dirname(self.variablePoolEdit.text()))
-        filePath, fileType = QFileDialog.getOpenFileName(self, "Open Variable Pool", varPoolFolder,"CSV Files (*.csv);;All Files (*)")
+        self.browseFile(self.variablePoolEdit, 'Open Variable Pool', 'CSV Files (*.csv)')
+
+    def browseFile(self, editBox, titleDialog, fileType):
+        folder = str(os.path.dirname(editBox.text()))
+        filePath, fileType = QFileDialog.getOpenFileName(self, titleDialog, folder,
+                                                         "{};;All Files (*)".format(fileType))
         if filePath:
-            self.variablePoolEdit.setText(str(Path(filePath)))
+            editBox.setText(str(Path(filePath)))
+
+    def browseFolder(self, editBox, titleDialog):
+        folder = editBox.text()
+        folderPath = QFileDialog.getExistingDirectory(self, "Select CSV Report Directory", folder)
+        if len(str(folderPath)):
+            editBox.setText(str(Path(folderPath)))
 
     def newConfig(self):
         self.setDefaultConfigDict()
@@ -239,7 +275,7 @@ class App(QMainWindow, Ui_MainWindow):
         # save the profile from profile dict
         try:
             with open(str(self.profileFile), 'wb') as f:
-                if self.debug: print(str(self.profileFile))
+                self.dprint(str(self.profileFile))
                 f.write(bytearray(xmltodict.unparse(self.profileDict, pretty=True), encoding='utf-8'))
                 self.setTitle(self.profileFile)
                 self.defaultProfile = False
@@ -284,7 +320,8 @@ class App(QMainWindow, Ui_MainWindow):
         for i in range(0, self.dtcExModel.rowCount()):
             dtcExList.append(self.dtcExModel.item(i, 0).text())
 
-        self.setProfileDict(callfolder=self.callFunctionEdit.text(),
+        self.setProfileDict(testcaseexcel=self.testCaseExcelEdit.text(),
+                            callfolder=self.callFunctionEdit.text(),
                             csvfolder=self.csvReportEdit.text(),
                             varpoolpath=self.variablePoolEdit.text(),
                             fullmessages=self.fullMessagesCheckbox.isChecked(),
@@ -345,11 +382,14 @@ class App(QMainWindow, Ui_MainWindow):
                 self.profileDict = xmltodict.parse(f.read())
                 try:
                     profileversion = self.profileDict['Profile']['@version']
+                    varpoolfile = self.profileDict['Profile']['VariablePoolPath']
                     if profileversion == '1.0':
+
                         # updates the gui after loading a valid profile
                         self.defaultProfile = False
                         self.updateGuiFromProfileDict()
-                        self.loadVariablePool()
+                        if os.path.exists(varpoolfile):
+                            self.loadVariablePool()
                         self.setTitle(self.profileFile)
                         self.statusbar.showMessage(self.profile_loaded_success)
                     else:
@@ -384,6 +424,12 @@ class App(QMainWindow, Ui_MainWindow):
 
     # use the profile dictionary to update the gui
     def updateGuiFromProfileDict(self):
+        try:
+            testcasepath = self.profileDict['Profile']['TestCaseExcel']
+            if testcasepath:
+                self.testCaseExcelEdit.setText(testcasepath)
+        except:
+            self.testCaseExcelEdit = ''
         try:
             callpath = self.profileDict['Profile']['CallFunctionFolder']
             if callpath:
@@ -433,7 +479,7 @@ class App(QMainWindow, Ui_MainWindow):
             for s in signalList:
                 self.addSignalModel.appendRow(QStandardItem(str(s)))
         except:
-            if self.debug: print('Signal list is empty')
+            self.dprint('Signal list is empty')
 
         self.dtcExModel.clear()
 
@@ -450,7 +496,7 @@ class App(QMainWindow, Ui_MainWindow):
             for s in dtcExList:
                 self.dtcExModel.appendRow(QStandardItem(str(s)))
         except:
-            if self.debug: print('DTCs exception list is empty')
+            self.dprint('DTCs exception list is empty')
 
     def loadConfig(self):
         try:
@@ -465,7 +511,7 @@ class App(QMainWindow, Ui_MainWindow):
                             height = self.configDict['Config']['Height']
                             self.resize(int(width), int(height))
                         except:
-                            if self.debug: print('Width and height values invalid')
+                            self.dprint('Width and height values invalid')
 
                         try:
                             profilepath = self.configDict['Config']['LastProfile']
@@ -505,6 +551,7 @@ class App(QMainWindow, Ui_MainWindow):
         self.setWindowTitle('[' + str(profilePath) + '] - AutomationDesk GUI')
 
     def setProfileDict(self,
+                       testcaseexcel='',
                        callfolder='',
                        csvfolder='',
                        varpoolpath='',
@@ -518,6 +565,7 @@ class App(QMainWindow, Ui_MainWindow):
         self.profileDict = {
             'Profile': {
                 '@version': '1.0',
+                'TestCaseExcel': testcaseexcel,
                 'CallFunctionFolder': callfolder,
                 'CSVReportFolder': csvfolder,
                 'VariablePoolPath': varpoolpath,
@@ -560,7 +608,7 @@ class App(QMainWindow, Ui_MainWindow):
 
             if msgReply == QMessageBox.Yes:
                 self.saveProfile()
-                if self.debug: print('File saved')
+                self.dprint('File saved')
 
         self.saveConfig()
         self.updateProfileDictFromGui()
