@@ -231,7 +231,7 @@ class App(QMainWindow, Ui_MainWindow):
             self.saveConfig()
 
     def browseTestCaseExcel(self):
-        self.browseFile(self.testCaseExcelEdit, 'Select Test Case Excel File', 'XLSX Files (*.xlsx)')
+        self.browseFile(self.testCaseExcelEdit, 'Select Test Case Excel File', 'Excel Files (*.xlsx; *.xlsm)')
 
     def browseCallFunction(self):
         self.browseFolder(self.callFunctionEdit, 'Select Call Function Directory')
