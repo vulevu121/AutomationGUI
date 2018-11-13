@@ -129,7 +129,7 @@ class App(QMainWindow, Ui_MainWindow):
 
         if self.autorunCheckBox.isChecked():
             self.startTimer.start(1000)
-            self.startTimerCount = 3
+            self.startTimerCount = self.autorunSpinBox.value()
 
     # def mousePressEvent(self, event):
     #     print(event.button())
@@ -360,9 +360,13 @@ class App(QMainWindow, Ui_MainWindow):
 
     def saveConfig(self):
         # update the config dict
-        self.setConfigDict(lastprofile=str(self.profileFile),
-                           width=self.width(),
-                           height=self.height())
+        self.setConfigDict(
+            lastprofile=str(self.profileFile),
+            width=self.width(),
+            height=self.height(),
+            autorun=self.autorunCheckBox.isChecked(),
+            autoruntimer=self.autorunSpinBox.value()
+        )
 
         # if config folder not found, create one
         dirname = os.path.dirname(str(self.configFile))
@@ -511,7 +515,7 @@ class App(QMainWindow, Ui_MainWindow):
                             height = self.configDict['Config']['Height']
                             self.resize(int(width), int(height))
                         except:
-                            self.dprint('Width and height values invalid')
+                            self.dprint('Width and height values not saved')
 
                         try:
                             profilepath = self.configDict['Config']['LastProfile']
@@ -520,6 +524,19 @@ class App(QMainWindow, Ui_MainWindow):
                                 self.loadProfile()
                         except:  # profile not found
                             self.statusbar.showMessage(self.profile_notfound_config)
+
+                        try:
+                            autorun = self.configDict['Config']['Autorun']
+                            self.autorunCheckBox.setChecked(eval(autorun))
+                        except:
+                            self.dprint('Autorun setting not saved')
+
+                        try:
+                            autoruntimer = self.configDict['Config']['AutorunTimer']
+                            self.autorunSpinBox.setValue(eval(autoruntimer))
+                        except:
+                            self.dprint('Autorun timer setting not saved')
+
                 except:  # key error
                     self.statusbar.showMessage(self.config_invalid)
         except FileNotFoundError:
@@ -527,6 +544,7 @@ class App(QMainWindow, Ui_MainWindow):
             self.setDefaultConfigDict()
             self.setDefaultProfile()
             self.setTitle(self.untitled_profile)
+
 
     # load the variable pool from csv file and extract variable names only
     def loadVariablePool(self):
@@ -587,13 +605,15 @@ class App(QMainWindow, Ui_MainWindow):
         # load default profile if no params are given
         self.setProfileDict()
 
-    def setConfigDict(self, lastprofile='', width=800, height=480):
+    def setConfigDict(self, lastprofile='', width=800, height=480, autorun=True, autoruntimer=10):
         self.configDict = {
             'Config': {
                 '@version': '1.0',
                 'LastProfile': lastprofile,
                 'Width': width,
-                'Height': height
+                'Height': height,
+                'Autorun': autorun,
+                'AutorunTimer': autoruntimer
             }
         }
 

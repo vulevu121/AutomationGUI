@@ -3,13 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="a315e363-4d6f-448a-8093-5fd7b0a7caa5" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/copytopython27.bat" beforeDir="false" afterPath="$PROJECT_DIR$/copytopython27.bat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/makegui.bat" beforeDir="false" afterPath="$PROJECT_DIR$/makegui.bat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/xmlconfig.py" beforeDir="false" afterPath="$PROJECT_DIR$/AutomationGUI_ui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/xmlconfig.qrc" beforeDir="false" afterPath="$PROJECT_DIR$/AutomationGUI.qrc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/xmlconfig.ui" beforeDir="false" afterPath="$PROJECT_DIR$/AutomationGUI_ui.ui" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/xmlconfig_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/AutomationGUI.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/xmlconfig_rc.py" beforeDir="false" afterPath="$PROJECT_DIR$/AutomationGUI_rc.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutomationGUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/AutomationGUI.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutomationGUI_rc.py" beforeDir="false" afterPath="$PROJECT_DIR$/AutomationGUI_rc.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutomationGUI_ui.py" beforeDir="false" afterPath="$PROJECT_DIR$/AutomationGUI_ui.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutomationGUI_ui.ui" beforeDir="false" afterPath="$PROJECT_DIR$/AutomationGUI_ui.ui" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -75,12 +72,14 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="1706" />
+          <entry key="py" value="2301" />
+          <entry key="txt" value="70" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="1706" />
+          <entry key="PLAIN_TEXT" value="70" />
+          <entry key="Python" value="2301" />
         </counts>
       </usages-collector>
     </session>
@@ -90,12 +89,13 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/AutomationGUI.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="231">
-              <caret line="414" column="46" lean-forward="true" selection-start-line="414" selection-start-column="46" selection-end-line="414" selection-end-column="46" />
+            <state relative-caret-position="204">
+              <caret line="371" column="55" lean-forward="true" selection-start-line="371" selection-start-column="55" selection-end-line="371" selection-end-column="55" />
               <folding>
                 <element signature="e#47#176#0" expanded="true" />
-                <marker date="1541719566462" expanded="true" signature="6124:6176" ph="..." />
-                <marker date="1541719566462" expanded="true" signature="6229:6323" ph="..." />
+                <marker date="1542139593129" expanded="true" signature="6150:6202" ph="..." />
+                <marker date="1542139593129" expanded="true" signature="6255:6349" ph="..." />
+                <marker date="1542139593129" expanded="true" signature="22270:22276" ph="..." />
               </folding>
             </state>
           </provider>
@@ -118,7 +118,6 @@
       <find>get'Profile').get('Log').get('Signal')</find>
       <find>saveprofile(</find>
       <find>loadconfig</find>
-      <find>updateguifrom</find>
       <find>Dict.get(</find>
       <find>')</find>
       <find>loadprofile</find>
@@ -130,6 +129,8 @@
       <find>saveprof</find>
       <find>saveprofile()</find>
       <find>saveprofile</find>
+      <find>saveconfig</find>
+      <find>updateguifrom</find>
     </findStrings>
     <replaceStrings>
       <replace>includeversion</replace>
@@ -373,7 +374,21 @@
       <option name="project" value="LOCAL" />
       <updated>1540334518547</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="Added auto run feature">
+      <created>1541719608782</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1541719608782</updated>
+    </task>
+    <task id="LOCAL-00022" summary="Added test case excel file support">
+      <created>1541728263926</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1541728263926</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -385,7 +400,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32907802" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32907802" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.33049646" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -416,7 +431,9 @@
     <MESSAGE value="Added debug menu option" />
     <MESSAGE value="Updated browse functions" />
     <MESSAGE value="Added Karma logo" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added Karma logo" />
+    <MESSAGE value="Added auto run feature" />
+    <MESSAGE value="Added test case excel file support" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added test case excel file support" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/../Update_Hw_Sw_Version.py">
@@ -435,12 +452,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/AutomationGUI.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="231">
-          <caret line="414" column="46" lean-forward="true" selection-start-line="414" selection-start-column="46" selection-end-line="414" selection-end-column="46" />
+        <state relative-caret-position="204">
+          <caret line="371" column="55" lean-forward="true" selection-start-line="371" selection-start-column="55" selection-end-line="371" selection-end-column="55" />
           <folding>
             <element signature="e#47#176#0" expanded="true" />
-            <marker date="1541719566462" expanded="true" signature="6124:6176" ph="..." />
-            <marker date="1541719566462" expanded="true" signature="6229:6323" ph="..." />
+            <marker date="1542139593129" expanded="true" signature="6150:6202" ph="..." />
+            <marker date="1542139593129" expanded="true" signature="6255:6349" ph="..." />
+            <marker date="1542139593129" expanded="true" signature="22270:22276" ph="..." />
           </folding>
         </state>
       </provider>

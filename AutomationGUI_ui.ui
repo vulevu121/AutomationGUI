@@ -54,7 +54,7 @@ QWidget {
 }
 
 QLabel {
-	background-color: rgba(255, 255, 255, 0.5);
+	background-color: transparent;
 	padding: 2px;
 	border-radius: 8px;
 }
@@ -673,6 +673,38 @@ and Additional Signals</string>
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="tab_4">
+       <attribute name="icon">
+        <iconset resource="AutomationGUI.qrc">
+         <normaloff>:/icon/graphics/baseline_tab_unselected_black_24dp.png</normaloff>
+         <normalon>:/icon/graphics/baseline_tab_black_24dp.png</normalon>:/icon/graphics/baseline_tab_unselected_black_24dp.png</iconset>
+       </attribute>
+       <attribute name="title">
+        <string>Settings</string>
+       </attribute>
+       <widget class="QWidget" name="horizontalLayoutWidget">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>10</y>
+          <width>211</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QLabel" name="autorunLabel">
+           <property name="text">
+            <string>Autorun Timer</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="autorunSpinBox"/>
+         </item>
+        </layout>
+       </widget>
+      </widget>
      </widget>
     </item>
     <item>
@@ -790,7 +822,7 @@ and Additional Signals</string>
     </property>
     <addaction name="actionAbout"/>
    </widget>
-   <widget class="QMenu" name="menuOptions">
+   <widget class="QMenu" name="menuView">
     <property name="sizePolicy">
      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
       <horstretch>0</horstretch>
@@ -798,12 +830,12 @@ and Additional Signals</string>
      </sizepolicy>
     </property>
     <property name="title">
-     <string>Options</string>
+     <string>View</string>
     </property>
     <addaction name="actionShow_Debug_Messages"/>
    </widget>
    <addaction name="menuFile"/>
-   <addaction name="menuOptions"/>
+   <addaction name="menuView"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar">
