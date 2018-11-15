@@ -2,6 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a315e363-4d6f-448a-8093-5fd7b0a7caa5" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/Editor/.idea/Editor.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Editor/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Editor/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Editor/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Editor/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AutomationGUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/AutomationGUI.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AutomationGUI_rc.py" beforeDir="false" afterPath="$PROJECT_DIR$/AutomationGUI_rc.py" afterDir="false" />
@@ -56,8 +61,10 @@
     <session id="1764806281">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
+          <entry key="project.closed" value="1" />
           <entry key="project.open.time.0" value="1" />
-          <entry key="project.opened" value="1" />
+          <entry key="project.open.time.3" value="1" />
+          <entry key="project.opened" value="2" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -72,30 +79,30 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="2301" />
-          <entry key="txt" value="70" />
+          <entry key="py" value="2633" />
+          <entry key="txt" value="128" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PLAIN_TEXT" value="70" />
-          <entry key="Python" value="2301" />
+          <entry key="PLAIN_TEXT" value="128" />
+          <entry key="Python" value="2633" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
-    <leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/AutomationGUI.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="204">
-              <caret line="371" column="55" lean-forward="true" selection-start-line="371" selection-start-column="55" selection-end-line="371" selection-end-column="55" />
+            <state relative-caret-position="122">
+              <caret line="77" column="68" selection-start-line="77" selection-start-column="68" selection-end-line="78" selection-end-column="67" />
               <folding>
                 <element signature="e#47#176#0" expanded="true" />
-                <marker date="1542139593129" expanded="true" signature="6150:6202" ph="..." />
-                <marker date="1542139593129" expanded="true" signature="6255:6349" ph="..." />
-                <marker date="1542139593129" expanded="true" signature="22270:22276" ph="..." />
+                <marker date="1542225254203" expanded="true" signature="6254:6306" ph="..." />
+                <marker date="1542225254203" expanded="true" signature="6359:6453" ph="..." />
+                <marker date="1542225254203" expanded="true" signature="22321:22326" ph="..." />
               </folding>
             </state>
           </provider>
@@ -131,6 +138,7 @@
       <find>saveprofile</find>
       <find>saveconfig</find>
       <find>updateguifrom</find>
+      <find>changed</find>
     </findStrings>
     <replaceStrings>
       <replace>includeversion</replace>
@@ -161,7 +169,7 @@
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="120" />
-    <option name="y" value="6" />
+    <option name="y" value="5" />
     <option name="width" value="1750" />
     <option name="height" value="970" />
   </component>
@@ -170,7 +178,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -182,10 +189,11 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/Editor" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunDashboard">
@@ -388,7 +396,14 @@
       <option name="project" value="LOCAL" />
       <updated>1541728263926</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="Autorun setings are now saved">
+      <created>1542145254668</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1542145254668</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -400,7 +415,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32907802" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.33049646" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.33049646" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -433,7 +448,8 @@
     <MESSAGE value="Added Karma logo" />
     <MESSAGE value="Added auto run feature" />
     <MESSAGE value="Added test case excel file support" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added test case excel file support" />
+    <MESSAGE value="Autorun setings are now saved" />
+    <option name="LAST_COMMIT_MESSAGE" value="Autorun setings are now saved" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/../Update_Hw_Sw_Version.py">
@@ -452,13 +468,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/AutomationGUI.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="371" column="55" lean-forward="true" selection-start-line="371" selection-start-column="55" selection-end-line="371" selection-end-column="55" />
+        <state relative-caret-position="122">
+          <caret line="77" column="68" selection-start-line="77" selection-start-column="68" selection-end-line="78" selection-end-column="67" />
           <folding>
             <element signature="e#47#176#0" expanded="true" />
-            <marker date="1542139593129" expanded="true" signature="6150:6202" ph="..." />
-            <marker date="1542139593129" expanded="true" signature="6255:6349" ph="..." />
-            <marker date="1542139593129" expanded="true" signature="22270:22276" ph="..." />
+            <marker date="1542225254203" expanded="true" signature="6254:6306" ph="..." />
+            <marker date="1542225254203" expanded="true" signature="6359:6453" ph="..." />
+            <marker date="1542225254203" expanded="true" signature="22321:22326" ph="..." />
           </folding>
         </state>
       </provider>

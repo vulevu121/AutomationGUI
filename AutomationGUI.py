@@ -74,6 +74,7 @@ class App(QMainWindow, Ui_MainWindow):
         self.dtcExListView.setModel(self.dtcExModel)
 
         # signals and slots for menus, buttons, etc
+        self.testCaseExcelEdit.textChanged.connect(self.unsavedChanges)
         self.callFunctionEdit.textChanged.connect(self.unsavedChanges)
         self.csvReportEdit.textChanged.connect(self.unsavedChanges)
         self.versionCheckBox.clicked.connect(self.unsavedChanges)
@@ -108,7 +109,7 @@ class App(QMainWindow, Ui_MainWindow):
         self.actionAbout.triggered.connect(self.about)
         self.actionExit.triggered.connect(self.exit)
         self.actionOpenConfigFolder.triggered.connect(self.openConfigFolder)
-        self.actionShow_Debug_Messages.triggered.connect(self.toggleDebug)
+        self.showDebugCheckBox.clicked.connect(self.toggleDebug)
 
         self.logRadioBtn0.clicked.connect(self.hideAddSignal)
         self.logRadioBtn1.clicked.connect(self.hideAddSignal)
@@ -117,6 +118,7 @@ class App(QMainWindow, Ui_MainWindow):
         self.dtcExCheckBox.clicked.connect(self.dtcExToggle)
 
         # widgets initial settings
+        self.tabWidget.setCurrentIndex(0)
         self.logRadioBtn0.setChecked(True)
         self.dtcExCheckBox.setChecked(False)
         self.hideAddSignal()
@@ -157,7 +159,7 @@ class App(QMainWindow, Ui_MainWindow):
                 self.exit()
 
     def toggleDebug(self):
-        if self.actionShow_Debug_Messages.isChecked():
+        if self.showDebugCheckBox.isChecked():
             self.debug = True
             print('Debug ON')
         else:
@@ -224,14 +226,24 @@ class App(QMainWindow, Ui_MainWindow):
 
     def browseProfile(self):
         profilefolder = os.path.dirname(str(self.profileFile))
-        filePath, fileType = QFileDialog.getOpenFileName(self, "Open Profile", profilefolder,"XML Files (*.xml);;All Files (*)")
+        filePath, fileType = QFileDialog.getOpenFileName(
+            self,
+            "Open Profile",
+            profilefolder,
+            "XML Files (*.xml);;All Files (*)"
+        )
+
         if filePath:
             self.profileFile = Path(filePath)
             self.loadProfile()
             self.saveConfig()
 
     def browseTestCaseExcel(self):
-        self.browseFile(self.testCaseExcelEdit, 'Select Test Case Excel File', 'Excel Files (*.xlsx; *.xlsm)')
+        self.browseFile(
+            self.testCaseExcelEdit,
+            'Select Test Case Excel File',
+            'Excel Files (*.xlsx; *.xlsm)'
+        )
 
     def browseCallFunction(self):
         self.browseFolder(self.callFunctionEdit, 'Select Call Function Directory')
@@ -244,8 +256,14 @@ class App(QMainWindow, Ui_MainWindow):
 
     def browseFile(self, editBox, titleDialog, fileType):
         folder = str(os.path.dirname(editBox.text()))
-        filePath, fileType = QFileDialog.getOpenFileName(self, titleDialog, folder,
-                                                         "{};;All Files (*)".format(fileType))
+
+        filePath, fileType = QFileDialog.getOpenFileName(
+            self,
+            titleDialog,
+            folder,
+            "{};;All Files (*)".format(fileType)
+        )
+
         if filePath:
             editBox.setText(str(Path(filePath)))
 
@@ -261,8 +279,12 @@ class App(QMainWindow, Ui_MainWindow):
     def saveProfile(self):
         configfolder = os.path.dirname(str(self.configFile))
         if self.defaultProfile:
-            filePath, fileType = QFileDialog.getSaveFileName(self, "Save Profile As", configfolder,
-                                                             "XML Files (*.xml);;All Files (*)")
+            filePath, fileType = QFileDialog.getSaveFileName(
+                self,
+                "Save Profile As",
+                configfolder,
+                "XML Files (*.xml);;All Files (*)"
+            )
             if filePath:
                 self.profileFile = Path(filePath)
 
@@ -299,7 +321,12 @@ class App(QMainWindow, Ui_MainWindow):
 
     def saveAsProfile(self):
         profilefolder = os.path.dirname(str(self.profileFile))
-        filePath, fileType = QFileDialog.getSaveFileName(self, "Save Profile As", profilefolder,"XML Files (*.xml);;All Files (*)")
+        filePath, fileType = QFileDialog.getSaveFileName(
+            self,
+            "Save Profile As",
+            profilefolder,
+            "XML Files (*.xml);;All Files (*)"
+        )
 
         if filePath:
             self.profileFile = Path(filePath)
@@ -320,16 +347,18 @@ class App(QMainWindow, Ui_MainWindow):
         for i in range(0, self.dtcExModel.rowCount()):
             dtcExList.append(self.dtcExModel.item(i, 0).text())
 
-        self.setProfileDict(testcaseexcel=self.testCaseExcelEdit.text(),
-                            callfolder=self.callFunctionEdit.text(),
-                            csvfolder=self.csvReportEdit.text(),
-                            varpoolpath=self.variablePoolEdit.text(),
-                            fullmessages=self.fullMessagesCheckbox.isChecked(),
-                            includeversion=self.versionCheckBox.isChecked(),
-                            logmode=logMode,
-                            signallist=signalList,
-                            dtcenable=self.dtcExCheckBox.isChecked(),
-                            dtcexlist=dtcExList)
+        self.setProfileDict(
+            testcaseexcel=self.testCaseExcelEdit.text(),
+            callfolder=self.callFunctionEdit.text(),
+            csvfolder=self.csvReportEdit.text(),
+            varpoolpath=self.variablePoolEdit.text(),
+            fullmessages=self.fullMessagesCheckbox.isChecked(),
+            includeversion=self.versionCheckBox.isChecked(),
+            logmode=logMode,
+            signallist=signalList,
+            dtcenable=self.dtcExCheckBox.isChecked(),
+            dtcexlist=dtcExList
+        )
 
     def addSignal(self):
         signal = self.addSignalEdit.text()
@@ -407,10 +436,12 @@ class App(QMainWindow, Ui_MainWindow):
     def checkFolderExist(self, path):
         basename = os.path.basename(str(path))
         if not os.path.exists(path):
-            msgReply = QMessageBox.question(self,
-                                            'Create Folder',
-                                            '\'' + basename + '\'' + ' folder was not found. Would you like to create it?',
-                                            QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+            msgReply = QMessageBox.question(
+                self,
+                'Create Folder',
+                '\'' + basename + '\'' + ' folder was not found. Would you like to create it?',
+                QMessageBox.Yes | QMessageBox.No, QMessageBox.No
+            )
 
             if msgReply == QMessageBox.Yes:
                 os.mkdir(path)
@@ -418,10 +449,12 @@ class App(QMainWindow, Ui_MainWindow):
     def checkVarPoolExist(self, path):
         basename = os.path.basename(str(path))
         if not os.path.exists(path):
-            msgReply = QMessageBox.question(self,
-                                            'Not Found',
-                                            '\'' + basename + '\'' + ' file was not found. Would you like to browse for one?',
-                                            QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+            msgReply = QMessageBox.question(
+                self,
+                'Not Found',
+                '\'' + basename + '\'' + ' file was not found. Would you like to browse for one?',
+                QMessageBox.Yes | QMessageBox.No, QMessageBox.No
+            )
 
             if msgReply == QMessageBox.Yes:
                 self.browseVariablePool()
@@ -545,7 +578,6 @@ class App(QMainWindow, Ui_MainWindow):
             self.setDefaultProfile()
             self.setTitle(self.untitled_profile)
 
-
     # load the variable pool from csv file and extract variable names only
     def loadVariablePool(self):
         varpoolfile = Path(self.variablePoolEdit.text())
@@ -568,17 +600,19 @@ class App(QMainWindow, Ui_MainWindow):
     def setTitle(self, profilePath):
         self.setWindowTitle('[' + str(profilePath) + '] - AutomationDesk GUI')
 
-    def setProfileDict(self,
-                       testcaseexcel='',
-                       callfolder='',
-                       csvfolder='',
-                       varpoolpath='',
-                       includeversion='False',
-                       fullmessages='False',
-                       logmode='0',
-                       signallist=[],
-                       dtcenable='False',
-                       dtcexlist=[]):
+    def setProfileDict(
+            self,
+            testcaseexcel='',
+            callfolder='',
+            csvfolder='',
+            varpoolpath='',
+            includeversion='False',
+            fullmessages='False',
+            logmode='0',
+            signallist=[],
+            dtcenable='False',
+            dtcexlist=[]
+    ):
 
         self.profileDict = {
             'Profile': {
@@ -605,7 +639,13 @@ class App(QMainWindow, Ui_MainWindow):
         # load default profile if no params are given
         self.setProfileDict()
 
-    def setConfigDict(self, lastprofile='', width=800, height=480, autorun=True, autoruntimer=10):
+    def setConfigDict(
+            self, lastprofile='',
+            width=800,
+            height=480,
+            autorun=True,
+            autoruntimer=10
+    ):
         self.configDict = {
             'Config': {
                 '@version': '1.0',
@@ -624,7 +664,13 @@ class App(QMainWindow, Ui_MainWindow):
 
     def exit(self):
         if not self.changesSaved:
-            msgReply = QMessageBox.question(self, 'Save Changes', 'Would you like to save before exit?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+            msgReply = QMessageBox.question(
+                self,
+                'Save Changes',
+                'Would you like to save before exit?',
+                QMessageBox.Yes | QMessageBox.No,
+                QMessageBox.No
+            )
 
             if msgReply == QMessageBox.Yes:
                 self.saveProfile()
