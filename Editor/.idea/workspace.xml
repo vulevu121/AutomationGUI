@@ -1,17 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2be678f5-c437-44c7-a6d8-e4a8907f9712" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/Editor.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="2be678f5-c437-44c7-a6d8-e4a8907f9712" name="Default Changelist" comment="Updated test case editor">
       <change beforePath="$PROJECT_DIR$/../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../AutomationGUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/../AutomationGUI.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../AutomationGUI_rc.py" beforeDir="false" afterPath="$PROJECT_DIR$/../AutomationGUI_rc.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../AutomationGUI_ui.py" beforeDir="false" afterPath="$PROJECT_DIR$/../AutomationGUI_ui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../AutomationGUI_ui.ui" beforeDir="false" afterPath="$PROJECT_DIR$/../AutomationGUI_ui.ui" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -23,29 +16,31 @@
     <session id="-1289760764">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="1" />
-          <entry key="project.open.time.0" value="2" />
-          <entry key="project.opened" value="2" />
+          <entry key="project.closed" value="2" />
+          <entry key="project.open.time.0" value="3" />
+          <entry key="project.opened" value="3" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="py" value="2" />
+          <entry key="py" value="3" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="Python" value="2" />
+          <entry key="Python" value="3" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="489" />
+          <entry key="py" value="6308" />
+          <entry key="txt" value="51" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="489" />
+          <entry key="PLAIN_TEXT" value="51" />
+          <entry key="Python" value="6308" />
         </counts>
       </usages-collector>
     </session>
@@ -55,10 +50,10 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/TestCaseEditor.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="220">
-              <caret line="26" column="26" selection-start-line="26" selection-start-column="26" selection-end-line="26" selection-end-column="26" />
+            <state relative-caret-position="180">
+              <caret line="69" column="47" selection-start-line="69" selection-start-column="47" selection-end-line="69" selection-end-column="47" />
               <folding>
-                <element signature="e#47#186#0" expanded="true" />
+                <element signature="e#47#217#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -152,6 +147,21 @@
       <option name="presentableId" value="Default" />
       <updated>1542319475611</updated>
     </task>
+    <task id="LOCAL-00001" summary="Added test case editor">
+      <created>1542324001165</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1542324001165</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Updated test case editor">
+      <created>1542333441212</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1542333441212</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -180,16 +190,28 @@
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Added test case editor" />
+    <MESSAGE value="Updated test case editor" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated test case editor" />
+  </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/TestCaseEditor_ui.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.2/system/python_stubs/1339128885/PyQt5/QtGui/QStandardItemModel.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="149">
+          <caret line="251" column="8" selection-start-line="251" selection-start-column="8" selection-end-line="251" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/TestCaseEditor.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="26" column="26" selection-start-line="26" selection-start-column="26" selection-end-line="26" selection-end-column="26" />
+        <state relative-caret-position="180">
+          <caret line="69" column="47" selection-start-line="69" selection-start-column="47" selection-end-line="69" selection-end-column="47" />
           <folding>
-            <element signature="e#47#186#0" expanded="true" />
+            <element signature="e#47#217#0" expanded="true" />
           </folding>
         </state>
       </provider>

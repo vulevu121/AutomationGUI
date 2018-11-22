@@ -181,12 +181,14 @@ class App(QMainWindow, Ui_MainWindow):
         dirname = os.path.dirname(str(varpoolpath))
         if os.path.exists(str(dirname)):
             os.startfile(str(dirname))
+            os.startfile(str(varpoolpath))
 
     def openTestCaseExcelFolder(self):
         testCaseExcelPath = Path(self.testCaseExcelEdit.text())
         dirname = os.path.dirname(str(testCaseExcelPath))
         if os.path.exists(str(dirname)):
             os.startfile(str(dirname))
+            os.startfile(str(testCaseExcelPath))
 
     def openConfigFolder(self):
         configfolder = os.path.dirname(str(self.configFile))
