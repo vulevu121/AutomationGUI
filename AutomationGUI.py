@@ -9,7 +9,7 @@ from pathlib import Path
 from AutomationGUI_ui import *
 import os
 import sys
-import csv
+# import csv
 
 if sys.version_info[0] < 3:
     FileNotFoundError = IOError
@@ -23,19 +23,6 @@ class App(QMainWindow, Ui_MainWindow):
 
         # create a frameless window without titlebar
         # self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-
-        # gui layout related
-        dropShadow = QGraphicsDropShadowEffect()
-        dropShadow.setXOffset(1)
-        dropShadow.setYOffset(1)
-        dropShadow.setBlurRadius(6)
-        self.tabWidget.setGraphicsEffect(dropShadow)
-
-        self.bottombuttonsLayout.setAlignment(Qt.AlignRight)
-        self.generalLayout.setAlignment(Qt.AlignTop)
-        self.loggingTabLayout.setAlignment(Qt.AlignLeft)
-        self.dtcTabLayout.setAlignment(Qt.AlignLeft | Qt.AlignTop)
-        self.logmodeLayout.setAlignment(Qt.AlignTop)
 
         # use these strings for messages
         self.config_invalid = 'Invalid config file detected.'
@@ -65,8 +52,10 @@ class App(QMainWindow, Ui_MainWindow):
 
         self.configDict = {}
         self.profileDict = {}
-        self.variablePool = []
+        self.variablePoolDict = {}
+        self.updateVariablePool = False  # update variable pool in AutomationDesk
 
+        # Qt item models
         self.addSignalModel = QStandardItemModel()
         self.addSignalListView.setModel(self.addSignalModel)
 
@@ -80,10 +69,7 @@ class App(QMainWindow, Ui_MainWindow):
         self.versionCheckBox.clicked.connect(self.unsavedChanges)
         self.reloadVariablePoolBtn.clicked.connect(self.loadVariablePool)
 
-        self.logRadioBtn0.clicked.connect(self.unsavedChanges)
-        self.logRadioBtn1.clicked.connect(self.unsavedChanges)
-        self.logRadioBtn2.clicked.connect(self.unsavedChanges)
-
+        # general tab
         self.browseTestCaseExcelBtn.clicked.connect(self.browseTestCaseExcel)
         self.browseCallFunctionBtn.clicked.connect(self.browseCallFunction)
         self.browseCsvReportBtn.clicked.connect(self.browseCsvReport)
@@ -94,14 +80,29 @@ class App(QMainWindow, Ui_MainWindow):
         self.openCsvReportFolderButton.clicked.connect(self.openCsvReportFolder)
         self.openVarPoolFolderButton.clicked.connect(self.openVarPoolFolder)
 
+        # logging tab
         self.addSignalBtn.clicked.connect(self.addSignal)
         self.addSignalEdit.returnPressed.connect(self.addSignal)
         self.removeSignalBtn.clicked.connect(self.removeSignal)
 
+        self.logRadioBtn0.clicked.connect(self.hideAddSignal)
+        self.logRadioBtn1.clicked.connect(self.hideAddSignal)
+        self.logRadioBtn2.clicked.connect(self.showAddSignal)
+        self.dtcExCheckBox.clicked.connect(self.dtcExToggle)
+
+        self.logRadioBtn0.clicked.connect(self.unsavedChanges)
+        self.logRadioBtn1.clicked.connect(self.unsavedChanges)
+        self.logRadioBtn2.clicked.connect(self.unsavedChanges)
+
+        # dtc tab
         self.addDtcExBtn.clicked.connect(self.addDtcEx)
         self.addDtcExEdit.returnPressed.connect(self.addDtcEx)
         self.removeDtcExBtn.clicked.connect(self.removeDtcEx)
 
+        # settings tab
+        self.updateVariablePoolCheckBox.clicked.connect(self.toggleUpdateVariablePool)
+
+        # file menu
         self.actionLoad.triggered.connect(self.browseProfile)
         self.actionNew.triggered.connect(self.newProfile)
         self.actionSave.triggered.connect(self.saveProfile)
@@ -111,13 +112,21 @@ class App(QMainWindow, Ui_MainWindow):
         self.actionOpenConfigFolder.triggered.connect(self.openConfigFolder)
         self.showDebugCheckBox.clicked.connect(self.toggleDebug)
 
-        self.logRadioBtn0.clicked.connect(self.hideAddSignal)
-        self.logRadioBtn1.clicked.connect(self.hideAddSignal)
-        self.logRadioBtn2.clicked.connect(self.showAddSignal)
+        # gui layout related
+        dropShadow = QGraphicsDropShadowEffect()
+        dropShadow.setXOffset(1)
+        dropShadow.setYOffset(1)
+        dropShadow.setBlurRadius(6)
+        self.tabWidget.setGraphicsEffect(dropShadow)
 
-        self.dtcExCheckBox.clicked.connect(self.dtcExToggle)
+        self.bottombuttonsLayout.setAlignment(Qt.AlignRight)
+        self.generalLayout.setAlignment(Qt.AlignTop)
+        self.loggingTabLayout.setAlignment(Qt.AlignLeft)
+        self.dtcTabLayout.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+        self.logmodeLayout.setAlignment(Qt.AlignTop)
+        self.settingsVerticalLayoutRight.setAlignment(Qt.AlignTop)
+        self.settingsVerticalLayoutLeft.setAlignment(Qt.AlignTop)
 
-        # widgets initial settings
         self.tabWidget.setCurrentIndex(0)
         self.logRadioBtn0.setChecked(True)
         self.dtcExCheckBox.setChecked(False)
@@ -159,12 +168,12 @@ class App(QMainWindow, Ui_MainWindow):
                 self.exit()
 
     def toggleDebug(self):
-        if self.showDebugCheckBox.isChecked():
-            self.debug = True
-            print('Debug ON')
-        else:
-            self.debug = False
-            print('Debug OFF')
+        self.debug = self.showDebugCheckBox.isChecked()
+        print('ShowDebug={}'.format(self.debug))
+
+    def toggleUpdateVariablePool(self):
+        self.updateVariablePool = self.updateVariablePoolCheckBox.isChecked()
+        self.dprint('UpdateVariablePool={}'.format(self.updateVariablePool))
 
     def openCallFunctionFolder(self):
         callfunctionpath = Path(self.callFunctionEdit.text())
@@ -254,7 +263,7 @@ class App(QMainWindow, Ui_MainWindow):
         self.browseFolder(self.csvReportEdit, 'Select CSV Report Directory')
 
     def browseVariablePool(self):
-        self.browseFile(self.variablePoolEdit, 'Open Variable Pool', 'CSV Files (*.csv)')
+        self.browseFile(self.variablePoolEdit, 'Open Variable Pool', 'TXT Files (*.txt)')
 
     def browseFile(self, editBox, titleDialog, fileType):
         folder = str(os.path.dirname(editBox.text()))
@@ -359,22 +368,32 @@ class App(QMainWindow, Ui_MainWindow):
             logmode=logMode,
             signallist=signalList,
             dtcenable=self.dtcExCheckBox.isChecked(),
-            dtcexlist=dtcExList
+            dtcexlist=dtcExList,
+            updatevp=self.updateVariablePool
         )
 
     def addSignal(self):
         signal = self.addSignalEdit.text()
+
         try:
-            self.variablePool.index(signal)
-            # check for duplicate signal
-            if self.addSignalModel.findItems(signal):
+            variablePoolKeys = list(self.variablePoolDict)
+
+            try:
+                foundInVp = variablePoolKeys.index(signal) >= 0
+            except:
+                foundInVp = False
+
+            foundInModel = self.addSignalModel.findItems(signal)
+
+            if foundInModel:
                 self.statusbar.showMessage(self.add_signal_duplicate)
-            else:
+
+            if foundInVp and not foundInModel:
                 self.addSignalModel.appendRow(QStandardItem(self.addSignalEdit.text()))
                 self.addSignalEdit.clear()
                 self.addSignalEdit.setFocus()
                 self.statusbar.showMessage(self.add_signal_success)
-        except ValueError:
+        except:
             self.statusbar.showMessage(self.add_signal_notfound)
 
     def removeSignal(self):
@@ -583,14 +602,16 @@ class App(QMainWindow, Ui_MainWindow):
     # load the variable pool from csv file and extract variable names only
     def loadVariablePool(self):
         varpoolfile = Path(self.variablePoolEdit.text())
-        if len(str(varpoolfile)) > 1:
+        if os.path.exists(str(varpoolfile)):
             try:
                 with open(str(varpoolfile)) as f:
-                    self.variablePool = []
-                    self.variablePool.extend(row['VariableName'] for row in csv.DictReader(f))
+                    # self.variablePool.extend(row['VariableName'] for row in csv.DictReader(f))
+                    self.variablePoolDict = eval(f.read())
+
+                    variablePoolKeys = list(self.variablePoolDict)
 
                     model = QStringListModel()
-                    model.setStringList(self.variablePool)
+                    model.setStringList(variablePoolKeys)
                     completer = QCompleter()
                     completer.setModel(model)
                     completer.setCaseSensitivity(0)
@@ -613,7 +634,8 @@ class App(QMainWindow, Ui_MainWindow):
             logmode='0',
             signallist=[],
             dtcenable='False',
-            dtcexlist=[]
+            dtcexlist=[],
+            updatevp='False'
     ):
 
         self.profileDict = {
@@ -623,6 +645,7 @@ class App(QMainWindow, Ui_MainWindow):
                 'CallFunctionFolder': callfolder,
                 'CSVReportFolder': csvfolder,
                 'VariablePoolPath': varpoolpath,
+                'UpdateVariablePool': updatevp,
                 'Version': {'@include': includeversion},
                 'FullMessages': {'@enable': fullmessages},
                 'Log': {
@@ -661,8 +684,7 @@ class App(QMainWindow, Ui_MainWindow):
 
     def setDefaultConfigDict(self):
         self.unsavedChanges()
-        # load default config if no params are given
-        self.setConfigDict()
+        self.setConfigDict()  # load default config if no params are given
 
     def exit(self):
         if not self.changesSaved:
@@ -696,8 +718,8 @@ def main():
     form = App()
     form.show()
     app.exec_()
-    # return the profile dict to caller such as AutomationDesk
-    return form.profileDict
+
+    return form.profileDict, form.variablePoolDict  # return data to AutomationDesk
 
 
 if __name__ == '__main__':

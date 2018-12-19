@@ -4,7 +4,11 @@
     <list default="true" id="a315e363-4d6f-448a-8093-5fd7b0a7caa5" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AutomationGUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/AutomationGUI.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutomationGUI_rc.py" beforeDir="false" afterPath="$PROJECT_DIR$/AutomationGUI_rc.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutomationGUI_ui.py" beforeDir="false" afterPath="$PROJECT_DIR$/AutomationGUI_ui.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutomationGUI_ui.ui" beforeDir="false" afterPath="$PROJECT_DIR$/AutomationGUI_ui.ui" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Editor/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Editor/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/copytopython27.bat" beforeDir="false" afterPath="$PROJECT_DIR$/copytopython27.bat" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -54,33 +58,35 @@
     <session id="1764806281">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="2" />
-          <entry key="project.open.time.0" value="1" />
+          <entry key="project.closed" value="3" />
+          <entry key="project.open.time.0" value="2" />
           <entry key="project.open.time.3" value="1" />
-          <entry key="project.open.time.4" value="1" />
-          <entry key="project.opened" value="3" />
+          <entry key="project.open.time.4" value="2" />
+          <entry key="project.opened" value="5" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="py" value="2" />
+          <entry key="py" value="3" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="Python" value="2" />
+          <entry key="Python" value="3" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="2646" />
+          <entry key="Python Console" value="21" />
+          <entry key="dummy" value="4" />
+          <entry key="py" value="4555" />
           <entry key="txt" value="128" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PLAIN_TEXT" value="128" />
-          <entry key="Python" value="2646" />
+          <entry key="PLAIN_TEXT" value="132" />
+          <entry key="Python" value="4576" />
         </counts>
       </usages-collector>
     </session>
@@ -90,13 +96,15 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/AutomationGUI.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="131">
-              <caret line="33" column="45" selection-start-line="33" selection-start-column="36" selection-end-line="33" selection-end-column="45" />
+            <state relative-caret-position="171">
+              <caret line="604" column="42" selection-start-line="604" selection-start-column="42" selection-end-line="604" selection-end-column="42" />
               <folding>
                 <element signature="e#47#176#0" expanded="true" />
-                <marker date="1542827289737" expanded="true" signature="6254:6306" ph="..." />
-                <marker date="1542827289737" expanded="true" signature="6359:6453" ph="..." />
-                <marker date="1542827289737" expanded="true" signature="22413:22418" ph="..." />
+                <marker date="1545258414347" expanded="true" signature="6657:6709" ph="..." />
+                <marker date="1545258414347" expanded="true" signature="6762:6856" ph="..." />
+                <marker date="1545258414347" expanded="true" signature="7335:7496" ph="..." />
+                <marker date="1545258414347" expanded="true" signature="23152:23157" ph="..." />
+                <marker date="1545258414347" expanded="true" signature="24158:24162" ph="..." />
               </folding>
             </state>
           </provider>
@@ -133,6 +141,8 @@
       <find>saveconfig</find>
       <find>updateguifrom</find>
       <find>changed</find>
+      <find>addsignal</find>
+      <find>addsignalbtn</find>
     </findStrings>
     <replaceStrings>
       <replace>includeversion</replace>
@@ -161,7 +171,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="120" />
     <option name="y" value="5" />
     <option name="width" value="1750" />
@@ -187,7 +197,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/Editor" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunDashboard">
@@ -401,10 +411,10 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="-7" width="1550" height="838" extended-state="7" />
+    <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15333775" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.13681428" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -415,9 +425,9 @@
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.32907802" />
-      <window_info anchor="bottom" id="Terminal" order="8" />
+      <window_info anchor="bottom" id="Terminal" order="8" weight="0.32907802" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
-      <window_info anchor="bottom" id="Python Console" order="10" />
+      <window_info anchor="bottom" id="Python Console" order="10" weight="0.32907802" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -445,6 +455,17 @@
     <MESSAGE value="Autorun setings are now saved" />
     <option name="LAST_COMMIT_MESSAGE" value="Autorun setings are now saved" />
   </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/AutomationGUI.py</url>
+          <line>610</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/../Update_Hw_Sw_Version.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -460,15 +481,24 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.2/system/python_stubs/1339128885/PyQt5/QtGui/QStandardItemModel.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-311">
+          <caret line="112" column="38" selection-start-line="112" selection-start-column="33" selection-end-line="112" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/AutomationGUI.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="131">
-          <caret line="33" column="45" selection-start-line="33" selection-start-column="36" selection-end-line="33" selection-end-column="45" />
+        <state relative-caret-position="171">
+          <caret line="604" column="42" selection-start-line="604" selection-start-column="42" selection-end-line="604" selection-end-column="42" />
           <folding>
             <element signature="e#47#176#0" expanded="true" />
-            <marker date="1542827289737" expanded="true" signature="6254:6306" ph="..." />
-            <marker date="1542827289737" expanded="true" signature="6359:6453" ph="..." />
-            <marker date="1542827289737" expanded="true" signature="22413:22418" ph="..." />
+            <marker date="1545258414347" expanded="true" signature="6657:6709" ph="..." />
+            <marker date="1545258414347" expanded="true" signature="6762:6856" ph="..." />
+            <marker date="1545258414347" expanded="true" signature="7335:7496" ph="..." />
+            <marker date="1545258414347" expanded="true" signature="23152:23157" ph="..." />
+            <marker date="1545258414347" expanded="true" signature="24158:24162" ph="..." />
           </folding>
         </state>
       </provider>
