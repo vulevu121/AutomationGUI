@@ -46,6 +46,9 @@ class App(QMainWindow, Ui_MainWindow):
         self.dtcExModel = QStandardItemModel()
         self.dtcExListView.setModel(self.dtcExModel)
 
+        # toolbar
+
+
         # general tab
         self.browseTestCaseExcelBtn.clicked.connect(self.browseTestCaseExcel)
         self.browseCallFunctionBtn.clicked.connect(self.browseCallFunction)
@@ -104,7 +107,7 @@ class App(QMainWindow, Ui_MainWindow):
         self.actionSaveAs.triggered.connect(self.saveAsProfile)
         self.actionAbout.triggered.connect(self.about)
         self.actionExit.triggered.connect(self.exit)
-        self.actionOpenConfigFolder.triggered.connect(self.openConfigFolder)
+        self.actionConfigFolder.triggered.connect(self.openConfigFolder)
         self.showDebugCheckBox.clicked.connect(self.toggleDebug)
 
         # gui layout related
