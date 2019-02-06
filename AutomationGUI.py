@@ -1,50 +1,33 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox, QListView, QCompleter, QGraphicsDropShadowEffect
-from PyQt5.QtGui import QStandardItem, QStandardItemModel, QPixmap, QIcon
-from PyQt5.QtCore import QStringListModel, Qt, QTimer
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 import xmltodict
 from pathlib import Path
 from AutomationGUI_ui import *
 import os
 import sys
-# import csv
+import strings
 
 if sys.version_info[0] < 3:
     FileNotFoundError = IOError
+
+debug = False
+def debugprint(msg):
+    if debug:
+        print(msg)
 
 
 class App(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super(self.__class__, self).__init__()
         self.setupUi(self)
-        self.debug = False
+
 
         # create a frameless window without titlebar
         # self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-
-        # use these strings for messages
-        self.config_invalid = 'Invalid config file detected.'
-        self.config_notfound = 'Config filse not found. Default config and profile loaded.'
-        self.unsaved_changes = 'You have unsaved changes.'
-        self.untitled_profile = 'Untitled Profile'
-        self.default_profile_loaded = 'Default profile loaded.'
-        self.profile_loaded_success = 'Profile loaded successfully.'
-        self.profile_does_not_exist = 'Profile does not exist. Please load profile.'
-        self.profile_notfound_config = 'No last profile defined in config.'
-        self.profile_invalid = 'Invalid profile detected.'
-        self.profile_invalid_version = 'Invalid profile version detected.'
-        self.profile_save_fail = 'Saving Profile...Fail'
-        self.profile_save_success = 'Saving Profile...Success!'
-        self.add_signal_success = 'Signal added successfully.'
-        self.add_signal_duplicate = 'Duplicate signal. Try again.'
-        self.add_signal_notfound = 'Signal not found in variable pool.'
-        self.add_dtcex_success = 'DTC exception added successfully.'
-        self.variable_pool_loaded_success = 'Variable pool loaded successfully.'
-        self.variable_pool_notfound = 'Variable pool file does not exist.'
-
-        self.defaultProfile = True
 
         # set default xml config file path
         self.configFile = 'C:/DS_Config/config.xml'
@@ -54,6 +37,7 @@ class App(QMainWindow, Ui_MainWindow):
         self.profileDict = {}
         self.variablePoolDict = {}
         self.updateVariablePool = False  # update variable pool in AutomationDesk
+        self.defaultProfile = True  # false when a profile is loaded
 
         # Qt item models
         self.addSignalModel = QStandardItemModel()
@@ -61,13 +45,6 @@ class App(QMainWindow, Ui_MainWindow):
 
         self.dtcExModel = QStandardItemModel()
         self.dtcExListView.setModel(self.dtcExModel)
-
-        # signals and slots for menus, buttons, etc
-        self.testCaseExcelEdit.textChanged.connect(self.unsavedChanges)
-        self.callFunctionEdit.textChanged.connect(self.unsavedChanges)
-        self.csvReportEdit.textChanged.connect(self.unsavedChanges)
-        self.versionCheckBox.clicked.connect(self.unsavedChanges)
-        self.reloadVariablePoolBtn.clicked.connect(self.loadVariablePool)
 
         # general tab
         self.browseTestCaseExcelBtn.clicked.connect(self.browseTestCaseExcel)
@@ -77,8 +54,26 @@ class App(QMainWindow, Ui_MainWindow):
 
         self.openTestCaseExcelFolderBtn.clicked.connect(self.openTestCaseExcelFolder)
         self.openCallFunctionFolderButton.clicked.connect(self.openCallFunctionFolder)
-        self.openCsvReportFolderButton.clicked.connect(self.openCsvReportFolder)
         self.openVarPoolFolderButton.clicked.connect(self.openVarPoolFolder)
+
+        self.testCaseExcelEdit.textChanged.connect(self.unsavedChanges)
+        self.callFunctionEdit.textChanged.connect(self.unsavedChanges)
+        self.csvReportEdit.textChanged.connect(self.unsavedChanges)
+        self.versionCheckBox.clicked.connect(self.unsavedChanges)
+        self.variablePoolEdit.textChanged.connect(self.unsavedChanges)
+        self.reloadVariablePoolBtn.clicked.connect(self.loadVariablePool)
+
+        self.toolButton.setPopupMode(QToolButton.InstantPopup)
+        menu = QMenu()
+        openCsvReportFolderButton = QAction(QIcon(':/icon/graphics/baseline_open_in_browser_black_24dp.png'), 'Open Folder + File', self)
+        openCsvReportFolderButton.triggered.connect(self.openCsvReportFolder)
+        menu.addAction(openCsvReportFolderButton)
+
+        useTestCasePathButton = QAction(QIcon(':/icon/graphics/baseline_folder_black_24dp.png'), 'Use Test Case Path', self)
+        useTestCasePathButton.triggered.connect(self.useTestCasePath)
+        menu.addAction(useTestCasePathButton)
+
+        self.toolButton.setMenu(menu)
 
         # logging tab
         self.addSignalBtn.clicked.connect(self.addSignal)
@@ -151,29 +146,27 @@ class App(QMainWindow, Ui_MainWindow):
     #     self.gridLayout.width
     #     # QtGui.QMainWindow.resizeEvent(self, event)
 
-    def dprint(self, msg):
-        if self.debug:
-            print(msg)
+
 
     def tick(self):
         if self.startTimerCount > 0:
             self.exitButton.setText('Continue ({})'.format(self.startTimerCount))
-            self.dprint(self.startTimerCount)
+            debugprint(self.startTimerCount)
             self.startTimerCount = self.startTimerCount - 1
         else:
             self.startTimer.stop()
-            self.dprint('Timer stop')
+            debugprint('Timer stop')
             self.exitButton.setText('Continue')
             if self.autorunCheckBox.isChecked():
                 self.exit()
 
     def toggleDebug(self):
-        self.debug = self.showDebugCheckBox.isChecked()
-        print('ShowDebug={}'.format(self.debug))
+        debug = self.showDebugCheckBox.isChecked()
+        print('ShowDebug={}'.format(debug))
 
     def toggleUpdateVariablePool(self):
         self.updateVariablePool = self.updateVariablePoolCheckBox.isChecked()
-        self.dprint('UpdateVariablePool={}'.format(self.updateVariablePool))
+        debugprint('UpdateVariablePool={}'.format(self.updateVariablePool))
 
     def openCallFunctionFolder(self):
         callfunctionpath = Path(self.callFunctionEdit.text())
@@ -206,6 +199,11 @@ class App(QMainWindow, Ui_MainWindow):
         if os.path.exists(configfolder):
             os.startfile(configfolder)
 
+    def useTestCasePath(self):
+        testCaseExcelPath = Path(self.testCaseExcelEdit.text())
+        dirname = os.path.dirname(str(testCaseExcelPath))
+        self.csvReportEdit.setText(str(dirname) + '\\Logs')
+
     def hideAddSignal(self):
         self.addSignalGroupBox.hide()
 
@@ -226,14 +224,14 @@ class App(QMainWindow, Ui_MainWindow):
 
     def unsavedChanges(self):
         self.changesSaved = False
-        self.statusbar.showMessage(self.unsaved_changes)
+        self.statusbar.showMessage(strings.UNSAVED_CHANGES)
 
     def newProfile(self):
         self.setDefaultProfile()
         self.profileFile = ''
-        self.setTitle(self.untitled_profile)
+        self.setTitle(strings.PROFILE_UNTITLED)
         self.updateGuiFromProfileDict()
-        self.statusbar.showMessage(self.default_profile_loaded)
+        self.statusbar.showMessage(strings.PROFILE_DEFAULT_LOADED)
 
     def browseProfile(self):
         profilefolder = os.path.dirname(str(self.profileFile))
@@ -308,14 +306,14 @@ class App(QMainWindow, Ui_MainWindow):
         # save the profile from profile dict
         try:
             with open(str(self.profileFile), 'wb') as f:
-                self.dprint(str(self.profileFile))
+                debugprint(str(self.profileFile))
                 f.write(bytearray(xmltodict.unparse(self.profileDict, pretty=True), encoding='utf-8'))
                 self.setTitle(self.profileFile)
                 self.defaultProfile = False
                 self.changesSaved = True
-                self.statusbar.showMessage(self.profile_save_success)
+                self.statusbar.showMessage(strings.PROFILE_SAVE_OK)
         except FileNotFoundError:
-            self.statusbar.showMessage(self.profile_save_fail)
+            self.statusbar.showMessage(strings.PROFILE_SAVE_FAIL)
 
         # update and check all paths exist, prompt accordingly
         callpath = self.callFunctionEdit.text()
@@ -363,7 +361,7 @@ class App(QMainWindow, Ui_MainWindow):
             callfolder=self.callFunctionEdit.text(),
             csvfolder=self.csvReportEdit.text(),
             varpoolpath=self.variablePoolEdit.text(),
-            fullmessages=self.fullMessagesCheckbox.isChecked(),
+            callfuncdebug=self.callFunctionDebugCheckbox.isChecked(),
             includeversion=self.versionCheckBox.isChecked(),
             logmode=logMode,
             signallist=signalList,
@@ -386,15 +384,15 @@ class App(QMainWindow, Ui_MainWindow):
             foundInModel = self.addSignalModel.findItems(signal)
 
             if foundInModel:
-                self.statusbar.showMessage(self.add_signal_duplicate)
+                self.statusbar.showMessage(strings.SIGNAL_ADD_DUPLICATE)
 
             if foundInVp and not foundInModel:
                 self.addSignalModel.appendRow(QStandardItem(self.addSignalEdit.text()))
                 self.addSignalEdit.clear()
                 self.addSignalEdit.setFocus()
-                self.statusbar.showMessage(self.add_signal_success)
+                self.statusbar.showMessage(strings.SIGNAL_ADD_OK)
         except:
-            self.statusbar.showMessage(self.add_signal_notfound)
+            self.statusbar.showMessage(strings.SIGNAL_NOTFOUND)
 
     def removeSignal(self):
         self.addSignalModel.removeRow(self.addSignalListView.currentIndex().row())
@@ -403,7 +401,8 @@ class App(QMainWindow, Ui_MainWindow):
         self.dtcExModel.appendRow(QStandardItem(self.addDtcExEdit.text()))
         self.addDtcExEdit.clear()
         self.addDtcExEdit.setFocus()
-        self.statusbar.showMessage(self.add_dtcex_success)
+        self.statusbar.showMessage(strings.DTCEX_ADD_OK)
+
 
     def removeDtcEx(self):
         self.dtcExModel.removeRow(self.dtcExListView.currentIndex().row())
@@ -428,31 +427,50 @@ class App(QMainWindow, Ui_MainWindow):
             with open(str(self.configFile), 'wb') as f:
                 f.write(bytearray(xmltodict.unparse(self.configDict, pretty=True), encoding='utf-8'))
         except FileNotFoundError:
-            self.statusbar.showMessage(self.config_notfound)
+            self.statusbar.showMessage(strings.CONFIG_NOTFOUND)
 
     def loadProfile(self):
-        try:
+        if os.path.exists(str(self.profileFile)):
             with open(str(self.profileFile), 'rb') as f:
-                self.profileDict = xmltodict.parse(f.read())
+                try:
+                    self.profileDict = xmltodict.parse(f.read())
+                except:
+                    debugprint('Unable to parse profile XML file.')
+
+                profileValid = True
+
                 try:
                     profileversion = self.profileDict['Profile']['@version']
-                    varpoolfile = self.profileDict['Profile']['VariablePoolPath']
                     if profileversion == '1.0':
-
-                        # updates the gui after loading a valid profile
-                        self.defaultProfile = False
-                        self.updateGuiFromProfileDict()
-                        if os.path.exists(varpoolfile):
-                            self.loadVariablePool()
-                        self.setTitle(self.profileFile)
-                        self.statusbar.showMessage(self.profile_loaded_success)
+                        profileValid &= True
                     else:
-                        self.statusbar.showMessage(self.profile_invalid_version)
+                        debugprint('Invalid profile version.')
                 except:
-                    self.statusbar.showMessage(self.profile_invalid)
-        except FileNotFoundError:
+                    debugprint('No profile version defined.')
+
+                try:
+                    varpoolfile = self.profileDict['Profile']['VariablePoolPath']
+                    if not os.path.exists(str(varpoolfile)):
+                        self.statusbar.showMessage(strings.VARIABLE_POOL_NOTFOUND)
+                    profileValid &= True
+                except:
+                    debugprint('No variable pool file defined in profile.')
+                    self.statusbar.showMessage(strings.CONFIG_VARIABLE_POOL_DEFINED)
+
+                if profileValid:
+                    # updates the gui after loading a valid profile
+                    self.defaultProfile = False
+                    self.updateGuiFromProfileDict()
+                    if os.path.exists(str(varpoolfile)):
+                        self.loadVariablePool()
+                    self.setTitle(self.profileFile)
+                    self.statusbar.showMessage(strings.PROFILE_LOADED_OK)
+                else:
+                    self.statusbar.showMessage(strings.PROFILE_INVALID)
+
+        else:
             self.newProfile()
-            self.statusbar.showMessage(self.profile_does_not_exist)
+            self.statusbar.showMessage(strings.PROFILE_NOTFOUND)
 
     def checkFolderExist(self, path):
         basename = os.path.basename(str(path))
@@ -513,10 +531,10 @@ class App(QMainWindow, Ui_MainWindow):
             self.variablePoolEdit.setText('')
 
         try:
-            fullmessagescheckbox = self.profileDict['Profile']['FullMessages']['@enable']
-            self.fullMessagesCheckbox.setChecked(eval(fullmessagescheckbox))
+            callfunctiondebug = self.profileDict['Profile']['CallFunctionDebug']['@enable']
+            self.callFunctionDebugCheckbox.setChecked(eval(callfunctiondebug))
         except:
-            self.fullMessagesCheckbox.setChecked(False)
+            self.callFunctionDebugCheckBox.setChecked(False)
 
         try:
             versioncheckbox = self.profileDict['Profile']['Version']['@include']
@@ -537,7 +555,7 @@ class App(QMainWindow, Ui_MainWindow):
             for s in signalList:
                 self.addSignalModel.appendRow(QStandardItem(str(s)))
         except:
-            self.dprint('Signal list is empty')
+            debugprint('Signal list is empty')
 
         self.dtcExModel.clear()
 
@@ -554,50 +572,64 @@ class App(QMainWindow, Ui_MainWindow):
             for s in dtcExList:
                 self.dtcExModel.appendRow(QStandardItem(str(s)))
         except:
-            self.dprint('DTCs exception list is empty')
+            debugprint('DTCs exception list is empty')
 
     def loadConfig(self):
-        try:
+        if os.path.exists(str(self.configFile)):
             with open(str(self.configFile), 'rb') as f:
-                self.configDict = xmltodict.parse(f.read())
+                configValid = True
+
+                try:
+                    self.configDict = xmltodict.parse(f.read())
+                    configValid &= True
+                except:
+                    debugprint('Unable to parse XML config file')
 
                 try:
                     configversion = self.configDict['Config']['@version']
                     if configversion == '1.0':
-                        try:
-                            width = self.configDict['Config']['Width']
-                            height = self.configDict['Config']['Height']
-                            self.resize(int(width), int(height))
-                        except:
-                            self.dprint('Width and height values not saved')
+                        configValid &= True
+                except:
+                    debugprint('Version was not found in config file.')
 
-                        try:
-                            profilepath = self.configDict['Config']['LastProfile']
-                            self.profileFile = Path(profilepath)
-                            if os.path.exists(str(self.profileFile)):
-                                self.loadProfile()
-                        except:  # profile not found
-                            self.statusbar.showMessage(self.profile_notfound_config)
+                try:
+                    width = self.configDict['Config']['Width']
+                    height = self.configDict['Config']['Height']
+                    self.resize(int(width), int(height))
+                except:
+                    debugprint('Window width or height is missing in config.')
 
-                        try:
-                            autorun = self.configDict['Config']['Autorun']
-                            self.autorunCheckBox.setChecked(eval(autorun))
-                        except:
-                            self.dprint('Autorun setting not saved')
 
-                        try:
-                            autoruntimer = self.configDict['Config']['AutorunTimer']
-                            self.autorunSpinBox.setValue(eval(autoruntimer))
-                        except:
-                            self.dprint('Autorun timer setting not saved')
+                try:
+                    profilepath = self.configDict['Config']['LastProfile']
+                    self.profileFile = Path(profilepath)
+                    if os.path.exists(profilepath):
+                        self.loadProfile()
+                except:
+                    self.statusbar.showMessage(strings.CONFIG_PROFILE_NOTFOUND)
+                    debugprint('Last profile not found in config.')
 
-                except:  # key error
-                    self.statusbar.showMessage(self.config_invalid)
-        except FileNotFoundError:
-            self.statusbar.showMessage(self.config_notfound)
+
+
+                try:
+                    autorun = self.configDict['Config']['Autorun']
+                    self.autorunCheckBox.setChecked(eval(autorun))
+                except:
+                    debugprint('Autorun setting not found in config.')
+
+                try:
+                    autoruntimer = self.configDict['Config']['AutorunTimer']
+                    self.autorunSpinBox.setValue(eval(autoruntimer))
+                except:
+                    debugprint('Autorun time not found in config.')
+
+                if not configValid:
+                    self.statusbar.showMessage(strings.CONFIG_INVALID)
+        else:
+            self.statusbar.showMessage(strings.CONFIG_NOTFOUND)
             self.setDefaultConfigDict()
             self.setDefaultProfile()
-            self.setTitle(self.untitled_profile)
+            self.setTitle(strings.PROFILE_UNTITLED)
 
     # load the variable pool from csv file and extract variable names only
     def loadVariablePool(self):
@@ -616,9 +648,9 @@ class App(QMainWindow, Ui_MainWindow):
                     completer.setModel(model)
                     completer.setCaseSensitivity(0)
                     self.addSignalEdit.setCompleter(completer)
-                    self.statusbar.showMessage(self.variable_pool_loaded_success)
+                    self.statusbar.showMessage(strings.VARIABLE_POOL_LOADED_OK)
             except FileNotFoundError:
-                self.statusbar.showMessage(self.variable_pool_notfound)
+                self.statusbar.showMessage(strings.VARIABLE_POOL_NOTFOUND)
 
     def setTitle(self, profilePath):
         self.setWindowTitle('[' + str(profilePath) + '] - AutomationDesk GUI')
@@ -630,7 +662,7 @@ class App(QMainWindow, Ui_MainWindow):
             csvfolder='',
             varpoolpath='',
             includeversion='False',
-            fullmessages='False',
+            callfuncdebug='False',
             logmode='0',
             signallist=[],
             dtcenable='False',
@@ -647,7 +679,7 @@ class App(QMainWindow, Ui_MainWindow):
                 'VariablePoolPath': varpoolpath,
                 'UpdateVariablePool': updatevp,
                 'Version': {'@include': includeversion},
-                'FullMessages': {'@enable': fullmessages},
+                'CallFunctionDebug': {'@enable': callfuncdebug},
                 'Log': {
                     '@mode': logmode,
                     'Signal': signallist
@@ -686,6 +718,10 @@ class App(QMainWindow, Ui_MainWindow):
         self.unsavedChanges()
         self.setConfigDict()  # load default config if no params are given
 
+    def toolButtonPressed(self, a):
+        print("Pressed tool button")
+
+
     def exit(self):
         if not self.changesSaved:
             msgReply = QMessageBox.question(
@@ -698,7 +734,7 @@ class App(QMainWindow, Ui_MainWindow):
 
             if msgReply == QMessageBox.Yes:
                 self.saveProfile()
-                self.dprint('File saved')
+                debugprint('File saved')
 
         self.saveConfig()
         self.updateProfileDictFromGui()

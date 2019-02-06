@@ -8,7 +8,8 @@
       <change beforePath="$PROJECT_DIR$/../AutomationGUI_ui.py" beforeDir="false" afterPath="$PROJECT_DIR$/../AutomationGUI_ui.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../AutomationGUI_ui.ui" beforeDir="false" afterPath="$PROJECT_DIR$/../AutomationGUI_ui.ui" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copytopython27.bat" beforeDir="false" afterPath="$PROJECT_DIR$/../copytopython27.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../copytopython27.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../makegui.bat" beforeDir="false" afterPath="$PROJECT_DIR$/../makegui.bat" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -39,14 +40,14 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="6531" />
+          <entry key="py" value="7165" />
           <entry key="txt" value="51" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="PLAIN_TEXT" value="51" />
-          <entry key="Python" value="6531" />
+          <entry key="Python" value="7165" />
         </counts>
       </usages-collector>
     </session>
@@ -56,10 +57,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/TestCaseEditor.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="622">
-              <caret line="43" column="45" lean-forward="true" selection-start-line="43" selection-start-column="45" selection-end-line="43" selection-end-column="45" />
+            <state relative-caret-position="-600">
+              <caret line="30" column="41" lean-forward="true" selection-start-line="30" selection-start-column="41" selection-end-line="30" selection-end-column="41" />
               <folding>
-                <element signature="e#47#257#0" expanded="true" />
+                <element signature="e#47#76#0" expanded="true" />
+                <marker date="1546475316488" expanded="true" signature="1283:1971" ph="..." />
               </folding>
             </state>
           </provider>
@@ -181,12 +183,12 @@
     <frame x="-7" y="-7" width="1550" height="838" extended-state="7" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24983476" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24983476" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.32907802" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32907802" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -221,10 +223,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/TestCaseEditor.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="622">
-          <caret line="43" column="45" lean-forward="true" selection-start-line="43" selection-start-column="45" selection-end-line="43" selection-end-column="45" />
+        <state relative-caret-position="-600">
+          <caret line="30" column="41" lean-forward="true" selection-start-line="30" selection-start-column="41" selection-end-line="30" selection-end-column="41" />
           <folding>
-            <element signature="e#47#257#0" expanded="true" />
+            <element signature="e#47#76#0" expanded="true" />
+            <marker date="1546475316488" expanded="true" signature="1283:1971" ph="..." />
           </folding>
         </state>
       </provider>

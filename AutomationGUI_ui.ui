@@ -74,7 +74,7 @@ QLineEdit:hover, QListView:hover {
 	border: 1px solid  rgba(0, 0, 0, 0.4);
 }
 
-QPushButton {
+QPushButton, QToolButton {
 	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:1, stop:0 rgba(253, 236, 218, 0.6), stop:0.4 rgba(253, 223, 186, 0.6), stop:0.42 rgba(255, 206, 105, 0.6), stop:0.9 rgba(255, 206, 105, 0.6), stop:1 rgba(255, 255, 215, 0.6));
 	border: 0px;
 	border-radius: 8px;
@@ -84,7 +84,7 @@ QPushButton {
 	border-right: 1px solid  rgba(255, 206, 105, 0.8);
 }
 
-QPushButton:hover, QPushButton:pressed {
+QPushButton:hover, QPushButton:pressed, QToolButton:hover {
 	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:1, stop:0 rgba(253, 236, 218, 255), stop:0.4 rgba(253, 223, 186, 255), stop:0.42 rgba(255, 206, 105, 255), stop:0.9 rgba(255, 206, 105, 255), stop:1 rgba(255, 255, 215, 255));
 }
 
@@ -269,7 +269,7 @@ QMessageBox {
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideNone</enum>
@@ -295,20 +295,7 @@ QMessageBox {
           <property name="leftMargin">
            <number>0</number>
           </property>
-          <item row="0" column="0">
-           <widget class="QLabel" name="testCaseExcelLabel">
-            <property name="text">
-             <string>Test Case Excel File</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLineEdit" name="testCaseExcelEdit"/>
-          </item>
-          <item row="3" column="1">
-           <widget class="QLineEdit" name="variablePoolEdit"/>
-          </item>
-          <item row="3" column="2">
+          <item row="4" column="2">
            <widget class="QPushButton" name="browseVariablePoolBtn">
             <property name="toolTip">
              <string>Browse</string>
@@ -322,76 +309,24 @@ QMessageBox {
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="csvReportLabel">
-            <property name="text">
-             <string>CSV Report Folder:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
+          <item row="4" column="0">
            <widget class="QLabel" name="variablePoolLabel">
             <property name="text">
              <string>VariablePool TXT File:</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
+          <item row="2" column="0">
            <widget class="QLabel" name="callFunctionLabel">
             <property name="text">
              <string>Call Function Folder:</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="2">
-           <widget class="QPushButton" name="browseCsvReportBtn">
-            <property name="toolTip">
-             <string>Browse</string>
-            </property>
-            <property name="text">
-             <string>Browse</string>
-            </property>
-            <property name="icon">
-             <iconset resource="AutomationGUI.qrc">
-              <normaloff>:/icon/graphics/baseline_folder_open_black_24dp.png</normaloff>:/icon/graphics/baseline_folder_open_black_24dp.png</iconset>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
+          <item row="2" column="1">
            <widget class="QLineEdit" name="callFunctionEdit"/>
           </item>
-          <item row="2" column="1">
-           <widget class="QLineEdit" name="csvReportEdit"/>
-          </item>
-          <item row="2" column="3">
-           <widget class="QPushButton" name="openCsvReportFolderButton">
-            <property name="toolTip">
-             <string>Open Folder</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="AutomationGUI.qrc">
-              <normaloff>:/icon/graphics/baseline_open_in_browser_black_24dp.png</normaloff>:/icon/graphics/baseline_open_in_browser_black_24dp.png</iconset>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="3">
-           <widget class="QPushButton" name="openVarPoolFolderButton">
-            <property name="toolTip">
-             <string>Open Folder</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="AutomationGUI.qrc">
-              <normaloff>:/icon/graphics/baseline_open_in_browser_black_24dp.png</normaloff>:/icon/graphics/baseline_open_in_browser_black_24dp.png</iconset>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="2">
+          <item row="5" column="2">
            <widget class="QPushButton" name="reloadVariablePoolBtn">
             <property name="toolTip">
              <string>Load Variable Pool</string>
@@ -408,10 +343,10 @@ QMessageBox {
             </property>
            </widget>
           </item>
-          <item row="1" column="3">
-           <widget class="QPushButton" name="openCallFunctionFolderButton">
+          <item row="4" column="3">
+           <widget class="QPushButton" name="openVarPoolFolderButton">
             <property name="toolTip">
-             <string>Open Folder</string>
+             <string>Open Folder + File</string>
             </property>
             <property name="text">
              <string/>
@@ -422,34 +357,22 @@ QMessageBox {
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
-           <widget class="QCheckBox" name="versionCheckBox">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
+          <item row="2" column="3">
+           <widget class="QPushButton" name="openCallFunctionFolderButton">
+            <property name="toolTip">
+             <string>Open Folder + File</string>
             </property>
             <property name="text">
-             <string>Include HW &amp;&amp; SW Version</string>
+             <string/>
             </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
-           <widget class="QCheckBox" name="fullMessagesCheckbox">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Show Full Call Function Messages</string>
+            <property name="icon">
+             <iconset resource="AutomationGUI.qrc">
+              <normaloff>:/icon/graphics/baseline_open_in_browser_black_24dp.png</normaloff>:/icon/graphics/baseline_open_in_browser_black_24dp.png</iconset>
             </property>
            </widget>
           </item>
           <item row="1" column="2">
-           <widget class="QPushButton" name="browseCallFunctionBtn">
+           <widget class="QPushButton" name="browseCsvReportBtn">
             <property name="toolTip">
              <string>Browse</string>
             </property>
@@ -476,10 +399,50 @@ QMessageBox {
             </property>
            </widget>
           </item>
+          <item row="2" column="2">
+           <widget class="QPushButton" name="browseCallFunctionBtn">
+            <property name="toolTip">
+             <string>Browse</string>
+            </property>
+            <property name="text">
+             <string>Browse</string>
+            </property>
+            <property name="icon">
+             <iconset resource="AutomationGUI.qrc">
+              <normaloff>:/icon/graphics/baseline_folder_open_black_24dp.png</normaloff>:/icon/graphics/baseline_folder_open_black_24dp.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1">
+           <widget class="QCheckBox" name="callFunctionDebugCheckbox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Debug Call Functions</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QCheckBox" name="versionCheckBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Include HW &amp;&amp; SW Version</string>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="3">
            <widget class="QPushButton" name="openTestCaseExcelFolderBtn">
             <property name="toolTip">
-             <string>Open Folder</string>
+             <string>Open Folder + File</string>
             </property>
             <property name="text">
              <string/>
@@ -487,6 +450,52 @@ QMessageBox {
             <property name="icon">
              <iconset resource="AutomationGUI.qrc">
               <normaloff>:/icon/graphics/baseline_open_in_browser_black_24dp.png</normaloff>:/icon/graphics/baseline_open_in_browser_black_24dp.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QLineEdit" name="variablePoolEdit"/>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="testCaseExcelEdit"/>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="testCaseExcelLabel">
+            <property name="text">
+             <string>Test Case Excel File</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="csvReportEdit"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="csvReportLabel">
+            <property name="text">
+             <string>CSV Report Folder:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <widget class="QToolButton" name="toolButton">
+            <property name="contextMenuPolicy">
+             <enum>Qt::DefaultContextMenu</enum>
+            </property>
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset resource="AutomationGUI.qrc">
+              <normaloff>:/icon/graphics/baseline_menu_black_24dp.png</normaloff>:/icon/graphics/baseline_menu_black_24dp.png</iconset>
+            </property>
+            <property name="popupMode">
+             <enum>QToolButton::InstantPopup</enum>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+            <property name="arrowType">
+             <enum>Qt::NoArrow</enum>
             </property>
            </widget>
           </item>
@@ -981,8 +990,8 @@ and Additional Signals</string>
    <slot>trigger()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>717</x>
-     <y>428</y>
+     <x>521</x>
+     <y>439</y>
     </hint>
     <hint type="destinationlabel">
      <x>-1</x>
@@ -997,8 +1006,8 @@ and Additional Signals</string>
    <slot>trigger()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>657</x>
-     <y>445</y>
+     <x>333</x>
+     <y>439</y>
     </hint>
     <hint type="destinationlabel">
      <x>-1</x>
@@ -1013,8 +1022,8 @@ and Additional Signals</string>
    <slot>trigger()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>552</x>
-     <y>428</y>
+     <x>180</x>
+     <y>439</y>
     </hint>
     <hint type="destinationlabel">
      <x>-1</x>
