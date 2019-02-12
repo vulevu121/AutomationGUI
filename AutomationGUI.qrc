@@ -17,6 +17,7 @@
     <file>graphics/baseline_file_copy_black_24dp.png</file>
     <file>graphics/baseline_folder_black_24dp.png</file>
     <file>graphics/baseline_save_black_24dp.png</file>
+    <file>graphics/excel_24dp.png</file>
     <file>graphics/outline_save_black_24dp.png</file>
     <file>graphics/baseline_tab_black_24dp.png</file>
     <file>graphics/baseline_tab_unselected_black_24dp.png</file>
@@ -24,5 +25,19 @@
     <file>graphics/baseline_folder_open_black_24dp.png</file>
     <file>graphics/baseline_save_alt_black_24dp.png</file>
     <file>graphics/baseline_exit_to_app_black_24dp.png</file>
+  </qresource>
+  <qresource prefix="png">
+    <file>icons/contact.png</file>
+    <file>icons/folder.png</file>
+    <file>icons/excel.png</file>
+    <file>icons/new.png</file>
+    <file>icons/save.png</file>
+    <file>icons/textfile.png</file>
+  </qresource>
+  <qresource prefix="svg">
+    <file>icons/excel.svg</file>
+    <file>icons/file.svg</file>
+    <file>icons/save.svg</file>
+    <file>icons/folder.svg</file>
   </qresource>
 </RCC>

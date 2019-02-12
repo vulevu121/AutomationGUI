@@ -46,8 +46,8 @@ class App(QMainWindow, Ui_MainWindow):
         self.dtcExModel = QStandardItemModel()
         self.dtcExListView.setModel(self.dtcExModel)
 
-        # toolbar
-
+        self.loadConfig()
+        self.changesSaved = True
 
         # general tab
         self.browseTestCaseExcelBtn.clicked.connect(self.browseTestCaseExcel)
@@ -55,28 +55,73 @@ class App(QMainWindow, Ui_MainWindow):
         self.browseCsvReportBtn.clicked.connect(self.browseCsvReport)
         self.browseVariablePoolBtn.clicked.connect(self.browseVariablePool)
 
-        self.openTestCaseExcelFolderBtn.clicked.connect(self.openTestCaseExcelFolder)
-        self.openCallFunctionFolderButton.clicked.connect(self.openCallFunctionFolder)
-        self.openVarPoolFolderButton.clicked.connect(self.openVarPoolFolder)
+        # self.openTestCaseExcelFolderBtn.clicked.connect(self.openTestCaseExcelFolder)
+        # self.openCallFunctionFolderButton.clicked.connect(self.openCallFunctionFolder)
+        # self.openVarPoolFolderButton.clicked.connect(self.openVarPoolFolder)
 
         self.testCaseExcelEdit.textChanged.connect(self.unsavedChanges)
+        self.testCaseExcelEdit.textChanged.connect(self.askUseTestCaseFolder)
         self.callFunctionEdit.textChanged.connect(self.unsavedChanges)
         self.csvReportEdit.textChanged.connect(self.unsavedChanges)
         self.versionCheckBox.clicked.connect(self.unsavedChanges)
         self.variablePoolEdit.textChanged.connect(self.unsavedChanges)
         self.reloadVariablePoolBtn.clicked.connect(self.loadVariablePool)
 
-        self.toolButton.setPopupMode(QToolButton.InstantPopup)
-        menu = QMenu()
-        openCsvReportFolderButton = QAction(QIcon(':/icon/graphics/baseline_open_in_browser_black_24dp.png'), 'Open Folder + File', self)
-        openCsvReportFolderButton.triggered.connect(self.openCsvReportFolder)
-        menu.addAction(openCsvReportFolderButton)
+        # test case excel toolbutton
 
-        useTestCasePathButton = QAction(QIcon(':/icon/graphics/baseline_folder_black_24dp.png'), 'Use Test Case Path', self)
-        useTestCasePathButton.triggered.connect(self.useTestCasePath)
-        menu.addAction(useTestCasePathButton)
+        self.testCaseExcelToolButton.setPopupMode(QToolButton.InstantPopup)
+        testCaseExcelMenu = QMenu()
 
-        self.toolButton.setMenu(menu)
+        openTestCaseExcelFileAction = QAction(QIcon(':/svg/icons/excel.svg'), 'Open Test Case File', self)
+        openTestCaseExcelFileAction.triggered.connect(self.openTestCaseExcelFile)
+        testCaseExcelMenu.addAction(openTestCaseExcelFileAction)
+
+        openTestCaseExcelFolderAction = QAction(QIcon(':/svg/icons/folder.svg'), 'Open Test Case Folder', self)
+        openTestCaseExcelFolderAction.triggered.connect(self.openTestCaseExcelFolder)
+        testCaseExcelMenu.addAction(openTestCaseExcelFolderAction)
+
+        self.testCaseExcelToolButton.setMenu(testCaseExcelMenu)
+
+        # csv report toolbutton
+
+        self.csvReportFolderToolButton.setPopupMode(QToolButton.InstantPopup)
+        csvReportFolderMenu = QMenu()
+
+        openCsvReportFolderAction = QAction(QIcon(':/svg/icons/folder.svg'), 'Open Report Folder', self)
+        openCsvReportFolderAction.triggered.connect(self.openCsvReportFolder)
+        csvReportFolderMenu.addAction(openCsvReportFolderAction)
+
+        useTestCasePathAction = QAction(QIcon(':/svg/icons/folder.svg'), 'Use {TestCaseFolder}\\Logs', self)
+        useTestCasePathAction.triggered.connect(self.useTestCasePath)
+        csvReportFolderMenu.addAction(useTestCasePathAction)
+
+        self.csvReportFolderToolButton.setMenu(csvReportFolderMenu)
+
+        # call function toolbutton
+
+        self.callFunctionFolderToolButton.setPopupMode(QToolButton.InstantPopup)
+        callFunctionFolderMenu = QMenu()
+
+        openCallFunctionFolderAction = QAction(QIcon(':/svg/icons/folder.svg'), 'Open Call Function Folder', self)
+        openCallFunctionFolderAction.triggered.connect(self.openCallFunctionFolder)
+        callFunctionFolderMenu.addAction(openCallFunctionFolderAction)
+
+        self.callFunctionFolderToolButton.setMenu(callFunctionFolderMenu)
+
+        # variable pool toolbutton
+
+        self.variablePoolToolButton.setPopupMode(QToolButton.InstantPopup)
+        variablePoolMenu = QMenu()
+
+        openVariablePoolFileAction = QAction(QIcon(':/svg/icons/file.svg'), 'Open Variable Pool File', self)
+        openVariablePoolFileAction.triggered.connect(self.openVarPoolFile)
+        variablePoolMenu.addAction(openVariablePoolFileAction)
+
+        openVariablePoolFolderAction = QAction(QIcon(':/svg/icons/folder.svg'), 'Open Variable Pool Folder', self)
+        openVariablePoolFolderAction.triggered.connect(self.openVarPoolFolder)
+        variablePoolMenu.addAction(openVariablePoolFolderAction)
+
+        self.variablePoolToolButton.setMenu(variablePoolMenu)
 
         # logging tab
         self.addSignalBtn.clicked.connect(self.addSignal)
@@ -127,11 +172,8 @@ class App(QMainWindow, Ui_MainWindow):
 
         self.tabWidget.setCurrentIndex(0)
         self.logRadioBtn0.setChecked(True)
-        self.dtcExCheckBox.setChecked(False)
         self.hideAddSignal()
         self.hideDtcException()
-        self.loadConfig()
-        self.changesSaved = True
 
         self.startTimer = QTimer()
         self.startTimer.timeout.connect(self.tick)
@@ -186,6 +228,11 @@ class App(QMainWindow, Ui_MainWindow):
         dirname = os.path.dirname(str(varpoolpath))
         if os.path.exists(str(dirname)):
             os.startfile(str(dirname))
+
+    def openVarPoolFile(self):
+        varpoolpath = Path(self.variablePoolEdit.text())
+        dirname = os.path.dirname(str(varpoolpath))
+        if os.path.exists(str(dirname)):
             os.startfile(str(varpoolpath))
 
     def openTestCaseExcelFolder(self):
@@ -193,6 +240,11 @@ class App(QMainWindow, Ui_MainWindow):
         dirname = os.path.dirname(str(testCaseExcelPath))
         if os.path.exists(str(dirname)):
             os.startfile(str(dirname))
+
+    def openTestCaseExcelFile(self):
+        testCaseExcelPath = Path(self.testCaseExcelEdit.text())
+        dirname = os.path.dirname(str(testCaseExcelPath))
+        if os.path.exists(str(dirname)):
             os.startfile(str(testCaseExcelPath))
 
     def openConfigFolder(self):
@@ -205,7 +257,30 @@ class App(QMainWindow, Ui_MainWindow):
     def useTestCasePath(self):
         testCaseExcelPath = Path(self.testCaseExcelEdit.text())
         dirname = os.path.dirname(str(testCaseExcelPath))
-        self.csvReportEdit.setText(str(dirname) + '\\Logs')
+        newCsvReportFolder = os.path.join(dirname, 'Logs')
+        self.csvReportEdit.setText(str(newCsvReportFolder))
+        if not os.path.exists(newCsvReportFolder):
+            os.mkdir(newCsvReportFolder)
+
+    def askUseTestCaseFolder(self):
+        testCaseExcelPath = Path(self.testCaseExcelEdit.text())
+        dirname = os.path.dirname(str(testCaseExcelPath))
+        newCsvReportFolder = os.path.join(dirname, 'Logs')
+
+        if os.path.exists(dirname):
+            msgReply = QMessageBox.question(
+                self,
+                'CSV Report Folder',
+                'Use [' + str(newCsvReportFolder) + '] to store reports?',
+                QMessageBox.Yes | QMessageBox.No, QMessageBox.No
+            )
+
+            if msgReply == QMessageBox.Yes:
+                newCsvReportFolder = os.path.join(dirname, 'Logs')
+                self.csvReportEdit.setText(str(newCsvReportFolder))
+                if not os.path.exists(newCsvReportFolder):
+                    os.mkdir(newCsvReportFolder)
+
 
     def hideAddSignal(self):
         self.addSignalGroupBox.hide()
@@ -356,6 +431,8 @@ class App(QMainWindow, Ui_MainWindow):
 
         # update dtc exception list
         dtcExList = []
+
+        # update the the dtc exception list from the view
         for i in range(0, self.dtcExModel.rowCount()):
             dtcExList.append(self.dtcExModel.item(i, 0).text())
 
@@ -509,39 +586,46 @@ class App(QMainWindow, Ui_MainWindow):
                 self.testCaseExcelEdit.setText(testcasepath)
         except:
             self.testCaseExcelEdit = ''
+
         try:
-            callpath = self.profileDict['Profile']['CallFunctionFolder']
-            if callpath:
-                self.callFunctionEdit.setText(callpath)
-                self.checkFolderExist(callpath)
+            callFunctionFolder = self.profileDict['Profile']['CallFunctionFolder']
+            if callFunctionFolder:
+                self.callFunctionEdit.setText(callFunctionFolder)
+                self.checkFolderExist(callFunctionFolder)
         except:
             self.callFunctionEdit.setText('')
 
         try:
-            csvpath = self.profileDict['Profile']['CSVReportFolder']
-            if csvpath:
-                self.csvReportEdit.setText(csvpath)
-                self.checkFolderExist(csvpath)
+            csvPath = self.profileDict['Profile']['CSVReportFolder']
+            if csvPath:
+                self.csvReportEdit.setText(csvPath)
+                self.checkFolderExist(csvPath)
         except:
             self.csvReportEdit.setText('')
 
 
         try:
-            varpoolpath = self.profileDict['Profile']['VariablePoolPath']
-            self.variablePoolEdit.setText(varpoolpath)
-            self.checkVarPoolExist(varpoolpath)
+            varPoolPath = self.profileDict['Profile']['VariablePoolPath']
+            self.variablePoolEdit.setText(varPoolPath)
+            self.checkVarPoolExist(varPoolPath)
         except:
             self.variablePoolEdit.setText('')
 
         try:
-            callfunctiondebug = self.profileDict['Profile']['CallFunctionDebug']['@enable']
-            self.callFunctionDebugCheckbox.setChecked(eval(callfunctiondebug))
+            dtcExceptionEnable = self.profileDict['Profile']['DTC']['@enable']
+            self.dtcExCheckBox.setChecked(eval(dtcExceptionEnable))
+        except:
+            self.dtcExCheckBox.setChecked(False)
+
+        try:
+            callFunctionDebug = self.profileDict['Profile']['CallFunctionDebug']['@enable']
+            self.callFunctionDebugCheckbox.setChecked(eval(callFunctionDebug))
         except:
             self.callFunctionDebugCheckBox.setChecked(False)
 
         try:
-            versioncheckbox = self.profileDict['Profile']['Version']['@include']
-            self.versionCheckBox.setChecked(eval(versioncheckbox))
+            versionCheckbox = self.profileDict['Profile']['Version']['@include']
+            self.versionCheckBox.setChecked(eval(versionCheckbox))
         except:
             self.versionCheckBox.setChecked(False)
 
@@ -721,9 +805,6 @@ class App(QMainWindow, Ui_MainWindow):
         self.unsavedChanges()
         self.setConfigDict()  # load default config if no params are given
 
-    def toolButtonPressed(self, a):
-        print("Pressed tool button")
-
 
     def exit(self):
         if not self.changesSaved:
@@ -747,7 +828,7 @@ class App(QMainWindow, Ui_MainWindow):
         about = QMessageBox()
         about.setWindowIcon(QIcon(':/logo/graphics/karmalogo_48dp.png'))
         about.setWindowTitle('About')
-        about.setText('Version 1.12\nAuthor: Vu Le')
+        about.setText('Version 1.28\nAuthor: Vu Le')
         about.setInformativeText('Copyright (C) 2018\nKarma Automotive')
         about.setIconPixmap(QPixmap(':/logo/graphics/karmalogo_48dp.png'))
         about.exec_()
