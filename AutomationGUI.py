@@ -626,7 +626,7 @@ class App(QMainWindow, Ui_MainWindow):
             pass
 
         newRunListString = '\n'.join(newRunList)
-        self.runEdit.setPlainText(newRunListString)
+        self.runYesNoEdit.setPlainText(newRunListString)
 
     # use the profile dictionary to update the gui
     def updateGuiFromProfileDict(self):
