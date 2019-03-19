@@ -871,6 +871,9 @@ and Additional Signals</string>
        <layout class="QHBoxLayout" name="horizontalLayout_5">
         <item>
          <widget class="QPlainTextEdit" name="runEdit">
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAsNeeded</enum>
+          </property>
           <property name="placeholderText">
            <string>Paste the test case list here...</string>
           </property>
@@ -878,6 +881,9 @@ and Additional Signals</string>
         </item>
         <item>
          <widget class="QPlainTextEdit" name="runYesNoEdit">
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAsNeeded</enum>
+          </property>
           <property name="placeholderText">
            <string>[yes] for passed test cases and [no] for failed test cases</string>
           </property>
@@ -885,6 +891,13 @@ and Additional Signals</string>
         </item>
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_9">
+          <item>
+           <widget class="QPushButton" name="copyButton">
+            <property name="text">
+             <string>Copy</string>
+            </property>
+           </widget>
+          </item>
           <item>
            <widget class="QPushButton" name="processRunListButton">
             <property name="text">

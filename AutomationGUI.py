@@ -147,6 +147,7 @@ class App(QMainWindow, Ui_MainWindow):
         self.runScrollBar2 = self.runYesNoEdit.verticalScrollBar()
         self.runScrollBar1.valueChanged.connect(self.syncRunScroll2)
         self.runScrollBar2.valueChanged.connect(self.syncRunScroll1)
+        self.copyButton.clicked.connect(self.copyRunList)
 
         # settings tab
         self.updateVariablePoolCheckBox.clicked.connect(self.toggleUpdateVariablePool)
@@ -592,7 +593,6 @@ class App(QMainWindow, Ui_MainWindow):
         if s1 != s2:
             self.runScrollBar2.setValue(s1)
 
-
     def processRunList(self):
         self.progressBar.setValue(10)
 
@@ -667,6 +667,11 @@ class App(QMainWindow, Ui_MainWindow):
         self.runYesNoEdit.setPlainText(newRunListString)
 
         self.progressBar.setValue(0)
+
+    # copy the run list
+    def copyRunList(self):
+        self.runYesNoEdit.selectAll()
+        self.runYesNoEdit.copy()
 
     # use the profile dictionary to update the gui
     def updateGuiFromProfileDict(self):
