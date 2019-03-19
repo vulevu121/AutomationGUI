@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a315e363-4d6f-448a-8093-5fd7b0a7caa5" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/xmlconfig.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/xmlconfig.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AutomationGUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/AutomationGUI.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AutomationGUI_rc.py" beforeDir="false" afterPath="$PROJECT_DIR$/AutomationGUI_rc.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AutomationGUI_ui.py" beforeDir="false" afterPath="$PROJECT_DIR$/AutomationGUI_ui.py" afterDir="false" />
@@ -59,9 +61,9 @@
           <entry key="project.closed" value="4" />
           <entry key="project.open.time.0" value="2" />
           <entry key="project.open.time.2" value="1" />
-          <entry key="project.open.time.3" value="1" />
+          <entry key="project.open.time.3" value="2" />
           <entry key="project.open.time.4" value="2" />
-          <entry key="project.opened" value="6" />
+          <entry key="project.opened" value="7" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -78,14 +80,14 @@
         <counts>
           <entry key="Python Console" value="21" />
           <entry key="dummy" value="4" />
-          <entry key="py" value="10061" />
-          <entry key="txt" value="346" />
+          <entry key="py" value="10247" />
+          <entry key="txt" value="364" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PLAIN_TEXT" value="350" />
-          <entry key="Python" value="10082" />
+          <entry key="PLAIN_TEXT" value="368" />
+          <entry key="Python" value="10268" />
         </counts>
       </usages-collector>
     </session>
@@ -95,12 +97,10 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/AutomationGUI.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="153">
-              <caret line="683" column="50" selection-start-line="683" selection-start-column="50" selection-end-line="683" selection-end-column="50" />
+            <state relative-caret-position="234">
+              <caret line="179" column="35" selection-start-line="179" selection-start-column="35" selection-end-line="179" selection-end-column="35" />
               <folding>
-                <element signature="e#47#76#0" expanded="true" />
-                <marker date="1553016329535" expanded="true" signature="21986:21995" ph="..." />
-                <marker date="1553016329535" expanded="true" signature="21986:23733" ph="..." />
+                <marker date="1553021181260" expanded="true" signature="23701:24365" ph="..." />
               </folding>
             </state>
           </provider>
@@ -110,7 +110,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>saveprofile()</find>
       <find>saveprofile</find>
       <find>saveconfig</find>
       <find>changed</find>
@@ -140,6 +139,7 @@
       <find>toggle</find>
       <find>path(</find>
       <find>csvreportfolder</find>
+      <find>process</find>
     </findStrings>
     <replaceStrings>
       <replace>includeversion</replace>
@@ -185,6 +185,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -196,7 +197,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -217,6 +217,9 @@
           <option name="mySupportsDeletion" value="false" />
           <option name="myCanBeAbsent" value="false" />
           <option name="myId" value="UPDATED" />
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/.idea/misc.xml</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/.idea/xmlconfig.iml</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/AutomationGUI.py</PATH>
         </FILE-GROUP>
         <FILE-GROUP>
           <option name="myUpdateName" value="Created" />
@@ -224,6 +227,7 @@
           <option name="mySupportsDeletion" value="false" />
           <option name="myCanBeAbsent" value="false" />
           <option name="myId" value="CREATED" />
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/.idea/encodings.xml</PATH>
         </FILE-GROUP>
         <FILE-GROUP>
           <option name="myUpdateName" value="Deleted" />
@@ -231,8 +235,6 @@
           <option name="mySupportsDeletion" value="false" />
           <option name="myCanBeAbsent" value="true" />
           <option name="myId" value="REMOVED_FROM_REPOSITORY" />
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/xmlconfig.pyc</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/xmlconfig_rc.pyc</PATH>
         </FILE-GROUP>
         <FILE-GROUP>
           <option name="myUpdateName" value="Restored" />
@@ -572,18 +574,26 @@
       <option name="project" value="LOCAL" />
       <updated>1553015978923</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="Added progress bar">
+      <created>1553020326144</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1553020326144</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="74" y="-7" width="1470" height="878" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.19888346" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32885906" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.31275168" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.31275168" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -624,7 +634,8 @@
     <MESSAGE value="Added run list" />
     <MESSAGE value="Updated run tab" />
     <MESSAGE value="Added strings.py" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added strings.py" />
+    <MESSAGE value="Added progress bar" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added progress bar" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/../Update_Hw_Sw_Version.py">
@@ -671,12 +682,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/AutomationGUI.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="683" column="50" selection-start-line="683" selection-start-column="50" selection-end-line="683" selection-end-column="50" />
+        <state relative-caret-position="234">
+          <caret line="179" column="35" selection-start-line="179" selection-start-column="35" selection-end-line="179" selection-end-column="35" />
           <folding>
-            <element signature="e#47#76#0" expanded="true" />
-            <marker date="1553016329535" expanded="true" signature="21986:21995" ph="..." />
-            <marker date="1553016329535" expanded="true" signature="21986:23733" ph="..." />
+            <marker date="1553021181260" expanded="true" signature="23701:24365" ph="..." />
           </folding>
         </state>
       </provider>

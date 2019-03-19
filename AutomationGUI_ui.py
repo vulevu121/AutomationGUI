@@ -53,6 +53,15 @@ class Ui_MainWindow(object):
 "    border: 1px solid  rgba(0, 0, 0, 0.4);\n"
 "}\n"
 "\n"
+"QProgressBar {\n"
+"    border: 1px solid grey;\n"
+"    border-radius: 5px;\n"
+"}\n"
+"\n"
+"QProgressBar::chunk {\n"
+"    background-color: #FFCC80;\n"
+"}\n"
+"\n"
 "QToolBar {\n"
 "    background-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(236, 236, 236, 255), stop:1 rgba(255, 255, 255, 255));\n"
 "    spacing: 5px;\n"
@@ -598,7 +607,8 @@ class Ui_MainWindow(object):
         self.tabWidget.addTab(self.tab_4, icon5, "")
         self.verticalLayout_3.addWidget(self.tabWidget)
         self.progressBar = QtWidgets.QProgressBar(self.centralwidget)
-        self.progressBar.setProperty("value", 25)
+        self.progressBar.setMaximum(100)
+        self.progressBar.setProperty("value", 10)
         self.progressBar.setTextVisible(False)
         self.progressBar.setObjectName("progressBar")
         self.verticalLayout_3.addWidget(self.progressBar)

@@ -177,6 +177,7 @@ class App(QMainWindow, Ui_MainWindow):
         self.settingsVerticalLayoutRight.setAlignment(Qt.AlignTop)
         self.settingsVerticalLayoutLeft.setAlignment(Qt.AlignTop)
 
+        self.progressBar.setValue(0)
         self.tabWidget.setCurrentIndex(0)
         self.logRadioBtn0.setChecked(True)
         self.hideAddSignal()
@@ -579,6 +580,8 @@ class App(QMainWindow, Ui_MainWindow):
                 self.browseVariablePool()
 
     def processRunList(self):
+        self.progressBar.setValue(10)
+
         wb = load_workbook(self.testCaseExcelEdit.text())
         ws = wb.active
         testCaseColumn = ws['K']
@@ -612,6 +615,7 @@ class App(QMainWindow, Ui_MainWindow):
                     except:
                         passed = False
 
+
                 lastModTimeIdx = 1
                 basicNameNoExtension = basicName.rstrip('.csv')
 
@@ -621,13 +625,16 @@ class App(QMainWindow, Ui_MainWindow):
                 except:
                     csvDict[basicNameNoExtension] = (file, lastModTime, passed)
 
+        self.progressBar.setValue(20)
         # runList = str(runListString.strip())
         # runList = runList.split('\n')
 
         newRunList = []
         passIdx = 2
 
-        for testCase in runList:
+        for testCase, idx in enumerate(runList):
+            self.progressBar.setValue(20 + int(idx / len(runList) * 80))
+
             try:
                 if csvDict[testCase][passIdx] == False:
                     newRunList.append('Yes')
@@ -640,6 +647,8 @@ class App(QMainWindow, Ui_MainWindow):
 
         newRunListString = '\n'.join(newRunList)
         self.runYesNoEdit.setPlainText(newRunListString)
+
+        self.progressBar.setValue(0)
 
     # use the profile dictionary to update the gui
     def updateGuiFromProfileDict(self):
