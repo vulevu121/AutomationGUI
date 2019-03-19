@@ -58,10 +58,6 @@ class App(QMainWindow, Ui_MainWindow):
         self.browseCsvReportBtn.clicked.connect(self.browseCsvReport)
         self.browseVariablePoolBtn.clicked.connect(self.browseVariablePool)
 
-        # self.openTestCaseExcelFolderBtn.clicked.connect(self.openTestCaseExcelFolder)
-        # self.openCallFunctionFolderButton.clicked.connect(self.openCallFunctionFolder)
-        # self.openVarPoolFolderButton.clicked.connect(self.openVarPoolFolder)
-
         self.testCaseExcelEdit.textChanged.connect(self.unsavedChanges)
         self.testCaseExcelEdit.textChanged.connect(self.askUseTestCaseFolder)
         self.callFunctionEdit.textChanged.connect(self.unsavedChanges)
@@ -147,7 +143,10 @@ class App(QMainWindow, Ui_MainWindow):
 
         # run list tab
         self.processRunListButton.clicked.connect(self.processRunList)
-
+        self.runScrollBar1 = self.runEdit.verticalScrollBar()
+        self.runScrollBar2 = self.runYesNoEdit.verticalScrollBar()
+        self.runScrollBar1.valueChanged.connect(self.syncRunScroll2)
+        self.runScrollBar2.valueChanged.connect(self.syncRunScroll1)
 
         # settings tab
         self.updateVariablePoolCheckBox.clicked.connect(self.toggleUpdateVariablePool)
@@ -579,15 +578,37 @@ class App(QMainWindow, Ui_MainWindow):
             if msgReply == QMessageBox.Yes:
                 self.browseVariablePool()
 
+    def syncRunScroll1(self):
+        s1 = self.runScrollBar1.value()
+        s2 = self.runScrollBar2.value()
+
+        if s1 != s2:
+            self.runScrollBar1.setValue(s2)
+
+    def syncRunScroll2(self):
+        s1 = self.runScrollBar1.value()
+        s2 = self.runScrollBar2.value()
+
+        if s1 != s2:
+            self.runScrollBar2.setValue(s1)
+
+
     def processRunList(self):
         self.progressBar.setValue(10)
 
+        # grab the active worksheet
         wb = load_workbook(self.testCaseExcelEdit.text())
         ws = wb.active
+
+        # grab the test case column
         testCaseColumn = ws['K']
 
         # less the header name and empty row, get only the test case names
         runList = [str(each.value) for each in testCaseColumn][2:]
+
+        # remove empty or none entries
+        while runList[-1] == 'None' or runList[-1] == '':
+            runList.pop()
 
         # convert to a string for plain text edit
         runListString = '\n'.join(runList)
@@ -598,6 +619,7 @@ class App(QMainWindow, Ui_MainWindow):
 
         csvReportFolder = self.csvReportEdit.text()
 
+        self.progressBar.setValue(50)
         for file in os.listdir(csvReportFolder):
             if file.endswith('.csv'):
                 filePath = os.path.join(csvReportFolder, file)
@@ -625,16 +647,12 @@ class App(QMainWindow, Ui_MainWindow):
                 except:
                     csvDict[basicNameNoExtension] = (file, lastModTime, passed)
 
-        self.progressBar.setValue(20)
-        # runList = str(runListString.strip())
-        # runList = runList.split('\n')
+        self.progressBar.setValue(80)
 
         newRunList = []
         passIdx = 2
 
-        for testCase, idx in enumerate(runList):
-            self.progressBar.setValue(20 + int(idx / len(runList) * 80))
-
+        for idx, testCase in enumerate(runList):
             try:
                 if csvDict[testCase][passIdx] == False:
                     newRunList.append('Yes')
