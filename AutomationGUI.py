@@ -10,12 +10,15 @@ from AutomationGUI_ui import *
 import os
 import sys
 import strings
+import datetime
 
 if sys.version_info[0] < 3:
     FileNotFoundError = IOError
 
 debug = False
-def debugprint(msg):
+
+
+def debugPrint(msg):
     if debug:
         print(msg)
 
@@ -24,7 +27,6 @@ class App(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super(self.__class__, self).__init__()
         self.setupUi(self)
-
 
         # create a frameless window without titlebar
         # self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
@@ -142,6 +144,10 @@ class App(QMainWindow, Ui_MainWindow):
         self.addDtcExEdit.returnPressed.connect(self.addDtcEx)
         self.removeDtcExBtn.clicked.connect(self.removeDtcEx)
 
+        # run list tab
+        self.processRunListButton.clicked.connect(self.processRunList)
+
+
         # settings tab
         self.updateVariablePoolCheckBox.clicked.connect(self.toggleUpdateVariablePool)
 
@@ -173,7 +179,6 @@ class App(QMainWindow, Ui_MainWindow):
         self.tabWidget.setCurrentIndex(0)
         self.logRadioBtn0.setChecked(True)
         self.hideAddSignal()
-        self.hideDtcException()
 
         self.startTimer = QTimer()
         self.startTimer.timeout.connect(self.tick)
@@ -191,16 +196,14 @@ class App(QMainWindow, Ui_MainWindow):
     #     self.gridLayout.width
     #     # QtGui.QMainWindow.resizeEvent(self, event)
 
-
-
     def tick(self):
         if self.startTimerCount > 0:
             self.exitButton.setText('Continue ({})'.format(self.startTimerCount))
-            debugprint(self.startTimerCount)
+            debugPrint(self.startTimerCount)
             self.startTimerCount = self.startTimerCount - 1
         else:
             self.startTimer.stop()
-            debugprint('Timer stop')
+            debugPrint('Timer stop')
             self.exitButton.setText('Continue')
             if self.autorunCheckBox.isChecked():
                 self.exit()
@@ -211,12 +214,12 @@ class App(QMainWindow, Ui_MainWindow):
 
     def toggleUpdateVariablePool(self):
         self.updateVariablePool = self.updateVariablePoolCheckBox.isChecked()
-        debugprint('UpdateVariablePool={}'.format(self.updateVariablePool))
+        debugPrint('UpdateVariablePool={}'.format(self.updateVariablePool))
 
     def openCallFunctionFolder(self):
-        callfunctionpath = Path(self.callFunctionEdit.text())
-        if os.path.exists(str(callfunctionpath)):
-            os.startfile(str(callfunctionpath))
+        callFunctionPath = Path(self.callFunctionEdit.text())
+        if os.path.exists(str(callFunctionPath)):
+            os.startfile(str(callFunctionPath))
 
     def openCsvReportFolder(self):
         csvreportpath = Path(self.csvReportEdit.text())
@@ -224,16 +227,16 @@ class App(QMainWindow, Ui_MainWindow):
             os.startfile(str(csvreportpath))
 
     def openVarPoolFolder(self):
-        varpoolpath = Path(self.variablePoolEdit.text())
-        dirname = os.path.dirname(str(varpoolpath))
+        varPoolPath = Path(self.variablePoolEdit.text())
+        dirname = os.path.dirname(str(varPoolPath))
         if os.path.exists(str(dirname)):
             os.startfile(str(dirname))
 
     def openVarPoolFile(self):
-        varpoolpath = Path(self.variablePoolEdit.text())
-        dirname = os.path.dirname(str(varpoolpath))
+        varPoolPath = Path(self.variablePoolEdit.text())
+        dirname = os.path.dirname(str(varPoolPath))
         if os.path.exists(str(dirname)):
-            os.startfile(str(varpoolpath))
+            os.startfile(str(varPoolPath))
 
     def openTestCaseExcelFolder(self):
         testCaseExcelPath = Path(self.testCaseExcelEdit.text())
@@ -281,7 +284,6 @@ class App(QMainWindow, Ui_MainWindow):
                 if not os.path.exists(newCsvReportFolder):
                     os.mkdir(newCsvReportFolder)
 
-
     def hideAddSignal(self):
         self.addSignalGroupBox.hide()
 
@@ -289,16 +291,13 @@ class App(QMainWindow, Ui_MainWindow):
         self.addSignalGroupBox.show()
 
     def dtcExToggle(self):
-        if self.dtcExCheckBox.isChecked():
-            self.showDtcException()
+        self.showDtcException(self.dtcExCheckBox.isChecked())
+
+    def showDtcException(self, visible=True):
+        if visible:
+            self.dtcExGroupBox.show()
         else:
-            self.hideDtcException()
-
-    def hideDtcException(self):
-        self.dtcExGroupBox.hide()
-
-    def showDtcException(self):
-        self.dtcExGroupBox.show()
+            self.dtcExGroupBox.hide()
 
     def unsavedChanges(self):
         self.changesSaved = False
@@ -384,7 +383,7 @@ class App(QMainWindow, Ui_MainWindow):
         # save the profile from profile dict
         try:
             with open(str(self.profileFile), 'wb') as f:
-                debugprint(str(self.profileFile))
+                debugPrint(str(self.profileFile))
                 f.write(bytearray(xmltodict.unparse(self.profileDict, pretty=True), encoding='utf-8'))
                 self.setTitle(self.profileFile)
                 self.defaultProfile = False
@@ -422,7 +421,8 @@ class App(QMainWindow, Ui_MainWindow):
     # updates the profile dict
     def updateProfileDictFromGui(self):
         # generate the log mode number based on checkboxes
-        logMode = (self.logRadioBtn0.isChecked() + self.logRadioBtn1.isChecked()*2 + self.logRadioBtn2.isChecked()*3) - 1
+        logMode = (
+                          self.logRadioBtn0.isChecked() + self.logRadioBtn1.isChecked() * 2 + self.logRadioBtn2.isChecked() * 3) - 1
 
         # update signal list
         signalList = []
@@ -483,7 +483,6 @@ class App(QMainWindow, Ui_MainWindow):
         self.addDtcExEdit.setFocus()
         self.statusbar.showMessage(strings.DTCEX_ADD_OK)
 
-
     def removeDtcEx(self):
         self.dtcExModel.removeRow(self.dtcExListView.currentIndex().row())
 
@@ -515,7 +514,7 @@ class App(QMainWindow, Ui_MainWindow):
                 try:
                     self.profileDict = xmltodict.parse(f.read())
                 except:
-                    debugprint('Unable to parse profile XML file.')
+                    debugPrint('Unable to parse profile XML file.')
 
                 profileValid = True
 
@@ -524,9 +523,9 @@ class App(QMainWindow, Ui_MainWindow):
                     if profileversion == '1.0':
                         profileValid &= True
                     else:
-                        debugprint('Invalid profile version.')
+                        debugPrint('Invalid profile version.')
                 except:
-                    debugprint('No profile version defined.')
+                    debugPrint('No profile version defined.')
 
                 try:
                     varpoolfile = self.profileDict['Profile']['VariablePoolPath']
@@ -534,7 +533,7 @@ class App(QMainWindow, Ui_MainWindow):
                         self.statusbar.showMessage(strings.VARIABLE_POOL_NOTFOUND)
                     profileValid &= True
                 except:
-                    debugprint('No variable pool file defined in profile.')
+                    debugPrint('No variable pool file defined in profile.')
                     self.statusbar.showMessage(strings.CONFIG_VARIABLE_POOL_DEFINED)
 
                 if profileValid:
@@ -578,6 +577,57 @@ class App(QMainWindow, Ui_MainWindow):
             if msgReply == QMessageBox.Yes:
                 self.browseVariablePool()
 
+    def processRunList(self):
+        runListString = self.runEdit.toPlainText()
+
+        csvDict = {}
+
+        csvReportFolder = self.csvReportEdit.text()
+
+        for file in os.listdir(csvReportFolder):
+            if file.endswith('.csv'):
+                filePath = os.path.join(csvReportFolder, file)
+                lastModTime = datetime.datetime.fromtimestamp(os.path.getmtime(filePath))
+                basicName = file.split('_')[2]
+
+                with open(filePath, 'r+') as f:
+                    allLines = f.readlines()
+
+                    firstLine = allLines[1]
+
+                    try:
+                        verdictIdx = 9
+                        passed = firstLine.split(',')[verdictIdx] == 'Passed'
+                    except:
+                        passed = False
+
+                lastModTimeIdx = 1
+                basicNameNoExtension = basicName.rstrip('.csv')
+
+                try:
+                    if lastModTime > csvDict[basicNameNoExtension][lastModTimeIdx]:
+                        csvDict[basicNameNoExtension] = (file, lastModTime, passed)
+                except:
+                    csvDict[basicNameNoExtension] = (file, lastModTime, passed)
+
+        runList = str(runListString.strip())
+        runList = runList.split('\n')
+
+        newRunList = []
+        try:
+            for each in runList:
+                if csvDict[each][2] == False:
+                    newRunList.append('Yes')
+                    print('Yes')
+                else:
+                    newRunList.append('No')
+                    print('No')
+        except:
+            pass
+
+        newRunListString = '\n'.join(newRunList)
+        self.runEdit.setPlainText(newRunListString)
+
     # use the profile dictionary to update the gui
     def updateGuiFromProfileDict(self):
         try:
@@ -603,7 +653,6 @@ class App(QMainWindow, Ui_MainWindow):
         except:
             self.csvReportEdit.setText('')
 
-
         try:
             varPoolPath = self.profileDict['Profile']['VariablePoolPath']
             self.variablePoolEdit.setText(varPoolPath)
@@ -612,10 +661,13 @@ class App(QMainWindow, Ui_MainWindow):
             self.variablePoolEdit.setText('')
 
         try:
-            dtcExceptionEnable = self.profileDict['Profile']['DTC']['@enable']
-            self.dtcExCheckBox.setChecked(eval(dtcExceptionEnable))
+            dtcExceptionEnableString = self.profileDict['Profile']['DTC']['@enable']
+            dtcExceptionEnable = eval(dtcExceptionEnableString)
+            self.dtcExCheckBox.setChecked(dtcExceptionEnable)
+            self.showDtcException(dtcExceptionEnable)
         except:
             self.dtcExCheckBox.setChecked(False)
+            self.showDtcException(False)
 
         try:
             callFunctionDebug = self.profileDict['Profile']['CallFunctionDebug']['@enable']
@@ -642,7 +694,7 @@ class App(QMainWindow, Ui_MainWindow):
             for s in signalList:
                 self.addSignalModel.appendRow(QStandardItem(str(s)))
         except:
-            debugprint('Signal list is empty')
+            debugPrint('Signal list is empty')
 
         self.dtcExModel.clear()
 
@@ -659,7 +711,7 @@ class App(QMainWindow, Ui_MainWindow):
             for s in dtcExList:
                 self.dtcExModel.appendRow(QStandardItem(str(s)))
         except:
-            debugprint('DTCs exception list is empty')
+            debugPrint('DTCs exception list is empty')
 
     def loadConfig(self):
         if os.path.exists(str(self.configFile)):
@@ -670,22 +722,21 @@ class App(QMainWindow, Ui_MainWindow):
                     self.configDict = xmltodict.parse(f.read())
                     configValid &= True
                 except:
-                    debugprint('Unable to parse XML config file')
+                    debugPrint('Unable to parse XML config file')
 
                 try:
                     configversion = self.configDict['Config']['@version']
                     if configversion == '1.0':
                         configValid &= True
                 except:
-                    debugprint('Version was not found in config file.')
+                    debugPrint('Version was not found in config file.')
 
                 try:
                     width = self.configDict['Config']['Width']
                     height = self.configDict['Config']['Height']
                     self.resize(int(width), int(height))
                 except:
-                    debugprint('Window width or height is missing in config.')
-
+                    debugPrint('Window width or height is missing in config.')
 
                 try:
                     profilepath = self.configDict['Config']['LastProfile']
@@ -694,21 +745,19 @@ class App(QMainWindow, Ui_MainWindow):
                         self.loadProfile()
                 except:
                     self.statusbar.showMessage(strings.CONFIG_PROFILE_NOTFOUND)
-                    debugprint('Last profile not found in config.')
-
-
+                    debugPrint('Last profile not found in config.')
 
                 try:
                     autorun = self.configDict['Config']['Autorun']
                     self.autorunCheckBox.setChecked(eval(autorun))
                 except:
-                    debugprint('Autorun setting not found in config.')
+                    debugPrint('Autorun setting not found in config.')
 
                 try:
                     autoruntimer = self.configDict['Config']['AutorunTimer']
                     self.autorunSpinBox.setValue(eval(autoruntimer))
                 except:
-                    debugprint('Autorun time not found in config.')
+                    debugPrint('Autorun time not found in config.')
 
                 if not configValid:
                     self.statusbar.showMessage(strings.CONFIG_INVALID)
@@ -805,7 +854,6 @@ class App(QMainWindow, Ui_MainWindow):
         self.unsavedChanges()
         self.setConfigDict()  # load default config if no params are given
 
-
     def exit(self):
         if not self.changesSaved:
             msgReply = QMessageBox.question(
@@ -818,7 +866,7 @@ class App(QMainWindow, Ui_MainWindow):
 
             if msgReply == QMessageBox.Yes:
                 self.saveProfile()
-                debugprint('File saved')
+                debugPrint('File saved')
 
         self.saveConfig()
         self.updateProfileDictFromGui()
@@ -828,10 +876,11 @@ class App(QMainWindow, Ui_MainWindow):
         about = QMessageBox()
         about.setWindowIcon(QIcon(':/logo/graphics/karmalogo_48dp.png'))
         about.setWindowTitle('About')
-        about.setText('Version 1.28\nAuthor: Vu Le')
-        about.setInformativeText('Copyright (C) 2018\nKarma Automotive')
+        about.setText('Version 1.28\nDeveloper: Vu Le')
+        about.setInformativeText('Copyright (C) 2018')
         about.setIconPixmap(QPixmap(':/logo/graphics/karmalogo_48dp.png'))
         about.exec_()
+
 
 def main():
     app = QApplication(sys.argv)

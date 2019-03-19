@@ -284,7 +284,7 @@ QPushButton:hover, QPushButton:pressed, QToolButton:hover {
 }</string>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>3</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideNone</enum>
@@ -855,6 +855,31 @@ and Additional Signals</string>
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="tab_5">
+       <attribute name="title">
+        <string>Run</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <item>
+         <widget class="QPlainTextEdit" name="runEdit">
+          <property name="placeholderText">
+           <string>Paste the test case run list here...</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_9">
+          <item>
+           <widget class="QPushButton" name="processRunListButton">
+            <property name="text">
+             <string>Process</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
       <widget class="QWidget" name="tab_4">
        <attribute name="icon">
         <iconset resource="AutomationGUI.qrc">
@@ -1019,8 +1044,8 @@ and Additional Signals</string>
    </property>
    <property name="iconSize">
     <size>
-     <width>32</width>
-     <height>32</height>
+     <width>24</width>
+     <height>24</height>
     </size>
    </property>
    <property name="toolButtonStyle">
@@ -1037,9 +1062,9 @@ and Additional Signals</string>
    </attribute>
    <addaction name="actionNew"/>
    <addaction name="actionLoad"/>
+   <addaction name="actionConfigFolder"/>
    <addaction name="actionSave"/>
    <addaction name="actionSaveAs"/>
-   <addaction name="actionConfigFolder"/>
    <addaction name="actionAbout"/>
   </widget>
   <action name="actionSave">
@@ -1049,6 +1074,9 @@ and Additional Signals</string>
    </property>
    <property name="text">
     <string>Save</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
   </action>
   <action name="actionExit">
@@ -1085,6 +1113,9 @@ and Additional Signals</string>
    </property>
    <property name="text">
     <string>Load</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
    </property>
   </action>
   <action name="actionSaveAs">
