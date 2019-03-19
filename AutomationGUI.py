@@ -11,6 +11,7 @@ import os
 import sys
 import strings
 import datetime
+from openpyxl import load_workbook
 
 if sys.version_info[0] < 3:
     FileNotFoundError = IOError
@@ -578,7 +579,17 @@ class App(QMainWindow, Ui_MainWindow):
                 self.browseVariablePool()
 
     def processRunList(self):
-        runListString = self.runEdit.toPlainText()
+        wb = load_workbook(self.testCaseExcelEdit.text())
+        ws = wb.active
+        testCaseColumn = ws['K']
+
+        # less the header name and empty row, get only the test case names
+        runList = [str(each.value) for each in testCaseColumn][2:]
+
+        # convert to a string for plain text edit
+        runListString = '\n'.join(runList)
+
+        self.runEdit.setPlainText(runListString)
 
         csvDict = {}
 
@@ -610,8 +621,8 @@ class App(QMainWindow, Ui_MainWindow):
                 except:
                     csvDict[basicNameNoExtension] = (file, lastModTime, passed)
 
-        runList = str(runListString.strip())
-        runList = runList.split('\n')
+        # runList = str(runListString.strip())
+        # runList = runList.split('\n')
 
         newRunList = []
         try:
