@@ -43,7 +43,7 @@ class Ui_MainWindow(object):
 "    padding: 2px;\n"
 "}\n"
 "\n"
-"QLineEdit,  QListView{\n"
+"QLineEdit,  QPlainTextEdit, QListView{\n"
 "    background-color: white;\n"
 "    border: 1px solid  rgba(0, 0, 0, 0.2);\n"
 "    border-radius: 8px;\n"

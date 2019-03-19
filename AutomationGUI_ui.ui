@@ -55,7 +55,7 @@ QLineEdit {
 	padding: 2px;
 }
 
-QLineEdit,  QListView{
+QLineEdit,  QPlainTextEdit, QListView{
 	background-color: white;
 	border: 1px solid  rgba(0, 0, 0, 0.2);
 	border-radius: 8px;
