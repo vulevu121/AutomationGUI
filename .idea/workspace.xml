@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="a315e363-4d6f-448a-8093-5fd7b0a7caa5" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutomationGUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/AutomationGUI.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AutomationGUI_rc.py" beforeDir="false" afterPath="$PROJECT_DIR$/AutomationGUI_rc.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AutomationGUI_ui.py" beforeDir="false" afterPath="$PROJECT_DIR$/AutomationGUI_ui.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AutomationGUI_ui.ui" beforeDir="false" afterPath="$PROJECT_DIR$/AutomationGUI_ui.ui" afterDir="false" />
@@ -55,7 +56,7 @@
     <session id="1764806281">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="3" />
+          <entry key="project.closed" value="4" />
           <entry key="project.open.time.0" value="2" />
           <entry key="project.open.time.2" value="1" />
           <entry key="project.open.time.3" value="1" />
@@ -77,14 +78,14 @@
         <counts>
           <entry key="Python Console" value="21" />
           <entry key="dummy" value="4" />
-          <entry key="py" value="9978" />
-          <entry key="txt" value="329" />
+          <entry key="py" value="10061" />
+          <entry key="txt" value="346" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PLAIN_TEXT" value="333" />
-          <entry key="Python" value="9999" />
+          <entry key="PLAIN_TEXT" value="350" />
+          <entry key="Python" value="10082" />
         </counts>
       </usages-collector>
     </session>
@@ -94,12 +95,12 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/AutomationGUI.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="213">
-              <caret line="628" column="37" selection-start-line="628" selection-start-column="37" selection-end-line="628" selection-end-column="37" />
+            <state relative-caret-position="153">
+              <caret line="683" column="50" selection-start-line="683" selection-start-column="50" selection-end-line="683" selection-end-column="50" />
               <folding>
                 <element signature="e#47#76#0" expanded="true" />
-                <marker date="1553011706409" expanded="true" signature="21986:21995" ph="..." />
-                <marker date="1553011706409" expanded="true" signature="21986:23666" ph="..." />
+                <marker date="1553016329535" expanded="true" signature="21986:21995" ph="..." />
+                <marker date="1553016329535" expanded="true" signature="21986:23733" ph="..." />
               </folding>
             </state>
           </provider>
@@ -330,6 +331,9 @@
       <module name="xmlconfig" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="C:\Users\vle\AppData\Local\Programs\Python\Python37\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="false" />
@@ -561,19 +565,25 @@
       <option name="project" value="LOCAL" />
       <updated>1553011723841</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="Added strings.py">
+      <created>1553015978923</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1553015978923</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="74" y="-7" width="1470" height="878" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.136776" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.19888346" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32885906" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.31275168" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.31275168" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -613,7 +623,8 @@
     <MESSAGE value="Updated gui and added dtc exceptions" />
     <MESSAGE value="Added run list" />
     <MESSAGE value="Updated run tab" />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated run tab" />
+    <MESSAGE value="Added strings.py" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added strings.py" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/../Update_Hw_Sw_Version.py">
@@ -660,12 +671,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/AutomationGUI.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="213">
-          <caret line="628" column="37" selection-start-line="628" selection-start-column="37" selection-end-line="628" selection-end-column="37" />
+        <state relative-caret-position="153">
+          <caret line="683" column="50" selection-start-line="683" selection-start-column="50" selection-end-line="683" selection-end-column="50" />
           <folding>
             <element signature="e#47#76#0" expanded="true" />
-            <marker date="1553011706409" expanded="true" signature="21986:21995" ph="..." />
-            <marker date="1553011706409" expanded="true" signature="21986:23666" ph="..." />
+            <marker date="1553016329535" expanded="true" signature="21986:21995" ph="..." />
+            <marker date="1553016329535" expanded="true" signature="21986:23733" ph="..." />
           </folding>
         </state>
       </provider>

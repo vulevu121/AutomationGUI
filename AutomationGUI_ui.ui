@@ -863,12 +863,16 @@ and Additional Signals</string>
         <item>
          <widget class="QPlainTextEdit" name="runEdit">
           <property name="placeholderText">
-           <string>Paste the test case run list here...</string>
+           <string>Paste the test case list here...</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPlainTextEdit" name="runYesNoEdit"/>
+         <widget class="QPlainTextEdit" name="runYesNoEdit">
+          <property name="placeholderText">
+           <string>[yes] for passed test cases and [no] for failed test cases</string>
+          </property>
+         </widget>
         </item>
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -977,6 +981,16 @@ and Additional Signals</string>
         </item>
        </layout>
       </widget>
+     </widget>
+    </item>
+    <item>
+     <widget class="QProgressBar" name="progressBar">
+      <property name="value">
+       <number>25</number>
+      </property>
+      <property name="textVisible">
+       <bool>false</bool>
+      </property>
      </widget>
     </item>
     <item>

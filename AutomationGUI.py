@@ -614,16 +614,18 @@ class App(QMainWindow, Ui_MainWindow):
         runList = runList.split('\n')
 
         newRunList = []
-        try:
-            for each in runList:
-                if csvDict[each][2] == False:
+        passIdx = 2
+
+        for testCase in runList:
+            try:
+                if csvDict[testCase][passIdx] == False:
                     newRunList.append('Yes')
-                    print('Yes')
+                    # print('Yes')
                 else:
                     newRunList.append('No')
-                    print('No')
-        except:
-            pass
+                    # print('No')
+            except:
+                newRunList.append('Yes')
 
         newRunListString = '\n'.join(newRunList)
         self.runYesNoEdit.setPlainText(newRunListString)
