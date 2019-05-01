@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'AutomationGUI_ui.ui'
 #
-# Created by: PyQt5 UI code generator 5.9.2
+# Created by: PyQt5 UI code generator 5.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -545,14 +545,9 @@ class Ui_MainWindow(object):
         self.tab_5.setObjectName("tab_5")
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout(self.tab_5)
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
-        self.runEdit = QtWidgets.QPlainTextEdit(self.tab_5)
-        self.runEdit.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.runEdit.setObjectName("runEdit")
-        self.horizontalLayout_5.addWidget(self.runEdit)
-        self.runYesNoEdit = QtWidgets.QPlainTextEdit(self.tab_5)
-        self.runYesNoEdit.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.runYesNoEdit.setObjectName("runYesNoEdit")
-        self.horizontalLayout_5.addWidget(self.runYesNoEdit)
+        self.runTableView = QtWidgets.QTableView(self.tab_5)
+        self.runTableView.setObjectName("runTableView")
+        self.horizontalLayout_5.addWidget(self.runTableView)
         self.verticalLayout_9 = QtWidgets.QVBoxLayout()
         self.verticalLayout_9.setObjectName("verticalLayout_9")
         self.copyButton = QtWidgets.QPushButton(self.tab_5)
@@ -774,8 +769,6 @@ class Ui_MainWindow(object):
         self.addDtcExBtn.setText(_translate("MainWindow", "Add"))
         self.removeDtcExBtn.setText(_translate("MainWindow", "Remove"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _translate("MainWindow", "DTC"))
-        self.runEdit.setPlaceholderText(_translate("MainWindow", "List of test cases from excel file..."))
-        self.runYesNoEdit.setPlaceholderText(_translate("MainWindow", "List of failed test cases to rerun..."))
         self.copyButton.setText(_translate("MainWindow", "Copy"))
         self.processRunListButton.setText(_translate("MainWindow", "Process"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_5), _translate("MainWindow", "Run"))

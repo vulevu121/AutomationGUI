@@ -870,24 +870,7 @@ and Additional Signals</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_5">
         <item>
-         <widget class="QPlainTextEdit" name="runEdit">
-          <property name="verticalScrollBarPolicy">
-           <enum>Qt::ScrollBarAsNeeded</enum>
-          </property>
-          <property name="placeholderText">
-           <string>List of test cases from excel file...</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPlainTextEdit" name="runYesNoEdit">
-          <property name="verticalScrollBarPolicy">
-           <enum>Qt::ScrollBarAsNeeded</enum>
-          </property>
-          <property name="placeholderText">
-           <string>List of failed test cases to rerun...</string>
-          </property>
-         </widget>
+         <widget class="QTableView" name="runTableView"/>
         </item>
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_9">

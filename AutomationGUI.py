@@ -143,10 +143,6 @@ class App(QMainWindow, Ui_MainWindow):
 
         # run list tab
         self.processRunListButton.clicked.connect(self.processRunList)
-        self.runScrollBar1 = self.runEdit.verticalScrollBar()
-        self.runScrollBar2 = self.runYesNoEdit.verticalScrollBar()
-        self.runScrollBar1.valueChanged.connect(self.syncRunScroll2)
-        self.runScrollBar2.valueChanged.connect(self.syncRunScroll1)
         self.copyButton.clicked.connect(self.copyRunList)
 
         # settings tab
@@ -591,27 +587,26 @@ class App(QMainWindow, Ui_MainWindow):
             if msgReply == QMessageBox.Yes:
                 self.browseVariablePool()
 
-    def syncRunScroll1(self):
-        s1 = self.runScrollBar1.value()
-        s2 = self.runScrollBar2.value()
-
-        if s1 != s2:
-            self.runScrollBar1.setValue(s2)
-
-    def syncRunScroll2(self):
-        s1 = self.runScrollBar1.value()
-        s2 = self.runScrollBar2.value()
-
-        if s1 != s2:
-            self.runScrollBar2.setValue(s1)
-
+    # read excel file and figure out which test cases need to rerun
     def processRunList(self):
-        self.progressBar.setValue(10)
+        from collections import OrderedDict
+        class MyItemModel(QStandardItemModel):
+            def __init__(self, data=None, header=None, parent=None):
+                QStandardItemModel.__init__(self, parent)
+                for i, d in enumerate(data):
+                    self.setItem(i, 0, QStandardItem(d))
+                    self.setItem(i, 1, QStandardItem(data[d]['run']))
+                    self.setItem(i, 2, QStandardItem(data[d]['testCaseVerdict']))
 
+                self.setHorizontalHeaderLabels(header)
+
+        self.progressBar.setValue(10)
+        #
         # grab the active worksheet
         wb = load_workbook(self.testCaseExcelEdit.text())
         ws = wb.active
 
+        self.progressBar.setValue(20)
         # grab the test case column
         testCaseColumn = ws['K']
 
@@ -622,68 +617,104 @@ class App(QMainWindow, Ui_MainWindow):
         while runList[-1] == 'None' or runList[-1] == '':
             runList.pop()
 
-        # convert to a string for plain text edit
-        runListString = '\n'.join(runList)
-
-        self.runEdit.setPlainText(runListString)
-
-        csvDict = {}
-
         csvReportFolder = self.csvReportEdit.text()
 
-        self.progressBar.setValue(50)
-        for file in os.listdir(csvReportFolder):
-            if file.endswith('.csv'):
-                filePath = os.path.join(csvReportFolder, file)
-                lastModTime = datetime.datetime.fromtimestamp(os.path.getmtime(filePath))
-                basicName = file.split('_')[2]
+        self.progressBar.setValue(30)
 
-                with open(filePath, 'r+') as f:
-                    allLines = f.readlines()
+        # dict to hold data from all log files
+        logDict = {}
 
-                    firstLine = allLines[1]
+        # enumerate the log folder and determine the latest log files
+        for fileName in os.listdir(csvReportFolder):
+            if fileName.endswith('.csv'):
+                filePath = os.path.join(csvReportFolder, fileName)
+                lastModTime = datetime.fromtimestamp(os.path.getmtime(filePath))
+                testCaseName = fileName.split('_')[2]
 
-                    try:
-                        verdictIdx = 9
-                        passed = firstLine.split(',')[verdictIdx] == 'Passed'
-                    except:
-                        passed = False
+                passList = []
+                testCaseVerdict = ''
+                testComment = ''
+                actualResult = []
+                length = 0
 
-
-                lastModTimeIdx = 1
-                basicNameNoExtension = basicName.rstrip('.csv')
+                testCase = testCaseName.rstrip('.csv')
 
                 try:
-                    if lastModTime > csvDict[basicNameNoExtension][lastModTimeIdx]:
-                        csvDict[basicNameNoExtension] = (file, lastModTime, passed)
-                except:
-                    csvDict[basicNameNoExtension] = (file, lastModTime, passed)
+                    # if testcase exist in dict, then we update it with latest csv filepath and modified date
+                    if lastModTime > logDict[testCase]['lastModTime']:
+                        logDict[testCase]['filePath'] = filePath
+                        logDict[testCase]['lastModTime'] = lastModTime
+                except KeyError:
+                    # create key-value pairs if test case does not exist in dict
+                    logDict[testCase] = {'filePath': filePath,
+                                         'lastModTime': lastModTime,
+                                         'testCaseVerdict': testCaseVerdict,
+                                         'testComment': testComment,
+                                         'actualResult': actualResult,
+                                         'passList': passList,
+                                         'length': length}
 
-        self.progressBar.setValue(80)
+        self.progressBar.setValue(50)
+        # grab the data from all latest log files
+        for testCase in logDict:
+            passList = []
+            testCaseVerdict = ''
+            testComment = ''
+            actualResult = []
 
-        newRunList = []
-        passIdx = 2
+            with open(logDict[testCase]['filePath']) as csvFile:
+                csvReader = csv.DictReader(csvFile)
+                for row in csvReader:
+                    passList.append(row['Step Verdict'])
+                    actualResult.append(row['Actual Result'])
+                    if len(row['Test Case Verdict']) > 0:
+                        testCaseVerdict = row['Test Case Verdict']
+                    if len(row['Test Comment']) > 0:
+                        testComment = row['Test Comment']
 
-        for idx, testCase in enumerate(runList):
+            logDict[testCase]['testCaseVerdict'] = testCaseVerdict
+            logDict[testCase]['testComment'] = testComment
+            logDict[testCase]['actualResult'] = actualResult
+            logDict[testCase]['passList'] = passList
+            logDict[testCase]['length'] = len(passList)
+
+        self.progressBar.setValue(70)
+        runDict = OrderedDict()
+
+        for t in runList:
             try:
-                if csvDict[testCase][passIdx] == False:
-                    newRunList.append('Yes')
-                    # print('Yes')
+                if logDict[t]['testCaseVerdict'] == 'Passed':
+                    runDict[t] = {'run': 'No',
+                                  'testCaseVerdict': logDict[t]['testCaseVerdict']}
                 else:
-                    newRunList.append('No')
-                    # print('No')
-            except:
-                newRunList.append('Yes')
+                    runDict[t] = {'run': 'Yes',
+                                  'testCaseVerdict': logDict[t]['testCaseVerdict']}
+            except KeyError as error:
+                print('KeyError:', str(error))
+                runDict[t] = {'run': 'Yes',
+                              'testCaseVerdict': 'Not Found'}
 
-        newRunListString = '\n'.join(newRunList)
-        self.runYesNoEdit.setPlainText(newRunListString)
+        header = ['TestCase', 'Run', 'TestCase Verdict']
 
-        self.progressBar.setValue(0)
+        model = MyItemModel(runDict, header)
+
+        self.runTableView.setModel(model)
+        self.runTableView.resizeColumnToContents(0)
+        # self.runTableView.setSortingEnabled(True)
+
+        self.progressBar.setValue(100)
 
     # copy the run list
     def copyRunList(self):
-        self.runYesNoEdit.selectAll()
-        self.runYesNoEdit.copy()
+        model = self.runTableView.model()
+
+        rowCount = model.rowCount()
+        runList = [model.item(x, 1).text() for x in range(0, rowCount)]
+        runListString = '\n'.join(runList)
+
+        cb = QApplication.clipboard()
+        cb.clear(mode=cb.Clipboard)
+        cb.setText(runListString, mode=cb.Clipboard)
 
     # use the profile dictionary to update the gui
     def updateGuiFromProfileDict(self):
