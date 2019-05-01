@@ -875,7 +875,7 @@ and Additional Signals</string>
            <enum>Qt::ScrollBarAsNeeded</enum>
           </property>
           <property name="placeholderText">
-           <string>Paste the test case list here...</string>
+           <string>List of test cases from excel file...</string>
           </property>
          </widget>
         </item>
@@ -885,7 +885,7 @@ and Additional Signals</string>
            <enum>Qt::ScrollBarAsNeeded</enum>
           </property>
           <property name="placeholderText">
-           <string>[yes] for passed test cases and [no] for failed test cases</string>
+           <string>List of failed test cases to rerun...</string>
           </property>
          </widget>
         </item>

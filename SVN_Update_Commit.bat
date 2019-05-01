@@ -3,4 +3,5 @@ copy /Y "AutomationGUI.py" %dest%
 copy /Y "AutomationGUI_ui.py" %dest%
 copy /Y "AutomationGUI_rc.py" %dest%
 copy /y "strings.py" %dest%
+copy /y "__init__.py" %dest%
 tortoiseproc /command:commit /path:%dest%

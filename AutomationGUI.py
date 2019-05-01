@@ -182,6 +182,8 @@ class App(QMainWindow, Ui_MainWindow):
         self.logRadioBtn0.setChecked(True)
         self.hideAddSignal()
 
+        self.autorunCheckBox.clicked.connect(self.autoRunClicked)
+
         self.startTimer = QTimer()
         self.startTimer.timeout.connect(self.tick)
 
@@ -198,15 +200,25 @@ class App(QMainWindow, Ui_MainWindow):
     #     self.gridLayout.width
     #     # QtGui.QMainWindow.resizeEvent(self, event)
 
+    def autoRunClicked(self):
+        if self.autorunCheckBox.isChecked():
+            self.startTimer.start(1000)
+            self.startTimerCount = self.autorunSpinBox.value()
+        else:
+            self.startTimer.stop()
+            self.autorunCheckBox.setText('Autorun')
+
     def tick(self):
         if self.startTimerCount > 0:
-            self.exitButton.setText('Continue ({})'.format(self.startTimerCount))
+            self.autorunCheckBox.setText('Autorun in {}s'.format(self.startTimerCount))
+            # self.exitButton.setText('Continue ({})'.format(self.startTimerCount))
             debugPrint(self.startTimerCount)
             self.startTimerCount = self.startTimerCount - 1
         else:
             self.startTimer.stop()
             debugPrint('Timer stop')
-            self.exitButton.setText('Continue')
+            self.autorunCheckBox.setText('Autorun')
+            # self.exitButton.setText('Continue')
             if self.autorunCheckBox.isChecked():
                 self.exit()
 
@@ -224,55 +236,55 @@ class App(QMainWindow, Ui_MainWindow):
             os.startfile(str(callFunctionPath))
 
     def openCsvReportFolder(self):
-        csvreportpath = Path(self.csvReportEdit.text())
-        if os.path.exists(str(csvreportpath)):
-            os.startfile(str(csvreportpath))
+        csvReportPath = Path(self.csvReportEdit.text())
+        if os.path.exists(str(csvReportPath)):
+            os.startfile(str(csvReportPath))
 
     def openVarPoolFolder(self):
         varPoolPath = Path(self.variablePoolEdit.text())
-        dirname = os.path.dirname(str(varPoolPath))
-        if os.path.exists(str(dirname)):
-            os.startfile(str(dirname))
+        dirName = os.path.dirName(str(varPoolPath))
+        if os.path.exists(str(dirName)):
+            os.startfile(str(dirName))
 
     def openVarPoolFile(self):
         varPoolPath = Path(self.variablePoolEdit.text())
-        dirname = os.path.dirname(str(varPoolPath))
-        if os.path.exists(str(dirname)):
+        dirName = os.path.dirName(str(varPoolPath))
+        if os.path.exists(str(dirName)):
             os.startfile(str(varPoolPath))
 
     def openTestCaseExcelFolder(self):
         testCaseExcelPath = Path(self.testCaseExcelEdit.text())
-        dirname = os.path.dirname(str(testCaseExcelPath))
-        if os.path.exists(str(dirname)):
-            os.startfile(str(dirname))
+        dirName = os.path.dirName(str(testCaseExcelPath))
+        if os.path.exists(str(dirName)):
+            os.startfile(str(dirName))
 
     def openTestCaseExcelFile(self):
         testCaseExcelPath = Path(self.testCaseExcelEdit.text())
-        dirname = os.path.dirname(str(testCaseExcelPath))
-        if os.path.exists(str(dirname)):
+        dirName = os.path.dirName(str(testCaseExcelPath))
+        if os.path.exists(str(dirName)):
             os.startfile(str(testCaseExcelPath))
 
     def openConfigFolder(self):
-        configfolder = os.path.dirname(str(self.configFile))
+        configFolder = os.path.dirName(str(self.configFile))
         # param = 'explorer "{}"'.format(configFolder)
         # subprocess.Popen(param)
-        if os.path.exists(configfolder):
-            os.startfile(configfolder)
+        if os.path.exists(configFolder):
+            os.startfile(configFolder)
 
     def useTestCasePath(self):
         testCaseExcelPath = Path(self.testCaseExcelEdit.text())
-        dirname = os.path.dirname(str(testCaseExcelPath))
-        newCsvReportFolder = os.path.join(dirname, 'Logs')
+        dirName = os.path.dirName(str(testCaseExcelPath))
+        newCsvReportFolder = os.path.join(dirName, 'Logs')
         self.csvReportEdit.setText(str(newCsvReportFolder))
         if not os.path.exists(newCsvReportFolder):
             os.mkdir(newCsvReportFolder)
 
     def askUseTestCaseFolder(self):
         testCaseExcelPath = Path(self.testCaseExcelEdit.text())
-        dirname = os.path.dirname(str(testCaseExcelPath))
-        newCsvReportFolder = os.path.join(dirname, 'Logs')
+        dirName = os.path.dirName(str(testCaseExcelPath))
+        newCsvReportFolder = os.path.join(dirName, 'Logs')
 
-        if os.path.exists(dirname):
+        if os.path.exists(dirName):
             msgReply = QMessageBox.question(
                 self,
                 'CSV Report Folder',
@@ -281,7 +293,7 @@ class App(QMainWindow, Ui_MainWindow):
             )
 
             if msgReply == QMessageBox.Yes:
-                newCsvReportFolder = os.path.join(dirname, 'Logs')
+                newCsvReportFolder = os.path.join(dirName, 'Logs')
                 self.csvReportEdit.setText(str(newCsvReportFolder))
                 if not os.path.exists(newCsvReportFolder):
                     os.mkdir(newCsvReportFolder)
@@ -313,11 +325,11 @@ class App(QMainWindow, Ui_MainWindow):
         self.statusbar.showMessage(strings.PROFILE_DEFAULT_LOADED)
 
     def browseProfile(self):
-        profilefolder = os.path.dirname(str(self.profileFile))
+        profileFolder = os.path.dirName(str(self.profileFile))
         filePath, fileType = QFileDialog.getOpenFileName(
             self,
             "Open Profile",
-            profilefolder,
+            profileFolder,
             "XML Files (*.xml);;All Files (*)"
         )
 
@@ -343,7 +355,7 @@ class App(QMainWindow, Ui_MainWindow):
         self.browseFile(self.variablePoolEdit, 'Open Variable Pool', 'TXT Files (*.txt)')
 
     def browseFile(self, editBox, titleDialog, fileType):
-        folder = str(os.path.dirname(editBox.text()))
+        folder = str(os.path.dirName(editBox.text()))
 
         filePath, fileType = QFileDialog.getOpenFileName(
             self,
@@ -365,12 +377,12 @@ class App(QMainWindow, Ui_MainWindow):
         self.setDefaultConfigDict()
 
     def saveProfile(self):
-        configfolder = os.path.dirname(str(self.configFile))
+        configFolder = os.path.dirName(str(self.configFile))
         if self.defaultProfile:
             filePath, fileType = QFileDialog.getSaveFileName(
                 self,
                 "Save Profile As",
-                configfolder,
+                configFolder,
                 "XML Files (*.xml);;All Files (*)"
             )
             if filePath:
@@ -408,11 +420,11 @@ class App(QMainWindow, Ui_MainWindow):
             self.checkVarPoolExist(varpoolpath)
 
     def saveAsProfile(self):
-        profilefolder = os.path.dirname(str(self.profileFile))
+        profileFolder = os.path.dirName(str(self.profileFile))
         filePath, fileType = QFileDialog.getSaveFileName(
             self,
             "Save Profile As",
-            profilefolder,
+            profileFolder,
             "XML Files (*.xml);;All Files (*)"
         )
 
@@ -499,10 +511,10 @@ class App(QMainWindow, Ui_MainWindow):
         )
 
         # if config folder not found, create one
-        dirname = os.path.dirname(str(self.configFile))
+        dirName = os.path.dirName(str(self.configFile))
 
-        if not os.path.exists(dirname):
-            os.mkdir(dirname)
+        if not os.path.exists(dirName):
+            os.mkdir(dirName)
 
         try:
             with open(str(self.configFile), 'wb') as f:
