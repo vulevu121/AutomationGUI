@@ -10,19 +10,20 @@ from AutomationGUI_ui import *
 import os
 import sys
 import strings
-import datetime
+import csv
+from datetime import datetime
 from openpyxl import load_workbook
+from collections import OrderedDict
+from functools import partial
 
 if sys.version_info[0] < 3:
     FileNotFoundError = IOError
 
 debug = False
 
-
 def debugPrint(msg):
     if debug:
         print(msg)
-
 
 class App(QMainWindow, Ui_MainWindow):
     def __init__(self):
@@ -38,6 +39,10 @@ class App(QMainWindow, Ui_MainWindow):
 
         self.configDict = {}
         self.profileDict = {}
+        # dict to hold data from all log files
+        self.logDict = {}
+        # dict to hold data from polarion sheet
+        self.polarionDict = OrderedDict()
         self.variablePoolDict = {}
         self.updateVariablePool = False  # update variable pool in AutomationDesk
         self.defaultProfile = True  # false when a profile is loaded
@@ -53,13 +58,16 @@ class App(QMainWindow, Ui_MainWindow):
         self.changesSaved = True
 
         # general tab
+        self.browsePolarionExcelBtn.clicked.connect(self.browsePolarionExcel)
         self.browseTestCaseExcelBtn.clicked.connect(self.browseTestCaseExcel)
         self.browseCallFunctionBtn.clicked.connect(self.browseCallFunction)
         self.browseCsvReportBtn.clicked.connect(self.browseCsvReport)
         self.browseVariablePoolBtn.clicked.connect(self.browseVariablePool)
 
+        self.polarionExcelEdit.textChanged.connect(self.unsavedChanges)
+        self.polarionExcelEdit.textChanged.connect(self.usePolarionExcelFolderForLogs)
         self.testCaseExcelEdit.textChanged.connect(self.unsavedChanges)
-        self.testCaseExcelEdit.textChanged.connect(self.askUseTestCaseFolder)
+        self.testCaseExcelEdit.textChanged.connect(self.useTestCaseFolderForLogs)
         self.callFunctionEdit.textChanged.connect(self.unsavedChanges)
         self.csvReportEdit.textChanged.connect(self.unsavedChanges)
         self.versionCheckBox.clicked.connect(self.unsavedChanges)
@@ -142,8 +150,15 @@ class App(QMainWindow, Ui_MainWindow):
         self.removeDtcExBtn.clicked.connect(self.removeDtcEx)
 
         # run list tab
-        self.processRunListButton.clicked.connect(self.processRunList)
+        self.processRunListButton.clicked.connect(self.getRunList)
         self.copyButton.clicked.connect(self.copyRunList)
+
+        # polarion tab
+        self.polarionReadExcelButton.clicked.connect(self.readPolarion)
+        self.polarionUpdatePassedButton.clicked.connect(partial(self.polarionUpdateExcel, 'Passed'))
+        self.polarionUpdateAllButton.clicked.connect(partial(self.polarionUpdateExcel, 'All'))
+        self.polarionSaveExcelButton.clicked.connect(self.polarionSaveExcel)
+        self.polarionUpdateRevisionButton.clicked.connect(self.polarionUpdateRevision)
 
         # settings tab
         self.updateVariablePoolCheckBox.clicked.connect(self.toggleUpdateVariablePool)
@@ -238,30 +253,30 @@ class App(QMainWindow, Ui_MainWindow):
 
     def openVarPoolFolder(self):
         varPoolPath = Path(self.variablePoolEdit.text())
-        dirName = os.path.dirName(str(varPoolPath))
+        dirName = os.path.dirname(str(varPoolPath))
         if os.path.exists(str(dirName)):
             os.startfile(str(dirName))
 
     def openVarPoolFile(self):
         varPoolPath = Path(self.variablePoolEdit.text())
-        dirName = os.path.dirName(str(varPoolPath))
+        dirName = os.path.dirname(str(varPoolPath))
         if os.path.exists(str(dirName)):
             os.startfile(str(varPoolPath))
 
     def openTestCaseExcelFolder(self):
         testCaseExcelPath = Path(self.testCaseExcelEdit.text())
-        dirName = os.path.dirName(str(testCaseExcelPath))
+        dirName = os.path.dirname(str(testCaseExcelPath))
         if os.path.exists(str(dirName)):
             os.startfile(str(dirName))
 
     def openTestCaseExcelFile(self):
         testCaseExcelPath = Path(self.testCaseExcelEdit.text())
-        dirName = os.path.dirName(str(testCaseExcelPath))
+        dirName = os.path.dirname(str(testCaseExcelPath))
         if os.path.exists(str(dirName)):
             os.startfile(str(testCaseExcelPath))
 
     def openConfigFolder(self):
-        configFolder = os.path.dirName(str(self.configFile))
+        configFolder = os.path.dirname(str(self.configFile))
         # param = 'explorer "{}"'.format(configFolder)
         # subprocess.Popen(param)
         if os.path.exists(configFolder):
@@ -269,15 +284,34 @@ class App(QMainWindow, Ui_MainWindow):
 
     def useTestCasePath(self):
         testCaseExcelPath = Path(self.testCaseExcelEdit.text())
-        dirName = os.path.dirName(str(testCaseExcelPath))
+        dirName = os.path.dirname(str(testCaseExcelPath))
         newCsvReportFolder = os.path.join(dirName, 'Logs')
         self.csvReportEdit.setText(str(newCsvReportFolder))
         if not os.path.exists(newCsvReportFolder):
             os.mkdir(newCsvReportFolder)
 
-    def askUseTestCaseFolder(self):
+    def useTestCaseFolderForLogs(self):
         testCaseExcelPath = Path(self.testCaseExcelEdit.text())
-        dirName = os.path.dirName(str(testCaseExcelPath))
+        dirName = os.path.dirname(str(testCaseExcelPath))
+        newCsvReportFolder = os.path.join(dirName, 'Logs')
+
+        if os.path.exists(dirName):
+            msgReply = QMessageBox.question(
+                self,
+                'CSV Report Folder',
+                'Use [' + str(newCsvReportFolder) + '] to store reports?',
+                QMessageBox.Yes | QMessageBox.No, QMessageBox.No
+            )
+
+            if msgReply == QMessageBox.Yes:
+                newCsvReportFolder = os.path.join(dirName, 'Logs')
+                self.csvReportEdit.setText(str(newCsvReportFolder))
+                if not os.path.exists(newCsvReportFolder):
+                    os.mkdir(newCsvReportFolder)
+
+    def usePolarionExcelFolderForLogs(self):
+        testCaseExcelPath = Path(self.polarionExcelEdit.text())
+        dirName = os.path.dirname(str(testCaseExcelPath))
         newCsvReportFolder = os.path.join(dirName, 'Logs')
 
         if os.path.exists(dirName):
@@ -321,7 +355,7 @@ class App(QMainWindow, Ui_MainWindow):
         self.statusbar.showMessage(strings.PROFILE_DEFAULT_LOADED)
 
     def browseProfile(self):
-        profileFolder = os.path.dirName(str(self.profileFile))
+        profileFolder = os.path.dirname(str(self.profileFile))
         filePath, fileType = QFileDialog.getOpenFileName(
             self,
             "Open Profile",
@@ -334,11 +368,18 @@ class App(QMainWindow, Ui_MainWindow):
             self.loadProfile()
             self.saveConfig()
 
+    def browsePolarionExcel(self):
+        self.browseFile(
+            self.polarionExcelEdit,
+            'Select Polarion TestCase Excel File',
+            'Excel Files (*.xlsx)'
+        )
+
     def browseTestCaseExcel(self):
         self.browseFile(
             self.testCaseExcelEdit,
             'Select Test Case Excel File',
-            'Excel Files (*.xlsx; *.xlsm)'
+            'Excel Files (*.xlsm)'
         )
 
     def browseCallFunction(self):
@@ -351,7 +392,10 @@ class App(QMainWindow, Ui_MainWindow):
         self.browseFile(self.variablePoolEdit, 'Open Variable Pool', 'TXT Files (*.txt)')
 
     def browseFile(self, editBox, titleDialog, fileType):
-        folder = str(os.path.dirName(editBox.text()))
+        if len(editBox.text()) > 0:
+            folder = str(os.path.dirname(editBox.text()))
+        else:
+            folder = ''
 
         filePath, fileType = QFileDialog.getOpenFileName(
             self,
@@ -373,7 +417,8 @@ class App(QMainWindow, Ui_MainWindow):
         self.setDefaultConfigDict()
 
     def saveProfile(self):
-        configFolder = os.path.dirName(str(self.configFile))
+        configFolder = os.path.dirname(str(self.configFile))
+
         if self.defaultProfile:
             filePath, fileType = QFileDialog.getSaveFileName(
                 self,
@@ -416,7 +461,7 @@ class App(QMainWindow, Ui_MainWindow):
             self.checkVarPoolExist(varpoolpath)
 
     def saveAsProfile(self):
-        profileFolder = os.path.dirName(str(self.profileFile))
+        profileFolder = os.path.dirname(str(self.profileFile))
         filePath, fileType = QFileDialog.getSaveFileName(
             self,
             "Save Profile As",
@@ -431,8 +476,7 @@ class App(QMainWindow, Ui_MainWindow):
     # updates the profile dict
     def updateProfileDictFromGui(self):
         # generate the log mode number based on checkboxes
-        logMode = (
-                          self.logRadioBtn0.isChecked() + self.logRadioBtn1.isChecked() * 2 + self.logRadioBtn2.isChecked() * 3) - 1
+        logMode = (self.logRadioBtn0.isChecked() + self.logRadioBtn1.isChecked() * 2 + self.logRadioBtn2.isChecked() * 3) - 1
 
         # update signal list
         signalList = []
@@ -446,19 +490,43 @@ class App(QMainWindow, Ui_MainWindow):
         for i in range(0, self.dtcExModel.rowCount()):
             dtcExList.append(self.dtcExModel.item(i, 0).text())
 
-        self.setProfileDict(
-            testcaseexcel=self.testCaseExcelEdit.text(),
-            callfolder=self.callFunctionEdit.text(),
-            csvfolder=self.csvReportEdit.text(),
-            varpoolpath=self.variablePoolEdit.text(),
-            callfuncdebug=self.callFunctionDebugCheckbox.isChecked(),
-            includeversion=self.versionCheckBox.isChecked(),
-            logmode=logMode,
-            signallist=signalList,
-            dtcenable=self.dtcExCheckBox.isChecked(),
-            dtcexlist=dtcExList,
-            updatevp=self.updateVariablePool
-        )
+        # self.setProfileDict(
+        #     testcaseexcel=self.testCaseExcelEdit.text(),
+        #     callfolder=self.callFunctionEdit.text(),
+        #     csvfolder=self.csvReportEdit.text(),
+        #     varpoolpath=self.variablePoolEdit.text(),
+        #     callfuncdebug=self.callFunctionDebugCheckbox.isChecked(),
+        #     includeversion=self.versionCheckBox.isChecked(),
+        #     logmode=logMode,
+        #     signallist=signalList,
+        #     dtcenable=self.dtcExCheckBox.isChecked(),
+        #     dtcexlist=dtcExList,
+        #     updatevp=self.updateVariablePool
+        # )
+
+        self.profileDict = {
+            'Profile': {
+                '@version': '1.0',
+                'PolarionExcel': self.polarionExcelEdit.text(),
+                'TestCaseExcel': self.testCaseExcelEdit.text(),
+                'CallFunctionFolder': self.callFunctionEdit.text(),
+                'CSVReportFolder': self.csvReportEdit.text(),
+                'VariablePoolPath': self.variablePoolEdit.text(),
+                'UpdateVariablePool': self.updateVariablePool,
+                'Version': {'@include': self.versionCheckBox.isChecked()},
+                'CallFunctionDebug': {'@enable': self.callFunctionDebugCheckbox.isChecked()},
+                'Log': {
+                    '@mode': logMode,
+                    'Signal': signalList
+                },
+                'DTC': {
+                    '@enable': self.dtcExCheckBox.isChecked(),
+                    'Except': dtcExList
+                }
+            }
+        }
+
+
 
     def addSignal(self):
         signal = self.addSignalEdit.text()
@@ -507,7 +575,7 @@ class App(QMainWindow, Ui_MainWindow):
         )
 
         # if config folder not found, create one
-        dirName = os.path.dirName(str(self.configFile))
+        dirName = os.path.dirname(str(self.configFile))
 
         if not os.path.exists(dirName):
             os.mkdir(dirName)
@@ -587,42 +655,20 @@ class App(QMainWindow, Ui_MainWindow):
             if msgReply == QMessageBox.Yes:
                 self.browseVariablePool()
 
-    # read excel file and figure out which test cases need to rerun
-    def processRunList(self):
-        from collections import OrderedDict
-        class MyItemModel(QStandardItemModel):
-            def __init__(self, data=None, header=None, parent=None):
-                QStandardItemModel.__init__(self, parent)
-                for i, d in enumerate(data):
-                    self.setItem(i, 0, QStandardItem(d))
-                    self.setItem(i, 1, QStandardItem(data[d]['run']))
-                    self.setItem(i, 2, QStandardItem(data[d]['testCaseVerdict']))
+    class MyItemModel(QStandardItemModel):
+        def __init__(self, data=None, header=None, parent=None):
+            QStandardItemModel.__init__(self, parent)
 
-                self.setHorizontalHeaderLabels(header)
+            for i, d in enumerate(data):
+                self.setItem(i, 0, QStandardItem(d))
+                for j, p in enumerate(list(data[d].keys())):
+                    self.setItem(i, j + 1, QStandardItem(str(data[d][p])))
 
-        self.progressBar.setValue(10)
-        #
-        # grab the active worksheet
-        wb = load_workbook(self.testCaseExcelEdit.text())
-        ws = wb.active
+            self.setHorizontalHeaderLabels(header)
 
-        self.progressBar.setValue(20)
-        # grab the test case column
-        testCaseColumn = ws['K']
-
-        # less the header name and empty row, get only the test case names
-        runList = [str(each.value) for each in testCaseColumn][2:]
-
-        # remove empty or none entries
-        while runList[-1] == 'None' or runList[-1] == '':
-            runList.pop()
-
+    # read all log files and extract data
+    def getLogDict(self):
         csvReportFolder = self.csvReportEdit.text()
-
-        self.progressBar.setValue(30)
-
-        # dict to hold data from all log files
-        logDict = {}
 
         # enumerate the log folder and determine the latest log files
         for fileName in os.listdir(csvReportFolder):
@@ -641,12 +687,12 @@ class App(QMainWindow, Ui_MainWindow):
 
                 try:
                     # if testcase exist in dict, then we update it with latest csv filepath and modified date
-                    if lastModTime > logDict[testCase]['lastModTime']:
-                        logDict[testCase]['filePath'] = filePath
-                        logDict[testCase]['lastModTime'] = lastModTime
+                    if lastModTime > self.logDict[testCase]['lastModTime']:
+                        self.logDict[testCase]['filePath'] = filePath
+                        self.logDict[testCase]['lastModTime'] = lastModTime
                 except KeyError:
                     # create key-value pairs if test case does not exist in dict
-                    logDict[testCase] = {'filePath': filePath,
+                    self.logDict[testCase] = {'filePath': filePath,
                                          'lastModTime': lastModTime,
                                          'testCaseVerdict': testCaseVerdict,
                                          'testComment': testComment,
@@ -654,15 +700,14 @@ class App(QMainWindow, Ui_MainWindow):
                                          'passList': passList,
                                          'length': length}
 
-        self.progressBar.setValue(50)
         # grab the data from all latest log files
-        for testCase in logDict:
+        for t in self.logDict:
             passList = []
             testCaseVerdict = ''
             testComment = ''
             actualResult = []
 
-            with open(logDict[testCase]['filePath']) as csvFile:
+            with open(self.logDict[t]['filePath']) as csvFile:
                 csvReader = csv.DictReader(csvFile)
                 for row in csvReader:
                     passList.append(row['Step Verdict'])
@@ -672,35 +717,82 @@ class App(QMainWindow, Ui_MainWindow):
                     if len(row['Test Comment']) > 0:
                         testComment = row['Test Comment']
 
-            logDict[testCase]['testCaseVerdict'] = testCaseVerdict
-            logDict[testCase]['testComment'] = testComment
-            logDict[testCase]['actualResult'] = actualResult
-            logDict[testCase]['passList'] = passList
-            logDict[testCase]['length'] = len(passList)
+            self.logDict[t]['testCaseVerdict'] = testCaseVerdict
+            self.logDict[t]['testComment'] = testComment
+            self.logDict[t]['actualResult'] = actualResult
+            self.logDict[t]['passList'] = passList
+            self.logDict[t]['length'] = len(passList)
+
+    # read excel file and figure out which test cases need to rerun
+    def getRunList(self):
+        self.progressBar.setValue(10)
+
+        # grab the active worksheet
+        wb = load_workbook(self.testCaseExcelEdit.text())
+        ws = wb.active
+
+        self.progressBar.setValue(20)
+        # grab the test case column
+        testCaseColumn = ws['K']
+
+        # less the header name and empty row, get only the test case names
+        runList = [str(each.value) for each in testCaseColumn][2:]
+
+        # remove empty or none entries
+        while runList[-1] == 'None' or runList[-1] == '':
+            runList.pop()
+
+        self.progressBar.setValue(30)
+        self.getLogDict()
+
+        self.progressBar.setValue(50)
+        # grab the data from all latest log files
+        for testCase in self.logDict:
+            passList = []
+            testCaseVerdict = ''
+            testComment = ''
+            actualResult = []
+
+            with open(self.logDict[testCase]['filePath']) as csvFile:
+                csvReader = csv.DictReader(csvFile)
+                for row in csvReader:
+                    passList.append(row['Step Verdict'])
+                    actualResult.append(row['Actual Result'])
+                    if len(row['Test Case Verdict']) > 0:
+                        testCaseVerdict = row['Test Case Verdict']
+                    if len(row['Test Comment']) > 0:
+                        testComment = row['Test Comment']
+
+            self.logDict[testCase]['testCaseVerdict'] = testCaseVerdict
+            self.logDict[testCase]['testComment'] = testComment
+            self.logDict[testCase]['actualResult'] = actualResult
+            self.logDict[testCase]['passList'] = passList
+            self.logDict[testCase]['length'] = len(passList)
 
         self.progressBar.setValue(70)
         runDict = OrderedDict()
 
         for t in runList:
             try:
-                if logDict[t]['testCaseVerdict'] == 'Passed':
+                if self.logDict[t]['testCaseVerdict'] == 'Passed':
                     runDict[t] = {'run': 'No',
-                                  'testCaseVerdict': logDict[t]['testCaseVerdict']}
+                                  'testCaseVerdict': self.logDict[t]['testCaseVerdict']}
                 else:
                     runDict[t] = {'run': 'Yes',
-                                  'testCaseVerdict': logDict[t]['testCaseVerdict']}
+                                  'testCaseVerdict': self.logDict[t]['testCaseVerdict']}
             except KeyError as error:
                 print('KeyError:', str(error))
                 runDict[t] = {'run': 'Yes',
                               'testCaseVerdict': 'Not Found'}
 
-        header = ['TestCase', 'Run', 'TestCase Verdict']
+        header = ['TestCase', 'TestCase Verdict', 'Run']
 
-        model = MyItemModel(runDict, header)
+        model = self.MyItemModel(runDict, header)
 
         self.runTableView.setModel(model)
         self.runTableView.resizeColumnToContents(0)
-        # self.runTableView.setSortingEnabled(True)
+        self.runTableView.setSortingEnabled(True)
+        self.runTableView.sortByColumn(0, Qt.AscendingOrder)
 
         self.progressBar.setValue(100)
 
@@ -709,28 +801,206 @@ class App(QMainWindow, Ui_MainWindow):
         model = self.runTableView.model()
 
         rowCount = model.rowCount()
-        runList = [model.item(x, 1).text() for x in range(0, rowCount)]
+        runList = [model.item(x, 2).text() for x in range(0, rowCount)]
         runListString = '\n'.join(runList)
 
         cb = QApplication.clipboard()
         cb.clear(mode=cb.Clipboard)
         cb.setText(runListString, mode=cb.Clipboard)
 
+        self.statusbar.showMessage('Run list copied.')
+
+    def readPolarion(self):
+        startTime = datetime.now()
+        self.progressBar.setValue(10)
+        polarionExcel = self.polarionExcelEdit.text()
+        self.wb = load_workbook(filename=polarionExcel)
+        self.ws = self.wb.active
+
+        # grab necessary columns to work from polarion excel file
+        testCaseNameCol = self.ws['A']  # test case names
+        stepNumberCol = self.ws['D']  # step numbers
+        # actualResultCol = self.ws['M']  # actual result
+        # stepVerdictCol = self.ws['N']  # step verdict
+        # testCaseVerdictCol = self.ws['O']  # test case verdict
+        # testCommentCol = self.ws['P']  # test comment
+
+        # get all testcase names and row start
+        allSteps = list(filter(lambda x: x != None, [x.value for x in stepNumberCol]))
+        i = 1
+
+        polarionWs = self.wb['_polarion']
+        polarionColA = [x.value for x in polarionWs['A']]
+        revisionRow = polarionColA.index('testRunRevision') + 1
+        self.polarionRevisionLineEdit.setText(str(polarionWs.cell(row=revisionRow, column=2).value))
+
+
+        for eachRow in testCaseNameCol:
+            if eachRow.value is not None and eachRow.value != 'ID':
+                testCase = eachRow.value
+                # grab the start and end row for each test case
+                start = i
+                try:
+                    end = allSteps.index(1, i + 1)
+                except ValueError:
+                    end = len(allSteps)
+                i = end
+                self.polarionDict[testCase] = OrderedDict()
+                self.polarionDict[testCase]['startRow'] = start
+                self.polarionDict[testCase]['endRow'] = end
+                self.polarionDict[testCase]['length'] = end - start
+                self.polarionDict[testCase]['testCaseVerdict'] = '-'
+
+
+        self.progressBar.setValue(40)
+        self.getLogDict()
+        self.progressBar.setValue(70)
+
+
+        #
+        # # self.wb.save('UpdatePolarionSheet.xlsx')
+        #
+        # timeDiff = datetime.now() - startTime
+        # print('Time Elapsed:', timeDiff.__str__())
+        #
+        # allTestCaseVerdicts = [self.logDict[x]['testCaseVerdict'] for x in self.logDict]
+        #
+        # passedTotal = allTestCaseVerdicts.count('Passed')
+        # deferredTotal = allTestCaseVerdicts.count('Deferred')
+        # errorTotal = allTestCaseVerdicts.count('Error')
+        #
+        # print('Passed:', passedTotal)
+        # print('Deferred:', deferredTotal)
+        # print('Error:', errorTotal)
+        # print('Total:', passedTotal + deferredTotal + errorTotal)
+
+        # def getError(x, errorType):
+        #     if self.logDict[x]['testCaseVerdict'] == errorType:
+        #         return (x)
+
+        # passedList = list(filter(lambda x: x != None, [getError(x, 'Passed') for x in self.logDict]))
+        # deferredList = list(filter(lambda x: x != None, [getError(x, 'Deferred') for x in self.logDict]))
+        # errorList = list(filter(lambda x: x != None, [getError(x, 'Error') for x in self.logDict]))
+
+
+        header = ['TestCase', 'StartRow', 'EndRow', 'Steps', 'TestCase Verdict']
+
+        model = self.MyItemModel(self.polarionDict, header)
+
+        self.polarionTableView.setModel(model)
+        self.polarionTableView.resizeColumnToContents(0)
+        self.polarionTableView.setSortingEnabled(True)
+        self.polarionTableView.sortByColumn(0, Qt.AscendingOrder)
+
+        self.progressBar.setValue(100)
+
+        self.statusbar.showMessage('Polarion file read sucessfully.')
+
+    # update polarion dict with 'passed' only test cases
+    def polarionUpdateExcel(self, testCaseVerdict='Passed'):
+        for t in self.polarionDict:
+            try:
+                if testCaseVerdict == 'All':
+                    useCriteria = True
+                else:
+                    useCriteria = self.logDict[t]['testCaseVerdict'] == testCaseVerdict
+
+                if self.polarionDict[t]['length'] == self.logDict[t]['length'] and useCriteria:
+                    self.polarionDict[t]['testCaseVerdict'] = self.logDict[t]['testCaseVerdict']
+            except KeyError as error:
+                print('{} not found'.format(str(error)))
+
+        header = ['TestCase', 'StartRow', 'EndRow', 'Steps', 'TestCase Verdict']
+
+        model = self.MyItemModel(self.polarionDict, header)
+
+        self.polarionTableView.setModel(model)
+        self.polarionTableView.resizeColumnToContents(0)
+        self.polarionTableView.setSortingEnabled(True)
+        self.polarionTableView.sortByColumn(0, Qt.AscendingOrder)
+
+        self.ws = self.wb.active
+
+        # grab necessary columns to work from polarion excel file
+        actualResultCol = self.ws['M']  # actual result
+        stepVerdictCol = self.ws['N']  # step verdict
+        testCaseVerdictCol = self.ws['O']  # test case verdict
+        testCommentCol = self.ws['P']  # test comment
+
+        count = 0
+        for t in self.polarionDict:
+            try:
+                if testCaseVerdict == 'All':
+                    useCriteria = True
+                else:
+                    useCriteria = self.logDict[t]['testCaseVerdict'] == testCaseVerdict
+
+                if self.polarionDict[t]['length'] == self.logDict[t]['length'] and useCriteria:
+                    # print(t, 'Match')
+                    startRow = self.polarionDict[t]['startRow']
+                    endRow = self.polarionDict[t]['endRow']
+
+                    actualResultRows = actualResultCol[startRow:endRow]
+                    for row, actual in zip(actualResultRows, self.logDict[t]['actualResult']):
+                        row.value = actual
+
+                    stepVerdictRows = stepVerdictCol[startRow:endRow]
+                    for row, verdict in zip(stepVerdictRows, self.logDict[t]['passList']):
+                        row.value = verdict
+
+                    testCaseVerdictCol[startRow].value = self.logDict[t]['testCaseVerdict']
+                    testCommentCol[startRow].value = self.logDict[t]['testComment']
+
+                    count += 1
+            # else:
+            # 	print('{} does not match'.format(t))
+            except KeyError as error:
+                print('{} not found'.format(str(error)))
+
+        self.statusbar.showMessage('Updated Polarion Dictionary with {} testcases.'.format(testCaseVerdict))
+
+    # update revision number in polarion excel
+    def polarionUpdateRevision(self):
+        polarionWs = self.wb['_polarion']
+        polarionColA = [x.value for x in polarionWs['A']]
+        revisionRow = polarionColA.index('testRunRevision') + 1
+        polarionWs.cell(row=revisionRow, column=2).value = self.polarionRevisionLineEdit.text()
+
+        self.statusbar.showMessage('Updated Polarion Revision Number.')
+
+    def polarionSaveExcel(self):
+        folder = os.path.dirname(self.polarionExcelEdit.text())
+        filePath, fileType = QFileDialog.getSaveFileName(
+            self,
+            "Open Profile",
+            folder,
+            'XLSX Files (*.xlsx);;All Files (*)'
+        )
+        if len(filePath) > 0:
+            self.wb.save(filePath)
+
+        self.statusbar.showMessage('Save successful.')
+
     # use the profile dictionary to update the gui
     def updateGuiFromProfileDict(self):
         try:
+            polarionExcelPath = self.profileDict['Profile']['PolarionExcel']
+            self.polarionExcelEdit.setText(polarionExcelPath)
+        except KeyError:
+            self.polarionExcelEdit.setText('')
+
+        try:
             testcasepath = self.profileDict['Profile']['TestCaseExcel']
-            if testcasepath:
-                self.testCaseExcelEdit.setText(testcasepath)
-        except:
-            self.testCaseExcelEdit = ''
+            self.testCaseExcelEdit.setText(testcasepath)
+        except KeyError:
+            self.testCaseExcelEdit.setText('')
 
         try:
             callFunctionFolder = self.profileDict['Profile']['CallFunctionFolder']
             if callFunctionFolder:
                 self.callFunctionEdit.setText(callFunctionFolder)
                 self.checkFolderExist(callFunctionFolder)
-        except:
+        except KeyError:
             self.callFunctionEdit.setText('')
 
         try:
@@ -738,14 +1008,14 @@ class App(QMainWindow, Ui_MainWindow):
             if csvPath:
                 self.csvReportEdit.setText(csvPath)
                 self.checkFolderExist(csvPath)
-        except:
+        except KeyError:
             self.csvReportEdit.setText('')
 
         try:
             varPoolPath = self.profileDict['Profile']['VariablePoolPath']
             self.variablePoolEdit.setText(varPoolPath)
             self.checkVarPoolExist(varPoolPath)
-        except:
+        except KeyError:
             self.variablePoolEdit.setText('')
 
         try:
@@ -753,20 +1023,20 @@ class App(QMainWindow, Ui_MainWindow):
             dtcExceptionEnable = eval(dtcExceptionEnableString)
             self.dtcExCheckBox.setChecked(dtcExceptionEnable)
             self.showDtcException(dtcExceptionEnable)
-        except:
+        except KeyError:
             self.dtcExCheckBox.setChecked(False)
             self.showDtcException(False)
 
         try:
             callFunctionDebug = self.profileDict['Profile']['CallFunctionDebug']['@enable']
             self.callFunctionDebugCheckbox.setChecked(eval(callFunctionDebug))
-        except:
+        except KeyError:
             self.callFunctionDebugCheckBox.setChecked(False)
 
         try:
             versionCheckbox = self.profileDict['Profile']['Version']['@include']
             self.versionCheckBox.setChecked(eval(versionCheckbox))
-        except:
+        except KeyError:
             self.versionCheckBox.setChecked(False)
 
         self.addSignalModel.clear()
@@ -781,7 +1051,7 @@ class App(QMainWindow, Ui_MainWindow):
 
             for s in signalList:
                 self.addSignalModel.appendRow(QStandardItem(str(s)))
-        except:
+        except KeyError:
             debugPrint('Signal list is empty')
 
         self.dtcExModel.clear()
@@ -798,7 +1068,7 @@ class App(QMainWindow, Ui_MainWindow):
             # add rows into qt list widget
             for s in dtcExList:
                 self.dtcExModel.appendRow(QStandardItem(str(s)))
-        except:
+        except KeyError:
             debugPrint('DTCs exception list is empty')
 
     def loadConfig(self):

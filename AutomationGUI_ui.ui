@@ -10,8 +10,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>526</height>
+    <width>907</width>
+    <height>619</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -293,7 +293,7 @@ QPushButton:hover, QPushButton:pressed, QToolButton:hover {
 }</string>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>4</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideNone</enum>
@@ -367,71 +367,22 @@ QPushButton:hover, QPushButton:pressed, QToolButton:hover {
           <property name="leftMargin">
            <number>0</number>
           </property>
-          <item row="4" column="1">
-           <widget class="QLabel" name="variablePoolLabel">
-            <property name="text">
-             <string>VariablePool File:</string>
-            </property>
-            <property name="buddy">
-             <cstring>variablePoolEdit</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="3">
-           <widget class="QPushButton" name="reloadVariablePoolBtn">
-            <property name="toolTip">
-             <string>Load Variable Pool</string>
-            </property>
-            <property name="text">
-             <string>Load VP</string>
-            </property>
-            <property name="icon">
-             <iconset resource="AutomationGUI.qrc">
-              <normaloff>:/icon/graphics/baseline_save_alt_black_24dp.png</normaloff>:/icon/graphics/baseline_save_alt_black_24dp.png</iconset>
-            </property>
-            <property name="flat">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <property name="horizontalSpacing">
+           <number>5</number>
+          </property>
+          <property name="verticalSpacing">
+           <number>8</number>
+          </property>
           <item row="1" column="4">
-           <widget class="QToolButton" name="csvReportFolderToolButton">
-            <property name="contextMenuPolicy">
-             <enum>Qt::DefaultContextMenu</enum>
-            </property>
-            <property name="text">
-             <string>...</string>
-            </property>
-            <property name="icon">
-             <iconset resource="AutomationGUI.qrc">
-              <normaloff>:/icon/graphics/baseline_menu_black_24dp.png</normaloff>:/icon/graphics/baseline_menu_black_24dp.png</iconset>
-            </property>
-            <property name="popupMode">
-             <enum>QToolButton::InstantPopup</enum>
-            </property>
-            <property name="autoRaise">
-             <bool>true</bool>
-            </property>
-            <property name="arrowType">
-             <enum>Qt::NoArrow</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="4">
-           <widget class="QToolButton" name="callFunctionFolderToolButton">
-            <property name="toolTip">
-             <string>Open Folder + File</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="AutomationGUI.qrc">
-              <normaloff>:/icon/graphics/baseline_menu_black_24dp.png</normaloff>:/icon/graphics/baseline_menu_black_24dp.png</iconset>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="4">
            <widget class="QToolButton" name="testCaseExcelToolButton">
             <property name="toolTip">
              <string>Open Folder + File</string>
@@ -445,7 +396,7 @@ QPushButton:hover, QPushButton:pressed, QToolButton:hover {
             </property>
            </widget>
           </item>
-          <item row="4" column="4">
+          <item row="5" column="4">
            <widget class="QToolButton" name="variablePoolToolButton">
             <property name="toolTip">
              <string>Open Folder + File</string>
@@ -459,10 +410,10 @@ QPushButton:hover, QPushButton:pressed, QToolButton:hover {
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
+          <item row="1" column="1">
            <widget class="QLabel" name="testCaseExcelLabel">
             <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Test Case Excel File&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;dSPACE Excel File&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -472,14 +423,14 @@ QPushButton:hover, QPushButton:pressed, QToolButton:hover {
             </property>
            </widget>
           </item>
-          <item row="0" column="2">
+          <item row="1" column="2">
            <widget class="QLineEdit" name="testCaseExcelEdit">
             <property name="placeholderText">
-             <string>Specify test case excel file</string>
+             <string>Specify dSPACE test case excel file</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
+          <item row="2" column="1">
            <widget class="QLabel" name="csvReportLabel">
             <property name="text">
              <string>CSV Report Folder:</string>
@@ -489,21 +440,21 @@ QPushButton:hover, QPushButton:pressed, QToolButton:hover {
             </property>
            </widget>
           </item>
-          <item row="2" column="2">
+          <item row="3" column="2">
            <widget class="QLineEdit" name="callFunctionEdit">
             <property name="placeholderText">
              <string>Specify the call function folder</string>
             </property>
            </widget>
           </item>
-          <item row="4" column="2">
+          <item row="5" column="2">
            <widget class="QLineEdit" name="variablePoolEdit">
             <property name="placeholderText">
              <string>Specify the variable pool text file</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
+          <item row="2" column="0">
            <widget class="QLabel" name="label_2">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -528,7 +479,7 @@ QPushButton:hover, QPushButton:pressed, QToolButton:hover {
             </property>
            </widget>
           </item>
-          <item row="2" column="3">
+          <item row="3" column="3">
            <widget class="QPushButton" name="browseCallFunctionBtn">
             <property name="toolTip">
              <string>Browse</string>
@@ -542,7 +493,7 @@ QPushButton:hover, QPushButton:pressed, QToolButton:hover {
             </property>
            </widget>
           </item>
-          <item row="4" column="0">
+          <item row="5" column="0">
            <widget class="QLabel" name="label_7">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -567,7 +518,7 @@ QPushButton:hover, QPushButton:pressed, QToolButton:hover {
             </property>
            </widget>
           </item>
-          <item row="1" column="2">
+          <item row="2" column="2">
            <widget class="QLineEdit" name="csvReportEdit">
             <property name="placeholderText">
              <string>Specify the CSV report folder</string>
@@ -580,7 +531,71 @@ QPushButton:hover, QPushButton:pressed, QToolButton:hover {
             </property>
            </widget>
           </item>
-          <item row="4" column="3">
+          <item row="5" column="1">
+           <widget class="QLabel" name="variablePoolLabel">
+            <property name="text">
+             <string>VariablePool File:</string>
+            </property>
+            <property name="buddy">
+             <cstring>variablePoolEdit</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="3">
+           <widget class="QPushButton" name="reloadVariablePoolBtn">
+            <property name="toolTip">
+             <string>Load Variable Pool</string>
+            </property>
+            <property name="text">
+             <string>Load VP</string>
+            </property>
+            <property name="icon">
+             <iconset resource="AutomationGUI.qrc">
+              <normaloff>:/icon/graphics/baseline_save_alt_black_24dp.png</normaloff>:/icon/graphics/baseline_save_alt_black_24dp.png</iconset>
+            </property>
+            <property name="flat">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="4">
+           <widget class="QToolButton" name="csvReportFolderToolButton">
+            <property name="contextMenuPolicy">
+             <enum>Qt::DefaultContextMenu</enum>
+            </property>
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset resource="AutomationGUI.qrc">
+              <normaloff>:/icon/graphics/baseline_menu_black_24dp.png</normaloff>:/icon/graphics/baseline_menu_black_24dp.png</iconset>
+            </property>
+            <property name="popupMode">
+             <enum>QToolButton::InstantPopup</enum>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+            <property name="arrowType">
+             <enum>Qt::NoArrow</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="4">
+           <widget class="QToolButton" name="callFunctionFolderToolButton">
+            <property name="toolTip">
+             <string>Open Folder + File</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="AutomationGUI.qrc">
+              <normaloff>:/icon/graphics/baseline_menu_black_24dp.png</normaloff>:/icon/graphics/baseline_menu_black_24dp.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="3">
            <widget class="QPushButton" name="browseVariablePoolBtn">
             <property name="toolTip">
              <string>Browse</string>
@@ -594,7 +609,7 @@ QPushButton:hover, QPushButton:pressed, QToolButton:hover {
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
+          <item row="3" column="1">
            <widget class="QLabel" name="callFunctionLabel">
             <property name="text">
              <string>Call Function Folder:</string>
@@ -604,7 +619,7 @@ QPushButton:hover, QPushButton:pressed, QToolButton:hover {
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
+          <item row="3" column="0">
            <widget class="QLabel" name="label_3">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -629,7 +644,7 @@ QPushButton:hover, QPushButton:pressed, QToolButton:hover {
             </property>
            </widget>
           </item>
-          <item row="1" column="3">
+          <item row="2" column="3">
            <widget class="QPushButton" name="browseCsvReportBtn">
             <property name="toolTip">
              <string>Browse</string>
@@ -643,7 +658,7 @@ QPushButton:hover, QPushButton:pressed, QToolButton:hover {
             </property>
            </widget>
           </item>
-          <item row="0" column="3">
+          <item row="1" column="3">
            <widget class="QPushButton" name="browseTestCaseExcelBtn">
             <property name="toolTip">
              <string>Browse</string>
@@ -657,7 +672,7 @@ QPushButton:hover, QPushButton:pressed, QToolButton:hover {
             </property>
            </widget>
           </item>
-          <item row="0" column="0">
+          <item row="1" column="0">
            <widget class="QLabel" name="label">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -685,6 +700,85 @@ QPushButton:hover, QPushButton:pressed, QToolButton:hover {
             </property>
             <property name="text">
              <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLineEdit" name="polarionExcelEdit">
+            <property name="placeholderText">
+             <string>Specify Polarion test case excel file</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="testCaseExcelLabel_2">
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Polarion Excel File&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+            </property>
+            <property name="buddy">
+             <cstring>testCaseExcelEdit</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_4">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>32</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>32</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="autoFillBackground">
+             <bool>false</bool>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">image: url(:/icon/graphics/excel_24dp.png);</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QPushButton" name="browsePolarionExcelBtn">
+            <property name="toolTip">
+             <string>Browse</string>
+            </property>
+            <property name="text">
+             <string>Browse</string>
+            </property>
+            <property name="icon">
+             <iconset resource="AutomationGUI.qrc">
+              <normaloff>:/icon/graphics/baseline_folder_open_black_24dp.png</normaloff>:/icon/graphics/baseline_folder_open_black_24dp.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="4">
+           <widget class="QToolButton" name="polarionExcelToolButton">
+            <property name="toolTip">
+             <string>Open Folder + File</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="AutomationGUI.qrc">
+              <normaloff>:/icon/graphics/baseline_menu_black_24dp.png</normaloff>:/icon/graphics/baseline_menu_black_24dp.png</iconset>
             </property>
            </widget>
           </item>
@@ -865,6 +959,10 @@ and Additional Signals</string>
        </layout>
       </widget>
       <widget class="QWidget" name="tab_5">
+       <attribute name="icon">
+        <iconset resource="AutomationGUI.qrc">
+         <normaloff>:/icon/graphics/baseline_tab_unselected_black_24dp.png</normaloff>:/icon/graphics/baseline_tab_unselected_black_24dp.png</iconset>
+       </attribute>
        <attribute name="title">
         <string>Run</string>
        </attribute>
@@ -885,6 +983,72 @@ and Additional Signals</string>
            <widget class="QPushButton" name="processRunListButton">
             <property name="text">
              <string>Process</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_6">
+       <attribute name="icon">
+        <iconset resource="AutomationGUI.qrc">
+         <normaloff>:/icon/graphics/baseline_tab_unselected_black_24dp.png</normaloff>:/icon/graphics/baseline_tab_unselected_black_24dp.png</iconset>
+       </attribute>
+       <attribute name="title">
+        <string>Polarion</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_7">
+        <item>
+         <widget class="QTableView" name="polarionTableView"/>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_10">
+          <item>
+           <widget class="QPushButton" name="polarionReadExcelButton">
+            <property name="text">
+             <string>Read Polarion Excel</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="polarionRevisionLineEdit">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="placeholderText">
+             <string>Revision number</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="polarionUpdateRevisionButton">
+            <property name="text">
+             <string>Update Revision #</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="polarionUpdatePassedButton">
+            <property name="text">
+             <string>Update 'Passed'</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="polarionUpdateAllButton">
+            <property name="text">
+             <string>Update All</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="polarionSaveExcelButton">
+            <property name="text">
+             <string>Save</string>
             </property>
            </widget>
           </item>
