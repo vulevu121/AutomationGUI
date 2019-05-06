@@ -44,6 +44,10 @@ QWidget {
 	font: 9pt;
 }
 
+QTableView {
+	background-color: rgb(255, 255, 255);
+}
+
 QLabel {
 	background-color: transparent;
 	padding: 2px;
@@ -272,7 +276,8 @@ QMessageBox {
        <bool>false</bool>
       </property>
       <property name="styleSheet">
-       <string notr="true">QToolBar {
+       <string notr="true">
+QToolBar {
 	background-color: rgb(245, 245, 245);
 	spacing: 5px;
 	padding: 8px 8px 8px 8px;
@@ -293,7 +298,7 @@ QPushButton:hover, QPushButton:pressed, QToolButton:hover {
 }</string>
       </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>3</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideNone</enum>
@@ -541,23 +546,6 @@ QPushButton:hover, QPushButton:pressed, QToolButton:hover {
             </property>
            </widget>
           </item>
-          <item row="6" column="3">
-           <widget class="QPushButton" name="reloadVariablePoolBtn">
-            <property name="toolTip">
-             <string>Load Variable Pool</string>
-            </property>
-            <property name="text">
-             <string>Load VP</string>
-            </property>
-            <property name="icon">
-             <iconset resource="AutomationGUI.qrc">
-              <normaloff>:/icon/graphics/baseline_save_alt_black_24dp.png</normaloff>:/icon/graphics/baseline_save_alt_black_24dp.png</iconset>
-            </property>
-            <property name="flat">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
           <item row="2" column="4">
            <widget class="QToolButton" name="csvReportFolderToolButton">
             <property name="contextMenuPolicy">
@@ -782,6 +770,35 @@ QPushButton:hover, QPushButton:pressed, QToolButton:hover {
             </property>
            </widget>
           </item>
+          <item row="6" column="2">
+           <widget class="QPushButton" name="reloadVariablePoolBtn">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>200</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>Load Variable Pool</string>
+            </property>
+            <property name="text">
+             <string>Load VariablePool</string>
+            </property>
+            <property name="icon">
+             <iconset resource="AutomationGUI.qrc">
+              <normaloff>:/icon/graphics/baseline_save_alt_black_24dp.png</normaloff>:/icon/graphics/baseline_save_alt_black_24dp.png</iconset>
+            </property>
+            <property name="flat">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
        </layout>
@@ -964,25 +981,63 @@ and Additional Signals</string>
          <normaloff>:/icon/graphics/baseline_tab_unselected_black_24dp.png</normaloff>:/icon/graphics/baseline_tab_unselected_black_24dp.png</iconset>
        </attribute>
        <attribute name="title">
-        <string>Run</string>
+        <string>dSPACE</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_5">
         <item>
-         <widget class="QTableView" name="runTableView"/>
+         <layout class="QVBoxLayout" name="verticalLayout_11">
+          <item>
+           <widget class="QTableView" name="runTableView">
+            <property name="contextMenuPolicy">
+             <enum>Qt::DefaultContextMenu</enum>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QFrame, QTableView{
+	background-color: rgb(255, 255, 255)
+}</string>
+            </property>
+            <property name="alternatingRowColors">
+             <bool>true</bool>
+            </property>
+            <property name="sortingEnabled">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="dSpaceOverviewLineEdit">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="frame">
+             <bool>true</bool>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="placeholderText">
+             <string/>
+            </property>
+            <property name="clearButtonEnabled">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_9">
           <item>
            <widget class="QPushButton" name="copyButton">
             <property name="text">
-             <string>Copy</string>
+             <string>Copy Yes/No</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="processRunListButton">
+           <widget class="QPushButton" name="dSpaceReadExcelButton">
             <property name="text">
-             <string>Process</string>
+             <string>Read dSPACE Excel</string>
             </property>
            </widget>
           </item>
@@ -1000,7 +1055,30 @@ and Additional Signals</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
         <item>
-         <widget class="QTableView" name="polarionTableView"/>
+         <layout class="QVBoxLayout" name="verticalLayout_12">
+          <item>
+           <widget class="QTableView" name="polarionTableView">
+            <property name="styleSheet">
+             <string notr="true">QFrame, QTableView{
+	background-color: rgb(255, 255, 255)
+}</string>
+            </property>
+            <property name="alternatingRowColors">
+             <bool>true</bool>
+            </property>
+            <property name="sortingEnabled">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="polarionOverViewLineEdit">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -1018,6 +1096,9 @@ and Additional Signals</string>
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
             </property>
             <property name="placeholderText">
              <string>Revision number</string>
@@ -1048,7 +1129,7 @@ and Additional Signals</string>
           <item>
            <widget class="QPushButton" name="polarionSaveExcelButton">
             <property name="text">
-             <string>Save</string>
+             <string>Save Excel</string>
             </property>
            </widget>
           </item>
@@ -1152,16 +1233,28 @@ and Additional Signals</string>
       </widget>
      </widget>
     </item>
-    <item>
-     <widget class="QProgressBar" name="progressBar">
-      <property name="maximum">
-       <number>100</number>
+    <item alignment="Qt::AlignHCenter">
+     <widget class="QLabel" name="loadingBarLabel">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
       </property>
-      <property name="value">
-       <number>10</number>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
       </property>
-      <property name="textVisible">
-       <bool>false</bool>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string/>
       </property>
      </widget>
     </item>
@@ -1173,6 +1266,50 @@ and Additional Signals</string>
       <property name="leftMargin">
        <number>0</number>
       </property>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="busyIndicatorLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>40</width>
+          <height>40</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>40</width>
+          <height>40</height>
+         </size>
+        </property>
+        <property name="baseSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
       <item alignment="Qt::AlignRight">
        <widget class="QCheckBox" name="autorunCheckBox">
         <property name="sizePolicy">
@@ -1319,7 +1456,7 @@ and Additional Signals</string>
   <action name="actionNew">
    <property name="icon">
     <iconset resource="AutomationGUI.qrc">
-     <normaloff>:/svg/icons/file.svg</normaloff>:/svg/icons/file.svg</iconset>
+     <normaloff>:/png/icons/new.png</normaloff>:/png/icons/new.png</iconset>
    </property>
    <property name="text">
     <string>New</string>
@@ -1335,7 +1472,6 @@ and Additional Signals</string>
   <tabstop>browseCallFunctionBtn</tabstop>
   <tabstop>variablePoolEdit</tabstop>
   <tabstop>browseVariablePoolBtn</tabstop>
-  <tabstop>reloadVariablePoolBtn</tabstop>
   <tabstop>exitButton</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>variablePoolToolButton</tabstop>

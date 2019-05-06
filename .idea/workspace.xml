@@ -1,121 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a315e363-4d6f-448a-8093-5fd7b0a7caa5" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/__init__.py" afterDir="false" />
+    <list default="true" id="49024ab1-9ffb-4632-9b89-0391c2d46587" name="Default Changelist" comment="Updated run list">
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/xmlconfig.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/xmlconfig.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/xmlconfig.iml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/AutomationGUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/AutomationGUI.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutomationGUI.qrc" beforeDir="false" afterPath="$PROJECT_DIR$/AutomationGUI.qrc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AutomationGUI_rc.py" beforeDir="false" afterPath="$PROJECT_DIR$/AutomationGUI_rc.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AutomationGUI_ui.py" beforeDir="false" afterPath="$PROJECT_DIR$/AutomationGUI_ui.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AutomationGUI_ui.ui" beforeDir="false" afterPath="$PROJECT_DIR$/AutomationGUI_ui.ui" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVN_Update_Commit.bat" beforeDir="false" afterPath="$PROJECT_DIR$/SVN_Update_Commit.bat" afterDir="false" />
     </list>
-    <ignored path="C:\Users\vle\Desktop\AutomationGUI\.idea\shelf/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="FUSProjectUsageTrigger">
-    <session id="1385430813">
-      <usages-collector id="statistics.lifecycle.project">
-        <counts>
-          <entry key="project.closed" value="1" />
-          <entry key="project.open.time.0" value="1" />
-          <entry key="project.open.time.4" value="1" />
-          <entry key="project.opened" value="2" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.extensions.open">
-        <counts>
-          <entry key="py" value="8" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.types.open">
-        <counts>
-          <entry key="Python" value="8" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.extensions.edit">
-        <counts>
-          <entry key="dummy" value="134" />
-          <entry key="py" value="6028" />
-          <entry key="txt" value="516" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.types.edit">
-        <counts>
-          <entry key="PLAIN_TEXT" value="650" />
-          <entry key="Python" value="6028" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.vcs.git.usages">
-        <counts>
-          <entry key="git.branch.merge" value="1" />
-        </counts>
-      </usages-collector>
-    </session>
-    <session id="1764806281">
-      <usages-collector id="statistics.lifecycle.project">
-        <counts>
-          <entry key="project.closed" value="8" />
-          <entry key="project.open.time.0" value="2" />
-          <entry key="project.open.time.2" value="1" />
-          <entry key="project.open.time.3" value="3" />
-          <entry key="project.open.time.4" value="4" />
-          <entry key="project.open.time.6" value="1" />
-          <entry key="project.opened" value="11" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.extensions.open">
-        <counts>
-          <entry key="py" value="7" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.types.open">
-        <counts>
-          <entry key="Python" value="7" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.extensions.edit">
-        <counts>
-          <entry key="Python Console" value="21" />
-          <entry key="dummy" value="4" />
-          <entry key="py" value="10775" />
-          <entry key="txt" value="395" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.types.edit">
-        <counts>
-          <entry key="PLAIN_TEXT" value="399" />
-          <entry key="Python" value="10796" />
-        </counts>
-      </usages-collector>
-    </session>
-  </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/AutomationGUI.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2693">
-              <caret line="77" column="26" selection-start-line="77" selection-start-column="26" selection-end-line="77" selection-end-column="26" />
+            <state relative-caret-position="246">
+              <caret line="957" column="36" selection-start-line="957" selection-start-column="36" selection-end-line="957" selection-end-column="36" />
               <folding>
-                <marker date="1554425570063" expanded="true" signature="8211:8466" ph="..." />
-                <marker date="1554425570063" expanded="true" signature="25397:25474" ph="..." />
+                <element signature="e#47#76#0" expanded="true" />
+                <element signature="e#39434#40000#0" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/AutomationGUI_ui.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="12460">
-              <caret line="623" column="13" selection-start-line="623" selection-start-column="13" selection-end-line="623" selection-end-column="13" />
             </state>
           </provider>
         </entry>
@@ -124,139 +38,60 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>changed</find>
-      <find>addsignal</find>
-      <find>addsignalbtn</find>
-      <find>fullmess</find>
-      <find>self.fullMessagesCheckbox</find>
-      <find>fullme</find>
-      <find>fullmes</find>
-      <find>self.variable_pool_notfound</find>
-      <find>CONFIG_NOTFOUND</find>
-      <find>PROFILE_NOTFOUND</find>
-      <find>PROFILE_NOTFOUND_CONFIG</find>
-      <find>self.debugprint</find>
-      <find>dprint</find>
-      <find>self.debug</find>
-      <find>config_profile_notfound</find>
-      <find>CONFIG_PROFILE_NOTFOUND</find>
-      <find>QIcon</find>
-      <find>self.testCaseExcelEdit</find>
-      <find>testCaseExcelEdit</find>
-      <find>testcaseexceledit</find>
-      <find>dtcexcept</find>
-      <find>loadprofile</find>
-      <find>dtcexcheck</find>
-      <find>updateguifrom</find>
-      <find>toggle</find>
-      <find>path(</find>
-      <find>csvreportfolder</find>
-      <find>autoruncheckbox</find>
-      <find>self.autorunCheckBox</find>
-      <find>profilefolder</find>
+      <find>runEdit</find>
+      <find>run</find>
+      <find>dspace</find>
+      <find>os.path.dirName</find>
+      <find>logDict</find>
+      <find>polarionDict</find>
+      <find>qsavefile</find>
+      <find>menu</find>
+      <find>testCase</find>
+      <find>TestCase</find>
+      <find>model</find>
+      <find>copyRunlist</find>
+      <find>partial</find>
+      <find>runDict</find>
+      <find>dspaceread</find>
+      <find>showbusy</find>
+      <find>self.progress</find>
+      <find>showloading</find>
+      <find>title</find>
+      <find>1.5.1</find>
+      <find>about</find>
+      <find>updateruntable</find>
     </findStrings>
     <replaceStrings>
-      <replace>includeversion</replace>
-      <replace>str\(Path\([a-zA-Z]+\)\)</replace>
-      <replace>.get'Profile').get('Log').get('Signal')</replace>
-      <replace>Dict[</replace>
-      <replace>][</replace>
-      <replace>']</replace>
-      <replace>self.callFunctionDebugCheckBox</replace>
-      <replace>strings.VARIABLE_POOL_NOTFOUND</replace>
-      <replace>CONFIG_PROFILE_NOTFOUND</replace>
-      <replace>debugprint</replace>
-      <replace>debug</replace>
-      <replace>profileFolder</replace>
+      <replace>os.path.dirname</replace>
+      <replace>self.logDict</replace>
+      <replace>self.polarionDict</replace>
+      <replace>polarion</replace>
+      <replace>Polarion</replace>
+      <replace>runTableViewModel</replace>
+      <replace>self.runTableViewModel</replace>
+      <replace>dSpaceReadExcel</replace>
+      <replace>self.main.runDict</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
-    <option name="PREVIOUS_COMMIT_AUTHORS">
-      <list>
-        <option value="Vu Le &lt;vulevu121@gmail.com&gt;" />
-      </list>
-    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/xmlconfig.py" />
-        <option value="$PROJECT_DIR$/xmlconfig_main.py" />
-        <option value="$PROJECT_DIR$/AutomationGUI_ui.py" />
-        <option value="$PROJECT_DIR$/strings.py" />
         <option value="$PROJECT_DIR$/AutomationGUI.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="38" />
-    <option name="y" value="55" />
-    <option name="width" value="1625" />
-    <option name="height" value="925" />
-  </component>
-  <component name="ProjectInspectionProfilesVisibleTreeState">
-    <entry key="Project Default">
-      <profile-state>
-        <expanded-state>
-          <State />
-          <State>
-            <id>Buildout</id>
-          </State>
-          <State>
-            <id>General</id>
-          </State>
-          <State>
-            <id>HTML</id>
-          </State>
-          <State>
-            <id>Internationalization</id>
-          </State>
-          <State>
-            <id>JSON and JSON5</id>
-          </State>
-          <State>
-            <id>Markdown</id>
-          </State>
-          <State>
-            <id>Properties Files</id>
-          </State>
-          <State>
-            <id>Python</id>
-          </State>
-          <State>
-            <id>RELAX NG</id>
-          </State>
-          <State>
-            <id>ReST</id>
-          </State>
-          <State>
-            <id>RegExp</id>
-          </State>
-          <State>
-            <id>Spelling</id>
-          </State>
-          <State>
-            <id>XML</id>
-          </State>
-          <State>
-            <id>YAML</id>
-          </State>
-        </expanded-state>
-        <selected-state>
-          <State>
-            <id>PyArgumentEqualDefaultInspection</id>
-          </State>
-        </selected-state>
-      </profile-state>
-    </entry>
+    <option name="width" value="1080" />
+    <option name="height" value="1040" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -264,15 +99,20 @@
               <item name="AutomationGUI" type="b2602c69:ProjectViewProjectNode" />
               <item name="AutomationGUI" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="AutomationGUI" type="b2602c69:ProjectViewProjectNode" />
+              <item name="AutomationGUI" type="462c0819:PsiDirectoryNode" />
+              <item name="graphics" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$USER_HOME$/Documents/Sony-Camera-API" />
-    <property name="settings.editor.selected.configurable" value="Errors" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/makegui.bat" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -287,19 +127,19 @@
     </option>
   </component>
   <component name="RunManager">
-    <configuration name="AutomationGUI" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
-      <module name="xmlconfig" />
+    <configuration name="AutomationGUI" type="PythonConfigurationType" factoryName="Python" activateToolWindowBeforeRun="false">
+      <module name="AutomationGUI" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="C:\Users\vle\AppData\Local\Programs\Python\Python37\python.exe" />
+      <option name="SDK_HOME" value="C:\Program Files\Python27\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="AutomationGUI.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/AutomationGUI.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -316,311 +156,83 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="a315e363-4d6f-448a-8093-5fd7b0a7caa5" name="Default Changelist" comment="" />
-      <created>1539728608497</created>
+      <changelist id="49024ab1-9ffb-4632-9b89-0391c2d46587" name="Default Changelist" comment="" />
+      <created>1556754212745</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1539728608497</updated>
+      <updated>1556754212745</updated>
     </task>
-    <task id="LOCAL-00001" summary="Updated">
-      <created>1539729039637</created>
+    <task id="LOCAL-00001" summary="Updated run list">
+      <created>1556754497909</created>
       <option name="number" value="00001" />
       <option name="presentableId" value="LOCAL-00001" />
       <option name="project" value="LOCAL" />
-      <updated>1539729039638</updated>
+      <updated>1556754497909</updated>
     </task>
-    <task id="LOCAL-00002" summary="Added open config folder function">
-      <created>1539730259518</created>
+    <task id="LOCAL-00002" summary="Added polarion support">
+      <created>1556828951971</created>
       <option name="number" value="00002" />
       <option name="presentableId" value="LOCAL-00002" />
       <option name="project" value="LOCAL" />
-      <updated>1539730259518</updated>
+      <updated>1556828951971</updated>
     </task>
-    <task id="LOCAL-00003" summary="Added checking for paths exist">
-      <created>1539797446151</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1539797446151</updated>
-    </task>
-    <task id="LOCAL-00004" summary="Changed configPath to configFile and profilePath to profileFile">
-      <created>1539797776626</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1539797776626</updated>
-    </task>
-    <task id="LOCAL-00005" summary="Fixed splitting strings with WindowsPath">
-      <created>1539798911542</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1539798911542</updated>
-    </task>
-    <task id="LOCAL-00006" summary="Update GUI layout">
-      <created>1539799354282</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1539799354282</updated>
-    </task>
-    <task id="LOCAL-00007" summary="Update GUI layout">
-      <created>1539800119634</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1539800119634</updated>
-    </task>
-    <task id="LOCAL-00008" summary="Update GUI layout">
-      <created>1539811105138</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1539811105138</updated>
-    </task>
-    <task id="LOCAL-00009" summary="Update GUI layout">
-      <created>1539815771087</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1539815771087</updated>
-    </task>
-    <task id="LOCAL-00010" summary="Updated GUI layout">
-      <created>1539816435756</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1539816435756</updated>
-    </task>
-    <task id="LOCAL-00011" summary="Added resizing and size save">
-      <created>1539899927812</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1539899927812</updated>
-    </task>
-    <task id="LOCAL-00012" summary="Improved dictionary access">
-      <created>1539904065095</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1539904065095</updated>
-    </task>
-    <task id="LOCAL-00013" summary="Added full call function messages">
-      <created>1539906866685</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1539906866685</updated>
-    </task>
-    <task id="LOCAL-00014" summary="Added full call function messages">
-      <created>1539907875754</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1539907875754</updated>
-    </task>
-    <task id="LOCAL-00015" summary="Updated GUI layout">
-      <created>1540239758539</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1540239758539</updated>
-    </task>
-    <task id="LOCAL-00016" summary="Updated GUI layout">
-      <created>1540240014821</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1540240014821</updated>
-    </task>
-    <task id="LOCAL-00017" summary="Added debug menu option">
-      <created>1540240951105</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
-      <option name="project" value="LOCAL" />
-      <updated>1540240951105</updated>
-    </task>
-    <task id="LOCAL-00018" summary="Updated browse functions">
-      <created>1540327212089</created>
-      <option name="number" value="00018" />
-      <option name="presentableId" value="LOCAL-00018" />
-      <option name="project" value="LOCAL" />
-      <updated>1540327212089</updated>
-    </task>
-    <task id="LOCAL-00019" summary="Added Karma logo">
-      <created>1540330923761</created>
-      <option name="number" value="00019" />
-      <option name="presentableId" value="LOCAL-00019" />
-      <option name="project" value="LOCAL" />
-      <updated>1540330923761</updated>
-    </task>
-    <task id="LOCAL-00020" summary="Added Karma logo">
-      <created>1540334518547</created>
-      <option name="number" value="00020" />
-      <option name="presentableId" value="LOCAL-00020" />
-      <option name="project" value="LOCAL" />
-      <updated>1540334518547</updated>
-    </task>
-    <task id="LOCAL-00021" summary="Added auto run feature">
-      <created>1541719608782</created>
-      <option name="number" value="00021" />
-      <option name="presentableId" value="LOCAL-00021" />
-      <option name="project" value="LOCAL" />
-      <updated>1541719608782</updated>
-    </task>
-    <task id="LOCAL-00022" summary="Added test case excel file support">
-      <created>1541728263926</created>
-      <option name="number" value="00022" />
-      <option name="presentableId" value="LOCAL-00022" />
-      <option name="project" value="LOCAL" />
-      <updated>1541728263926</updated>
-    </task>
-    <task id="LOCAL-00023" summary="Autorun setings are now saved">
-      <created>1542145254668</created>
-      <option name="number" value="00023" />
-      <option name="presentableId" value="LOCAL-00023" />
-      <option name="project" value="LOCAL" />
-      <updated>1542145254668</updated>
-    </task>
-    <task id="LOCAL-00024" summary="Updated all.">
-      <created>1545258440538</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1545258440538</updated>
-    </task>
-    <task id="LOCAL-00025" summary="Added pop menu for csv report folder">
-      <created>1549411860955</created>
-      <option name="number" value="00025" />
-      <option name="presentableId" value="LOCAL-00025" />
-      <option name="project" value="LOCAL" />
-      <updated>1549411860955</updated>
-    </task>
-    <task id="LOCAL-00026" summary="Replaced top menu with toolbar">
-      <created>1549495858973</created>
-      <option name="number" value="00026" />
-      <option name="presentableId" value="LOCAL-00026" />
-      <option name="project" value="LOCAL" />
-      <updated>1549495858973</updated>
-    </task>
-    <task id="LOCAL-00027" summary="Updated gui and added dtc exceptions">
-      <created>1550008474571</created>
-      <option name="number" value="00027" />
-      <option name="presentableId" value="LOCAL-00027" />
-      <option name="project" value="LOCAL" />
-      <updated>1550008474571</updated>
-    </task>
-    <task id="LOCAL-00028" summary="Added run list">
-      <created>1553011376778</created>
-      <option name="number" value="00028" />
-      <option name="presentableId" value="LOCAL-00028" />
-      <option name="project" value="LOCAL" />
-      <updated>1553011376778</updated>
-    </task>
-    <task id="LOCAL-00029" summary="Updated run tab">
-      <created>1553011723841</created>
-      <option name="number" value="00029" />
-      <option name="presentableId" value="LOCAL-00029" />
-      <option name="project" value="LOCAL" />
-      <updated>1553011723841</updated>
-    </task>
-    <task id="LOCAL-00030" summary="Added excel support for run list">
-      <created>1553020274339</created>
-      <option name="number" value="00030" />
-      <option name="presentableId" value="LOCAL-00030" />
-      <option name="project" value="LOCAL" />
-      <updated>1553020274339</updated>
-    </task>
-    <task id="LOCAL-00032" summary="Added copy button on run tab">
-      <created>1553035881751</created>
-      <option name="number" value="00032" />
-      <option name="presentableId" value="LOCAL-00032" />
-      <option name="project" value="LOCAL" />
-      <updated>1553035881751</updated>
-    </task>
-    <option name="localTasksCounter" value="33" />
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49842766" visible="true" weight="0.116325185" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.14488935" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info id="Favorites" order="2" sideWeight="0.5015723" side_tool="true" weight="0.13645943" />
+      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32885906" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.31275168" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32900432" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32900432" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Version Control" order="7" weight="0.32792208" />
-      <window_info anchor="bottom" id="Terminal" order="8" weight="0.32907802" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.32900432" />
+      <window_info anchor="bottom" id="Version Control" order="7" weight="0.32900432" />
+      <window_info anchor="bottom" id="Terminal" order="8" weight="0.32900432" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
-      <window_info anchor="bottom" id="Python Console" order="10" weight="0.32792208" />
+      <window_info anchor="bottom" id="Python Console" order="10" weight="0.32900432" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
     </layout>
   </component>
-  <component name="VcsContentAnnotationSettings">
-    <option name="myLimit" value="2678400000" />
-  </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Updated" />
-    <MESSAGE value="Added open config folder function" />
-    <MESSAGE value="Added checking for paths exist" />
-    <MESSAGE value="Changed configPath to configFile and profilePath to profileFile" />
-    <MESSAGE value="Fixed splitting strings with WindowsPath" />
-    <MESSAGE value="Update GUI layout" />
-    <MESSAGE value="Added resizing and size save" />
-    <MESSAGE value="Improved dictionary access" />
-    <MESSAGE value="Added full call function messages" />
-    <MESSAGE value="Updated GUI layout" />
-    <MESSAGE value="Added debug menu option" />
-    <MESSAGE value="Updated browse functions" />
-    <MESSAGE value="Added Karma logo" />
-    <MESSAGE value="Added auto run feature" />
-    <MESSAGE value="Added test case excel file support" />
-    <MESSAGE value="Autorun setings are now saved" />
-    <MESSAGE value="Updated all." />
-    <MESSAGE value="Added pop menu for csv report folder" />
-    <MESSAGE value="Replaced top menu with toolbar" />
-    <MESSAGE value="Updated gui and added dtc exceptions" />
-    <MESSAGE value="Added run list" />
-    <MESSAGE value="Updated run tab" />
-    <MESSAGE value="Added excel support for run list" />
-    <MESSAGE value="Added copy button on run tab" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added copy button on run tab" />
+    <MESSAGE value="Updated run list" />
+    <MESSAGE value="Added polarion support" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added polarion support" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../Update_Hw_Sw_Version.py" />
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.2/system/python_stubs/1339128885/PyQt5/QtGui/QStandardItemModel.py" />
-    <entry file="file://$PROJECT_DIR$/strings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="40">
-          <caret line="2" column="23" selection-start-line="2" selection-end-line="2" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.2/system/python_stubs/1339128885/PyQt5/QtWidgets/QAction.py" />
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.2/system/python_stubs/1339128885/PyQt5/QtWidgets/QWidget.py" />
-    <entry file="file://$PROJECT_DIR$/AutomationGUI.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2693">
-          <caret line="77" column="26" selection-start-line="77" selection-start-column="26" selection-end-line="77" selection-end-column="26" />
-          <folding>
-            <marker date="1554425570063" expanded="true" signature="8211:8466" ph="..." />
-            <marker date="1554425570063" expanded="true" signature="25397:25474" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/AutomationGUI.py.bak" />
     <entry file="file://$PROJECT_DIR$/AutomationGUI_ui.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="12460">
-          <caret line="623" column="13" selection-start-line="623" selection-start-column="13" selection-end-line="623" selection-end-column="13" />
+        <state relative-caret-position="197">
+          <caret line="589" column="13" selection-start-line="589" selection-start-column="13" selection-end-line="589" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/AutomationGUI.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="246">
+          <caret line="957" column="36" selection-start-line="957" selection-start-column="36" selection-end-line="957" selection-end-column="36" />
+          <folding>
+            <element signature="e#47#76#0" expanded="true" />
+            <element signature="e#39434#40000#0" />
+          </folding>
         </state>
       </provider>
     </entry>

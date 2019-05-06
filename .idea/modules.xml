@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/xmlconfig.iml" filepath="$PROJECT_DIR$/.idea/xmlconfig.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/AutomationGUI.iml" filepath="$PROJECT_DIR$/.idea/AutomationGUI.iml" />
     </modules>
   </component>
 </project>

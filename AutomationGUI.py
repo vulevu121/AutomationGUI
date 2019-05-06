@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# 5/6/19 Changelog v1.5.2
+# Added loading bar
+# Implemented threading for reading and processing excel files
+
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
@@ -14,12 +18,13 @@ import csv
 from datetime import datetime
 from openpyxl import load_workbook
 from collections import OrderedDict
-from functools import partial
+# from functools import partial # used for calling with args
 
 if sys.version_info[0] < 3:
     FileNotFoundError = IOError
 
 debug = False
+version = 'v1.5.2'
 
 def debugPrint(msg):
     if debug:
@@ -46,6 +51,17 @@ class App(QMainWindow, Ui_MainWindow):
         self.variablePoolDict = {}
         self.updateVariablePool = False  # update variable pool in AutomationDesk
         self.defaultProfile = True  # false when a profile is loaded
+
+        # busy indicator
+        # self.busyIndicatorMovie = QMovie(":/animation/graphics/ring-alt_1.gif")
+        # self.busyIndicatorMovie.setScaledSize(QSize(32, 32))
+        # self.busyIndicatorLabel.setMovie(self.busyIndicatorMovie)
+        # self.busyIndicatorLabel.hide()
+
+        # loading bar
+        self.loadingBarMovie = QMovie(":/animation/graphics/loading_bar.gif")
+        self.loadingBarLabel.setMovie(self.loadingBarMovie)
+        self.loadingBarLabel.hide()
 
         # Qt item models
         self.addSignalModel = QStandardItemModel()
@@ -74,8 +90,22 @@ class App(QMainWindow, Ui_MainWindow):
         self.variablePoolEdit.textChanged.connect(self.unsavedChanges)
         self.reloadVariablePoolBtn.clicked.connect(self.loadVariablePool)
 
-        # test case excel toolbutton
+        # polarion excel toolbutton
+        self.polarionExcelToolButton.setPopupMode(QToolButton.InstantPopup)
+        self.polarionExcelMenu = QMenu()
 
+        openPolarionExcelFileAction = QAction(QIcon(':/svg/icons/excel.svg'), 'Open Test Case File', self)
+        openPolarionExcelFileAction.triggered.connect(self.openPolarionExcelFile)
+        self.polarionExcelMenu.addAction(openPolarionExcelFileAction)
+
+
+        openPolarionExcelFolderAction = QAction(QIcon(':/svg/icons/folder.svg'), 'Open Test Case Folder', self)
+        openPolarionExcelFolderAction.triggered.connect(self.openPolarionExcelFolder)
+        self.polarionExcelMenu.addAction(openPolarionExcelFolderAction)
+
+        self.polarionExcelToolButton.setMenu(self.polarionExcelMenu)
+
+        # test case excel toolbutton
         self.testCaseExcelToolButton.setPopupMode(QToolButton.InstantPopup)
         testCaseExcelMenu = QMenu()
 
@@ -90,7 +120,6 @@ class App(QMainWindow, Ui_MainWindow):
         self.testCaseExcelToolButton.setMenu(testCaseExcelMenu)
 
         # csv report toolbutton
-
         self.csvReportFolderToolButton.setPopupMode(QToolButton.InstantPopup)
         csvReportFolderMenu = QMenu()
 
@@ -105,7 +134,6 @@ class App(QMainWindow, Ui_MainWindow):
         self.csvReportFolderToolButton.setMenu(csvReportFolderMenu)
 
         # call function toolbutton
-
         self.callFunctionFolderToolButton.setPopupMode(QToolButton.InstantPopup)
         callFunctionFolderMenu = QMenu()
 
@@ -116,7 +144,6 @@ class App(QMainWindow, Ui_MainWindow):
         self.callFunctionFolderToolButton.setMenu(callFunctionFolderMenu)
 
         # variable pool toolbutton
-
         self.variablePoolToolButton.setPopupMode(QToolButton.InstantPopup)
         variablePoolMenu = QMenu()
 
@@ -150,13 +177,22 @@ class App(QMainWindow, Ui_MainWindow):
         self.removeDtcExBtn.clicked.connect(self.removeDtcEx)
 
         # run list tab
-        self.processRunListButton.clicked.connect(self.getRunList)
+        self.dSpaceReadExcelButton.clicked.connect(self.dSpaceReadExcelStart)
+        self.runTableViewModel = QStandardItemModel()
+        self.runTableView.setModel(self.runTableViewModel)
+
         self.copyButton.clicked.connect(self.copyRunList)
+        self.runTableView.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.runTableView.customContextMenuRequested.connect(self.tableContextMenuEvent)
+
 
         # polarion tab
-        self.polarionReadExcelButton.clicked.connect(self.readPolarion)
-        self.polarionUpdatePassedButton.clicked.connect(partial(self.polarionUpdateExcel, 'Passed'))
-        self.polarionUpdateAllButton.clicked.connect(partial(self.polarionUpdateExcel, 'All'))
+        self.polarionReadExcelButton.clicked.connect(self.polarionReadExcelStart)
+        self.polarionTableViewModel = QStandardItemModel()
+        self.polarionTableView.setModel(self.polarionTableViewModel)
+
+        self.polarionUpdatePassedButton.clicked.connect(lambda: self.polarionUpdateExcel('Passed'))
+        self.polarionUpdateAllButton.clicked.connect(lambda: self.polarionUpdateExcel('All'))
         self.polarionSaveExcelButton.clicked.connect(self.polarionSaveExcel)
         self.polarionUpdateRevisionButton.clicked.connect(self.polarionUpdateRevision)
 
@@ -188,7 +224,6 @@ class App(QMainWindow, Ui_MainWindow):
         self.settingsVerticalLayoutRight.setAlignment(Qt.AlignTop)
         self.settingsVerticalLayoutLeft.setAlignment(Qt.AlignTop)
 
-        self.progressBar.setValue(0)
         self.tabWidget.setCurrentIndex(0)
         self.logRadioBtn0.setChecked(True)
         self.hideAddSignal()
@@ -210,6 +245,56 @@ class App(QMainWindow, Ui_MainWindow):
     #     self.tabWidget.setFixedWidth(self.width()-40)
     #     self.gridLayout.width
     #     # QtGui.QMainWindow.resizeEvent(self, event)
+
+    def showLoadingBar(self):
+        self.loadingBarMovie.setScaledSize(QSize(self.width(), 3))
+        self.loadingBarMovie.start()
+        self.loadingBarLabel.show()
+
+    def hideLoadingBar(self):
+        self.loadingBarLabel.hide()
+        self.loadingBarMovie.stop()
+
+    # def showBusyIndicator(self):
+    #     self.busyIndicatorLabel.show()
+    #     self.busyIndicatorMovie.start()
+    #
+    # def hideBusyIndicator(self):
+    #     self.busyIndicatorLabel.hide()
+    #     self.busyIndicatorMovie.stop()
+
+    def tableContextMenuEvent(self, qpoint):
+        menu = QMenu(self)
+        copyAction = QAction(QIcon(':/svg/icons/file.svg'), 'Copy Selection', self)
+        copyAction.triggered.connect(lambda: self.copySelection(qpoint))
+        menu.addAction(copyAction)
+        menu.popup(QCursor.pos())
+
+    def copySelection(self, qpoint):
+        if self.runTableView.model():
+            selectionModel = self.runTableView.selectionModel()
+
+            copyList = []
+
+            for each in selectionModel.selectedIndexes():
+                item = self.runTableViewModel.item(each.row(), each.column())
+                copyList.append(item.text())
+
+            copyString = '\n'.join(copyList)
+
+            cb = QApplication.clipboard()
+            cb.clear(mode=cb.Clipboard)
+            cb.setText(copyString, mode=cb.Clipboard)
+        else:
+            print("No model found")
+
+    # def copyCells(self, qpoint):
+    #     row = self.runTableView.rowAt(qpoint.y())
+    #     col = self.runTableView.columnAt(qpoint.x())
+    #
+    #     model = self.runTableView.model()
+    #     item = model.item(row, col)
+    #     print(item.text())
 
     def autoRunClicked(self):
         if self.autorunCheckBox.isChecked():
@@ -262,6 +347,18 @@ class App(QMainWindow, Ui_MainWindow):
         dirName = os.path.dirname(str(varPoolPath))
         if os.path.exists(str(dirName)):
             os.startfile(str(varPoolPath))
+
+    def openPolarionExcelFolder(self):
+        polarionExcelPath = Path(self.polarionExcelEdit.text())
+        dirName = os.path.dirname(str(polarionExcelPath))
+        if os.path.exists(str(dirName)):
+            os.startfile(str(dirName))
+
+    def openPolarionExcelFile(self):
+        polarionExcelPath = Path(self.polarionExcelEdit.text())
+        dirName = os.path.dirname(str(polarionExcelPath))
+        if os.path.exists(str(dirName)):
+            os.startfile(str(polarionExcelPath))
 
     def openTestCaseExcelFolder(self):
         testCaseExcelPath = Path(self.testCaseExcelEdit.text())
@@ -662,9 +759,12 @@ class App(QMainWindow, Ui_MainWindow):
             for i, d in enumerate(data):
                 self.setItem(i, 0, QStandardItem(d))
                 for j, p in enumerate(list(data[d].keys())):
-                    self.setItem(i, j + 1, QStandardItem(str(data[d][p])))
+                    item = QStandardItem(str(data[d][p]))
+                    # item.setCheckable(True)
+                    self.setItem(i, j + 1, item)
 
             self.setHorizontalHeaderLabels(header)
+
 
     # read all log files and extract data
     def getLogDict(self):
@@ -724,218 +824,251 @@ class App(QMainWindow, Ui_MainWindow):
             self.logDict[t]['length'] = len(passList)
 
     # read excel file and figure out which test cases need to rerun
-    def getRunList(self):
-        self.progressBar.setValue(10)
+    class dSpaceReadExcelThread(QThread):
+        signal = pyqtSignal('PyQt_PyObject')
+        def __init__(self, parent):
+            QThread.__init__(self)
+            self.main = parent
 
-        # grab the active worksheet
-        wb = load_workbook(self.testCaseExcelEdit.text())
-        ws = wb.active
+        def run(self):
+            print('Reading dSpace excel...')
 
-        self.progressBar.setValue(20)
-        # grab the test case column
-        testCaseColumn = ws['K']
+            # grab the active worksheet
+            wb = load_workbook(self.main.testCaseExcelEdit.text())
+            ws = wb.active
 
-        # less the header name and empty row, get only the test case names
-        runList = [str(each.value) for each in testCaseColumn][2:]
+            # grab the test case column
+            testCaseColumn = ws['K']
 
-        # remove empty or none entries
-        while runList[-1] == 'None' or runList[-1] == '':
-            runList.pop()
+            # less the header name and empty row, get only the test case names
+            runList = [str(each.value) for each in testCaseColumn][2:]
 
-        self.progressBar.setValue(30)
-        self.getLogDict()
+            # remove empty or none entries
+            while runList[-1] == 'None' or runList[-1] == '':
+                runList.pop()
 
-        self.progressBar.setValue(50)
-        # grab the data from all latest log files
-        for testCase in self.logDict:
-            passList = []
-            testCaseVerdict = ''
-            testComment = ''
-            actualResult = []
+            self.main.getLogDict()
 
-            with open(self.logDict[testCase]['filePath']) as csvFile:
-                csvReader = csv.DictReader(csvFile)
-                for row in csvReader:
-                    passList.append(row['Step Verdict'])
-                    actualResult.append(row['Actual Result'])
-                    if len(row['Test Case Verdict']) > 0:
-                        testCaseVerdict = row['Test Case Verdict']
-                    if len(row['Test Comment']) > 0:
-                        testComment = row['Test Comment']
+            # grab the data from all latest log files
+            for testCase in self.main.logDict:
+                passList = []
+                testCaseVerdict = ''
+                testComment = ''
+                actualResult = []
 
-            self.logDict[testCase]['testCaseVerdict'] = testCaseVerdict
-            self.logDict[testCase]['testComment'] = testComment
-            self.logDict[testCase]['actualResult'] = actualResult
-            self.logDict[testCase]['passList'] = passList
-            self.logDict[testCase]['length'] = len(passList)
+                with open(self.main.logDict[testCase]['filePath']) as csvFile:
+                    csvReader = csv.DictReader(csvFile)
+                    for row in csvReader:
+                        passList.append(row['Step Verdict'])
+                        actualResult.append(row['Actual Result'])
+                        if len(row['Test Case Verdict']) > 0:
+                            testCaseVerdict = row['Test Case Verdict']
+                        if len(row['Test Comment']) > 0:
+                            testComment = row['Test Comment']
 
-        self.progressBar.setValue(70)
-        runDict = OrderedDict()
+                self.main.logDict[testCase]['testCaseVerdict'] = testCaseVerdict
+                self.main.logDict[testCase]['testComment'] = testComment
+                self.main.logDict[testCase]['actualResult'] = actualResult
+                self.main.logDict[testCase]['passList'] = passList
+                self.main.logDict[testCase]['length'] = len(passList)
 
-        for t in runList:
-            try:
-                if self.logDict[t]['testCaseVerdict'] == 'Passed':
-                    runDict[t] = {'run': 'No',
-                                  'testCaseVerdict': self.logDict[t]['testCaseVerdict']}
-                else:
-                    runDict[t] = {'run': 'Yes',
-                                  'testCaseVerdict': self.logDict[t]['testCaseVerdict']}
-            except KeyError as error:
-                print('KeyError:', str(error))
-                runDict[t] = {'run': 'Yes',
-                              'testCaseVerdict': 'Not Found'}
+            self.main.runDict = OrderedDict()
 
-        header = ['TestCase', 'TestCase Verdict', 'Run']
+            for t in runList:
+                try:
+                    if self.main.logDict[t]['testCaseVerdict'] == 'Passed':
+                        self.main.runDict[t] = {'run': 'No',
+                                      'testCaseVerdict': self.main.logDict[t]['testCaseVerdict']}
+                    else:
+                        self.main.runDict[t] = {'run': 'Yes',
+                                      'testCaseVerdict': self.main.logDict[t]['testCaseVerdict']}
+                except KeyError as error:
+                    print('KeyError:', str(error))
+                    self.main.runDict[t] = {'run': 'Yes',
+                                  'testCaseVerdict': 'Not Found'}
 
-        model = self.MyItemModel(runDict, header)
+            self.signal.emit('Reading dSpace excel finished.')
 
-        self.runTableView.setModel(model)
-        self.runTableView.resizeColumnToContents(0)
+    def dSpaceReadExcelStart(self):
+        self.showLoadingBar()
+        self.dSpaceReadExcelThreadObject = self.dSpaceReadExcelThread(self)
+        self.dSpaceReadExcelThreadObject.signal.connect(self.updateRunTableViewModel)
+        self.dSpaceReadExcelThreadObject.start()
+
+    def updateRunTableViewModel(self, result):
+        header = ['TestCase', 'TestCase Verdict', 'Rerun']
+        model = self.runTableViewModel
+
+        for i, d in enumerate(self.runDict):
+            model.setItem(i, 0, QStandardItem(d))
+            for j, p in enumerate(list(self.runDict[d].keys())):
+                item = QStandardItem(str(self.runDict[d][p]))
+                # item.setCheckable(True)
+                model.setItem(i, j + 1, item)
+
+        model.setHorizontalHeaderLabels(header)
+        self.runTableView.resizeColumnsToContents()
+        self.runTableView.setColumnWidth(0, 150)
+
         self.runTableView.setSortingEnabled(True)
         self.runTableView.sortByColumn(0, Qt.AscendingOrder)
+        self.runTableView.setAlternatingRowColors(True)
 
-        self.progressBar.setValue(100)
+        allTestCaseVerdicts = [self.logDict[x]['testCaseVerdict'] for x in self.logDict]
+
+        passedTotal = allTestCaseVerdicts.count('Passed')
+        deferredTotal = allTestCaseVerdicts.count('Deferred')
+        errorTotal = allTestCaseVerdicts.count('Error')
+        total = passedTotal + deferredTotal + errorTotal
+
+        self.dSpaceOverviewLineEdit.setText(
+            'Total Logs Found: {}    Passed: {}    Deferred: {}    Error: {}'.format(total, passedTotal,
+                                                                                     deferredTotal, errorTotal))
+        self.statusbar.showMessage('dSpace excel file read sucessfully.')
+        self.hideLoadingBar()
+        print(result)
 
     # copy the run list
     def copyRunList(self):
-        model = self.runTableView.model()
+        selectionModel = self.runTableView.selectionModel()
+        self.runTableView.selectColumn(2)
 
-        rowCount = model.rowCount()
-        runList = [model.item(x, 2).text() for x in range(0, rowCount)]
-        runListString = '\n'.join(runList)
+        # print(selectionModel.selectedIndexes())
+        copyList = []
+
+        for each in selectionModel.selectedIndexes():
+            item = self.runTableViewModel.item(each.row(), each.column())
+            copyList.append(item.text())
+
+        copyString = '\n'.join(copyList)
 
         cb = QApplication.clipboard()
         cb.clear(mode=cb.Clipboard)
-        cb.setText(runListString, mode=cb.Clipboard)
+        cb.setText(copyString, mode=cb.Clipboard)
 
-        self.statusbar.showMessage('Run list copied.')
+        self.statusbar.showMessage('Copy Yes/No successful.')
 
-    def readPolarion(self):
-        startTime = datetime.now()
-        self.progressBar.setValue(10)
-        polarionExcel = self.polarionExcelEdit.text()
-        self.wb = load_workbook(filename=polarionExcel)
-        self.ws = self.wb.active
+    class polarionReadExcelThread(QThread):
+        signal = pyqtSignal('PyQt_PyObject')
+        def __init__(self, parent):
+            QThread.__init__(self)
+            self.main = parent
 
-        # grab necessary columns to work from polarion excel file
-        testCaseNameCol = self.ws['A']  # test case names
-        stepNumberCol = self.ws['D']  # step numbers
-        # actualResultCol = self.ws['M']  # actual result
-        # stepVerdictCol = self.ws['N']  # step verdict
-        # testCaseVerdictCol = self.ws['O']  # test case verdict
-        # testCommentCol = self.ws['P']  # test comment
+        def run(self):
+            print('Reading Polarion excel...')
+            polarionExcel = self.main.polarionExcelEdit.text()
+            self.main.polarionWb = load_workbook(filename=polarionExcel)
+            self.main.polarionWs = self.main.polarionWb.active
 
-        # get all testcase names and row start
-        allSteps = list(filter(lambda x: x != None, [x.value for x in stepNumberCol]))
-        i = 1
+            # grab necessary columns to work from polarion excel file
+            testCaseNameCol = self.main.polarionWs['A']  # test case names
+            stepNumberCol = self.main.polarionWs['D']  # step numbers
 
-        polarionWs = self.wb['_polarion']
-        polarionColA = [x.value for x in polarionWs['A']]
-        revisionRow = polarionColA.index('testRunRevision') + 1
-        self.polarionRevisionLineEdit.setText(str(polarionWs.cell(row=revisionRow, column=2).value))
+            # get all testcase names and row start
+            allSteps = list(filter(lambda x: x != None, [x.value for x in stepNumberCol]))
+            i = 1
 
+            # read revision number
+            self.main.polarionWs = self.main.polarionWb['_polarion']
+            polarionColA = [x.value for x in self.main.polarionWs['A']]
+            revisionRow = polarionColA.index('testRunRevision') + 1
+            self.main.polarionRevisionLineEdit.setText(str(self.main.polarionWs.cell(row=revisionRow, column=2).value))
 
-        for eachRow in testCaseNameCol:
-            if eachRow.value is not None and eachRow.value != 'ID':
-                testCase = eachRow.value
-                # grab the start and end row for each test case
-                start = i
-                try:
-                    end = allSteps.index(1, i + 1)
-                except ValueError:
-                    end = len(allSteps)
-                i = end
-                self.polarionDict[testCase] = OrderedDict()
-                self.polarionDict[testCase]['startRow'] = start
-                self.polarionDict[testCase]['endRow'] = end
-                self.polarionDict[testCase]['length'] = end - start
-                self.polarionDict[testCase]['testCaseVerdict'] = '-'
+            for eachRow in testCaseNameCol:
+                if eachRow.value is not None and eachRow.value != 'ID':
+                    testCase = eachRow.value
+                    # grab the start and end row for each test case
+                    start = i
+                    try:
+                        end = allSteps.index(1, i + 1)
+                    except ValueError:
+                        end = len(allSteps)
+                    i = end
+                    self.main.polarionDict[testCase] = OrderedDict()
+                    self.main.polarionDict[testCase]['startRow'] = start
+                    self.main.polarionDict[testCase]['endRow'] = end
+                    self.main.polarionDict[testCase]['length'] = end - start
+                    self.main.polarionDict[testCase]['testCaseVerdict'] = ''
 
+            self.main.getLogDict()
 
-        self.progressBar.setValue(40)
-        self.getLogDict()
-        self.progressBar.setValue(70)
+            self.signal.emit('Reading Polarion excel finished.')
 
+    def polarionReadExcelStart(self):
+        self.showLoadingBar()
+        self.polarionReadExcelThreadObject = self.polarionReadExcelThread(self)
+        self.polarionReadExcelThreadObject.signal.connect(self.updatePolarionTableViewModel)
+        self.polarionReadExcelThreadObject.start()
 
-        #
-        # # self.wb.save('UpdatePolarionSheet.xlsx')
-        #
-        # timeDiff = datetime.now() - startTime
-        # print('Time Elapsed:', timeDiff.__str__())
-        #
-        # allTestCaseVerdicts = [self.logDict[x]['testCaseVerdict'] for x in self.logDict]
-        #
-        # passedTotal = allTestCaseVerdicts.count('Passed')
-        # deferredTotal = allTestCaseVerdicts.count('Deferred')
-        # errorTotal = allTestCaseVerdicts.count('Error')
-        #
-        # print('Passed:', passedTotal)
-        # print('Deferred:', deferredTotal)
-        # print('Error:', errorTotal)
-        # print('Total:', passedTotal + deferredTotal + errorTotal)
-
-        # def getError(x, errorType):
-        #     if self.logDict[x]['testCaseVerdict'] == errorType:
-        #         return (x)
-
-        # passedList = list(filter(lambda x: x != None, [getError(x, 'Passed') for x in self.logDict]))
-        # deferredList = list(filter(lambda x: x != None, [getError(x, 'Deferred') for x in self.logDict]))
-        # errorList = list(filter(lambda x: x != None, [getError(x, 'Error') for x in self.logDict]))
-
-
+    def updatePolarionTableViewModel(self, result):
+        model = self.polarionTableViewModel
         header = ['TestCase', 'StartRow', 'EndRow', 'Steps', 'TestCase Verdict']
 
-        model = self.MyItemModel(self.polarionDict, header)
+        for i, d in enumerate(self.polarionDict):
+            model.setItem(i, 0, QStandardItem(d))
+            for j, p in enumerate(list(self.polarionDict[d].keys())):
+                item = QStandardItem(str(self.polarionDict[d][p]))
+                # item.setCheckable(True)
+                model.setItem(i, j + 1, item)
 
-        self.polarionTableView.setModel(model)
-        self.polarionTableView.resizeColumnToContents(0)
+        model.setHorizontalHeaderLabels(header)
+        self.polarionTableView.resizeColumnsToContents()
+        self.polarionTableView.setColumnWidth(0, 150)
+
         self.polarionTableView.setSortingEnabled(True)
         self.polarionTableView.sortByColumn(0, Qt.AscendingOrder)
+        self.polarionTableView.setAlternatingRowColors(True)
 
-        self.progressBar.setValue(100)
+        allTestCaseVerdicts = [self.logDict[x]['testCaseVerdict'] for x in self.logDict]
 
-        self.statusbar.showMessage('Polarion file read sucessfully.')
+        passedTotal = allTestCaseVerdicts.count('Passed')
+        deferredTotal = allTestCaseVerdicts.count('Deferred')
+        errorTotal = allTestCaseVerdicts.count('Error')
+        total = passedTotal + deferredTotal + errorTotal
+
+        self.polarionOverViewLineEdit.setText(
+            'Total Logs Found: {}    Passed: {}    Deferred: {}    Error: {}'.format(total, passedTotal, deferredTotal,
+                                                                                     errorTotal))
+
+        self.statusbar.showMessage('Polarion excel file read sucessfully.')
+        self.hideLoadingBar()
+        print(result)
+
 
     # update polarion dict with 'passed' only test cases
     def polarionUpdateExcel(self, testCaseVerdict='Passed'):
         for t in self.polarionDict:
             try:
                 if testCaseVerdict == 'All':
-                    useCriteria = True
+                    verdictCriteria = True
                 else:
-                    useCriteria = self.logDict[t]['testCaseVerdict'] == testCaseVerdict
+                    verdictCriteria = self.logDict[t]['testCaseVerdict'] == testCaseVerdict
 
-                if self.polarionDict[t]['length'] == self.logDict[t]['length'] and useCriteria:
+                if self.polarionDict[t]['length'] == self.logDict[t]['length'] and verdictCriteria:
                     self.polarionDict[t]['testCaseVerdict'] = self.logDict[t]['testCaseVerdict']
             except KeyError as error:
                 print('{} not found'.format(str(error)))
 
-        header = ['TestCase', 'StartRow', 'EndRow', 'Steps', 'TestCase Verdict']
 
-        model = self.MyItemModel(self.polarionDict, header)
+        self.updatePolarionTableViewModel('Polarion model updated.')
 
-        self.polarionTableView.setModel(model)
-        self.polarionTableView.resizeColumnToContents(0)
-        self.polarionTableView.setSortingEnabled(True)
-        self.polarionTableView.sortByColumn(0, Qt.AscendingOrder)
-
-        self.ws = self.wb.active
+        self.polarionWs = self.polarionWb.active
 
         # grab necessary columns to work from polarion excel file
-        actualResultCol = self.ws['M']  # actual result
-        stepVerdictCol = self.ws['N']  # step verdict
-        testCaseVerdictCol = self.ws['O']  # test case verdict
-        testCommentCol = self.ws['P']  # test comment
+        actualResultCol = self.polarionWs['M']  # actual result
+        stepVerdictCol = self.polarionWs['N']  # step verdict
+        testCaseVerdictCol = self.polarionWs['O']  # test case verdict
+        testCommentCol = self.polarionWs['P']  # test comment
 
         count = 0
         for t in self.polarionDict:
             try:
                 if testCaseVerdict == 'All':
-                    useCriteria = True
+                    verdictCriteria = True
                 else:
-                    useCriteria = self.logDict[t]['testCaseVerdict'] == testCaseVerdict
+                    verdictCriteria = self.logDict[t]['testCaseVerdict'] == testCaseVerdict
 
-                if self.polarionDict[t]['length'] == self.logDict[t]['length'] and useCriteria:
+                if self.polarionDict[t]['length'] == self.logDict[t]['length'] and verdictCriteria:
                     # print(t, 'Match')
                     startRow = self.polarionDict[t]['startRow']
                     endRow = self.polarionDict[t]['endRow']
@@ -961,7 +1094,7 @@ class App(QMainWindow, Ui_MainWindow):
 
     # update revision number in polarion excel
     def polarionUpdateRevision(self):
-        polarionWs = self.wb['_polarion']
+        polarionWs = self.polarionWb['_polarion']
         polarionColA = [x.value for x in polarionWs['A']]
         revisionRow = polarionColA.index('testRunRevision') + 1
         polarionWs.cell(row=revisionRow, column=2).value = self.polarionRevisionLineEdit.text()
@@ -969,18 +1102,21 @@ class App(QMainWindow, Ui_MainWindow):
         self.statusbar.showMessage('Updated Polarion Revision Number.')
 
     def polarionSaveExcel(self):
+        self.showLoadingBar()
         folder = os.path.dirname(self.polarionExcelEdit.text())
         filePath, fileType = QFileDialog.getSaveFileName(
             self,
-            "Open Profile",
+            "Save Polarion Excel File",
             folder,
             'XLSX Files (*.xlsx);;All Files (*)'
         )
         if len(filePath) > 0:
-            self.wb.save(filePath)
+            self.polarionWb.save(filePath)
+            self.polarionWb.close()
 
         self.statusbar.showMessage('Save successful.')
 
+        self.hideLoadingBar()
     # use the profile dictionary to update the gui
     def updateGuiFromProfileDict(self):
         try:
@@ -1147,7 +1283,7 @@ class App(QMainWindow, Ui_MainWindow):
                 self.statusbar.showMessage(strings.VARIABLE_POOL_NOTFOUND)
 
     def setTitle(self, profilePath):
-        self.setWindowTitle('[' + str(profilePath) + '] - AutomationDesk GUI')
+        self.setWindowTitle('[' + str(profilePath) + '] - AutomationDesk GUI ' + version)
 
     def setProfileDict(
             self,
@@ -1234,10 +1370,15 @@ class App(QMainWindow, Ui_MainWindow):
         about = QMessageBox()
         about.setWindowIcon(QIcon(':/logo/graphics/karmalogo_48dp.png'))
         about.setWindowTitle('About')
-        about.setText('Version 1.28\nDeveloper: Vu Le')
+        about.setText(version + '\n'
+                      'Developer: Vu Le\n'
+                      'The developer reserves all rights to this software.\n'
+                      'Do not distribute this software without permission.')
         about.setInformativeText('Copyright (C) 2018')
         about.setIconPixmap(QPixmap(':/logo/graphics/karmalogo_48dp.png'))
         about.exec_()
+
+
 
 
 def main():

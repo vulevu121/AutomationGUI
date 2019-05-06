@@ -7,6 +7,10 @@
     <file>graphics/baseline_radio_button_checked_white_24dp.png</file>
     <file>graphics/baseline_radio_button_unchecked_white_24dp.png</file>
   </qresource>
+  <qresource prefix="animation">
+    <file>graphics/ring-alt_1.gif</file>
+    <file>graphics/loading_bar.gif</file>
+  </qresource>
   <qresource prefix="logo">
     <file>graphics/karmalogo_48dp.png</file>
   </qresource>
