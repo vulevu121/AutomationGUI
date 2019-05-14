@@ -1,47 +1,39 @@
 <RCC>
   <qresource prefix="checkbox">
-    <file>graphics/baseline_check_circle_white_24dp.png</file>
-    <file>graphics/baseline_check_circle_black_24dp.png</file>
-    <file>graphics/baseline_radio_button_checked_black_24dp.png</file>
-    <file>graphics/baseline_radio_button_unchecked_black_24dp.png</file>
-    <file>graphics/baseline_radio_button_checked_white_24dp.png</file>
-    <file>graphics/baseline_radio_button_unchecked_white_24dp.png</file>
+    <file alias="checkedButton">graphics/baseline_check_circle_black_24dp.png</file>
+    <file alias="radioCheckedButton">graphics/baseline_radio_button_checked_black_24dp.png</file>
+    <file alias="uncheckedButton">graphics/baseline_radio_button_unchecked_black_24dp.png</file>
   </qresource>
   <qresource prefix="animation">
-    <file>graphics/ring-alt_1.gif</file>
     <file>graphics/loading_bar.gif</file>
   </qresource>
   <qresource prefix="logo">
     <file>graphics/karmalogo_48dp.png</file>
   </qresource>
   <qresource prefix="icon">
-    <file>graphics/baseline_open_in_browser_black_24dp.png</file>
-    <file>graphics/baseline_menu_black_24dp.png</file>
-    <file>graphics/baseline_info_black_24dp.png</file>
-    <file>graphics/baseline_file_copy_black_24dp.png</file>
-    <file>graphics/baseline_folder_black_24dp.png</file>
-    <file>graphics/baseline_save_black_24dp.png</file>
-    <file>graphics/excel_24dp.png</file>
-    <file>graphics/outline_save_black_24dp.png</file>
-    <file>graphics/baseline_tab_black_24dp.png</file>
-    <file>graphics/baseline_tab_unselected_black_24dp.png</file>
-    <file>graphics/baseline_arrow_forward_black_24dp.png</file>
-    <file>graphics/baseline_folder_open_black_24dp.png</file>
-    <file>graphics/baseline_save_alt_black_24dp.png</file>
-    <file>graphics/baseline_exit_to_app_black_24dp.png</file>
-  </qresource>
-  <qresource prefix="png">
-    <file>icons/contact.png</file>
-    <file>icons/folder.png</file>
-    <file>icons/excel.png</file>
-    <file>icons/new.png</file>
-    <file>icons/save.png</file>
-    <file>icons/textfile.png</file>
-  </qresource>
-  <qresource prefix="svg">
-    <file>icons/excel.svg</file>
-    <file>icons/file.svg</file>
-    <file>icons/save.svg</file>
-    <file>icons/folder.svg</file>
+    <file alias="menuIcon">graphics/baseline_menu_black_24dp.png</file>
+    <file alias="copyIcon">graphics/baseline_file_copy_black_24dp.png</file>
+    <file alias="settingIcon">graphics/baseline_settings_black_48dp.png</file>
+    <file alias="contactColorIcon">graphics/contact.png</file>
+    <file alias="passedVerdictIcon">graphics/baseline_playlist_add_check_black_48dp.png</file>
+    <file alias="historyIcon">graphics/baseline_history_black_48dp.png</file>
+    <file alias="allVerdictsIcon">graphics/baseline_spellcheck_black_48dp.png</file>
+    <file alias="excelColorIcon">graphics/excel.png</file>
+    <file alias="excelBlackIcon">graphics/excel_24dp.png</file>
+    <file alias="saveIcon">graphics/outline_save_black_48dp.png</file>
+    <file alias="polarionIcon">graphics/polarion.png</file>
+    <file alias="folderColorIcon">graphics/folder.png</file>
+    <file alias="newColorIcon">graphics/new.png</file>
+    <file alias="dSpaceIcon">graphics/favicondSpace.ico</file>
+    <file alias="saveColorIcon">graphics/save.png</file>
+    <file alias="tabSelectedIcon">graphics/baseline_tab_black_24dp.png</file>
+    <file alias="tabDeselectedIcon">graphics/baseline_tab_unselected_black_24dp.png</file>
+    <file alias="nextIcon">graphics/baseline_arrow_forward_black_24dp.png</file>
+    <file alias="linkIcon">graphics/baseline_link_black_48dp.png</file>
+    <file alias="numberedListIcon">graphics/baseline_format_list_numbered_black_48dp.png</file>
+    <file alias="folderOpenIcon">graphics/baseline_folder_open_black_24dp.png</file>
+    <file alias="updateIcon">graphics/baseline_update_black_48dp.png</file>
+    <file alias="loadIcon">graphics/baseline_save_alt_black_24dp.png</file>
+    <file alias="exitIcon">graphics/baseline_exit_to_app_black_24dp.png</file>
   </qresource>
 </RCC>
