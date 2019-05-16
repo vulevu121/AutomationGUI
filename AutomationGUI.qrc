@@ -14,8 +14,15 @@
     <file alias="menuIcon">graphics/baseline_menu_black_24dp.png</file>
     <file alias="copyIcon">graphics/baseline_file_copy_black_24dp.png</file>
     <file alias="settingIcon">graphics/baseline_settings_black_48dp.png</file>
+    <file alias="tuneIcon">graphics/baseline_tune_black_48dp.png</file>
+    <file alias="stopIcon">graphics/build_ABORTED.png</file>
+    <file alias="failedIcon">graphics/build_FAILED.png</file>
+    <file alias="passedIcon">graphics/build_OK.png</file>
     <file alias="contactColorIcon">graphics/contact.png</file>
     <file alias="passedVerdictIcon">graphics/baseline_playlist_add_check_black_48dp.png</file>
+    <file alias="automationDeskIcon">graphics/automationdesk.png</file>
+    <file alias="karmaIcon">graphics/karmaicon.png</file>
+    <file alias="recordIcon">graphics/baseline_videocam_black_48dp.png</file>
     <file alias="historyIcon">graphics/baseline_history_black_48dp.png</file>
     <file alias="allVerdictsIcon">graphics/baseline_spellcheck_black_48dp.png</file>
     <file alias="excelColorIcon">graphics/excel.png</file>
@@ -24,7 +31,6 @@
     <file alias="polarionIcon">graphics/polarion.png</file>
     <file alias="folderColorIcon">graphics/folder.png</file>
     <file alias="newColorIcon">graphics/new.png</file>
-    <file alias="dSpaceIcon">graphics/favicondSpace.ico</file>
     <file alias="saveColorIcon">graphics/save.png</file>
     <file alias="tabSelectedIcon">graphics/baseline_tab_black_24dp.png</file>
     <file alias="tabDeselectedIcon">graphics/baseline_tab_unselected_black_24dp.png</file>

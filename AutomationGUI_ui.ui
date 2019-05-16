@@ -31,7 +31,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="AutomationGUI.qrc">
-    <normaloff>:/logo/graphics/karmalogo_48dp.png</normaloff>:/logo/graphics/karmalogo_48dp.png</iconset>
+    <normaloff>:/icon/karmaIcon</normaloff>:/icon/karmaIcon</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">QMainWindow, QFrame {
@@ -298,7 +298,7 @@ QPushButton:hover, QPushButton:pressed, QToolButton:hover {
 }</string>
       </property>
       <property name="currentIndex">
-       <number>5</number>
+       <number>3</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideNone</enum>
@@ -309,62 +309,14 @@ QPushButton:hover, QPushButton:pressed, QToolButton:hover {
       <widget class="QWidget" name="tab">
        <attribute name="icon">
         <iconset>
-         <normalon>:/icon/tabSelectedIcon</normalon>
+         <normalon>:/icon/tuneIcon</normalon>
         </iconset>
        </attribute>
        <attribute name="title">
-        <string>General</string>
+        <string>Settings</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_6">
-        <item row="2" column="0">
-         <widget class="QGroupBox" name="groupBox_4">
-          <property name="title">
-           <string>Runtime Options</string>
-          </property>
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <item>
-            <widget class="QCheckBox" name="dtcExCheckBox">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Enable DTC Exception(s)</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="callFunctionDebugCheckbox">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Debug Call Functions</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="versionCheckBox">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Include HW &amp;&amp; SW Version</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="0" column="0">
+       <layout class="QVBoxLayout" name="verticalLayout_13">
+        <item>
          <layout class="QGridLayout" name="generalLayout">
           <property name="sizeConstraint">
            <enum>QLayout::SetDefaultConstraint</enum>
@@ -679,7 +631,97 @@ QPushButton:hover, QPushButton:pressed, QToolButton:hover {
           </item>
          </layout>
         </item>
-        <item row="3" column="0">
+        <item>
+         <widget class="QGroupBox" name="groupBox_4">
+          <property name="title">
+           <string>Runtime Options</string>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QCheckBox" name="dtcExCheckBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Enable DTC Exception(s)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="callFunctionDebugCheckbox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Debug Call Functions</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="versionCheckBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Include HW &amp;&amp; SW Version</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBox_3">
+          <property name="title">
+           <string>Tool Options</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+          </property>
+          <property name="flat">
+           <bool>false</bool>
+          </property>
+          <property name="checkable">
+           <bool>false</bool>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_7">
+           <item>
+            <layout class="QVBoxLayout" name="settingsVerticalLayoutRight">
+             <item>
+              <widget class="QCheckBox" name="updateVariablePoolCheckBox">
+               <property name="layoutDirection">
+                <enum>Qt::LeftToRight</enum>
+               </property>
+               <property name="text">
+                <string>Update VariablePool in AutomationDesk</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="showDebugCheckBox">
+               <property name="layoutDirection">
+                <enum>Qt::LeftToRight</enum>
+               </property>
+               <property name="text">
+                <string>Console Messages</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
          <spacer name="verticalSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -697,7 +739,7 @@ QPushButton:hover, QPushButton:pressed, QToolButton:hover {
       <widget class="QWidget" name="tab_2">
        <attribute name="icon">
         <iconset>
-         <normalon>:/icon/tabSelectedIcon</normalon>
+         <normalon>:/icon/recordIcon</normalon>
         </iconset>
        </attribute>
        <attribute name="title">
@@ -757,6 +799,19 @@ and Additional Signals</string>
               </layout>
              </widget>
             </item>
+            <item>
+             <spacer name="verticalSpacer_4">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
            </layout>
           </item>
           <item>
@@ -803,6 +858,19 @@ and Additional Signals</string>
                   <string>Remove</string>
                  </property>
                 </widget>
+               </item>
+               <item>
+                <spacer name="verticalSpacer_5">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
                </item>
               </layout>
              </item>
@@ -857,6 +925,19 @@ and Additional Signals</string>
                  </property>
                 </widget>
                </item>
+               <item>
+                <spacer name="verticalSpacer_6">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
               </layout>
              </item>
             </layout>
@@ -869,7 +950,7 @@ and Additional Signals</string>
       <widget class="QWidget" name="tab_5">
        <attribute name="icon">
         <iconset>
-         <normalon>:/icon/dSpaceIcon</normalon>
+         <normalon>:/icon/automationDeskIcon</normalon>
         </iconset>
        </attribute>
        <attribute name="title">
@@ -881,7 +962,7 @@ and Additional Signals</string>
           <item>
            <widget class="QTableView" name="runTableView">
             <property name="contextMenuPolicy">
-             <enum>Qt::DefaultContextMenu</enum>
+             <enum>Qt::CustomContextMenu</enum>
             </property>
             <property name="styleSheet">
              <string notr="true">QFrame, QTableView{
@@ -995,6 +1076,9 @@ and Additional Signals</string>
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="contextMenuPolicy">
+             <enum>Qt::CustomContextMenu</enum>
             </property>
             <property name="styleSheet">
              <string notr="true">QFrame, QTableView{
@@ -1235,76 +1319,6 @@ and Additional Signals</string>
            </layout>
           </item>
          </layout>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tab_4">
-       <attribute name="icon">
-        <iconset>
-         <normalon>:/icon/settingIcon</normalon>
-        </iconset>
-       </attribute>
-       <attribute name="title">
-        <string>Settings</string>
-       </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QGroupBox" name="groupBox_2">
-          <property name="title">
-           <string>Parameters</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_8">
-           <item>
-            <layout class="QVBoxLayout" name="settingsVerticalLayoutLeft">
-             <item>
-              <layout class="QHBoxLayout" name="autorunHorizontalLayout"/>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="groupBox_3">
-          <property name="title">
-           <string>Options</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-          </property>
-          <property name="flat">
-           <bool>false</bool>
-          </property>
-          <property name="checkable">
-           <bool>false</bool>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_7">
-           <item>
-            <layout class="QVBoxLayout" name="settingsVerticalLayoutRight">
-             <item>
-              <widget class="QCheckBox" name="updateVariablePoolCheckBox">
-               <property name="layoutDirection">
-                <enum>Qt::LeftToRight</enum>
-               </property>
-               <property name="text">
-                <string>Update VariablePool in AutomationDesk</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="showDebugCheckBox">
-               <property name="layoutDirection">
-                <enum>Qt::LeftToRight</enum>
-               </property>
-               <property name="text">
-                <string>Show Debug Messages</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </widget>
         </item>
        </layout>
       </widget>
@@ -1550,8 +1564,6 @@ and Additional Signals</string>
   <tabstop>addDtcExEdit</tabstop>
   <tabstop>addDtcExBtn</tabstop>
   <tabstop>removeDtcExBtn</tabstop>
-  <tabstop>updateVariablePoolCheckBox</tabstop>
-  <tabstop>showDebugCheckBox</tabstop>
   <tabstop>autorunCheckBox</tabstop>
   <tabstop>testCaseExcelToolButton</tabstop>
  </tabstops>
