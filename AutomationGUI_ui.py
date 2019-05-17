@@ -59,11 +59,11 @@ class Ui_MainWindow(object):
 "\n"
 "QProgressBar {\n"
 "    border: 1px solid grey;\n"
-"    border-radius: 5px;\n"
+"    border-radius: 0px;\n"
 "}\n"
 "\n"
 "QProgressBar::chunk {\n"
-"    background-color: #FFCC80;\n"
+"    background-color: #202020;\n"
 "}\n"
 "\n"
 "QToolBar {\n"
@@ -593,6 +593,11 @@ class Ui_MainWindow(object):
         self.copyButton.setIconSize(QtCore.QSize(24, 24))
         self.copyButton.setObjectName("copyButton")
         self.verticalLayout_9.addWidget(self.copyButton)
+        self.exportExcelButton = QtWidgets.QToolButton(self.tab_5)
+        self.exportExcelButton.setIcon(icon5)
+        self.exportExcelButton.setIconSize(QtCore.QSize(24, 24))
+        self.exportExcelButton.setObjectName("exportExcelButton")
+        self.verticalLayout_9.addWidget(self.exportExcelButton)
         spacerItem4 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_9.addItem(spacerItem4)
         self.horizontalLayout_5.addLayout(self.verticalLayout_9)
@@ -706,17 +711,14 @@ class Ui_MainWindow(object):
         icon15.addPixmap(QtGui.QPixmap(":/icon/polarionIcon"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.tabWidget.addTab(self.tab_6, icon15, "")
         self.verticalLayout_3.addWidget(self.tabWidget)
-        self.loadingBarLabel = QtWidgets.QLabel(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.loadingBarLabel.sizePolicy().hasHeightForWidth())
-        self.loadingBarLabel.setSizePolicy(sizePolicy)
-        self.loadingBarLabel.setMinimumSize(QtCore.QSize(0, 0))
-        self.loadingBarLabel.setMaximumSize(QtCore.QSize(16777215, 16777215))
-        self.loadingBarLabel.setText("")
-        self.loadingBarLabel.setObjectName("loadingBarLabel")
-        self.verticalLayout_3.addWidget(self.loadingBarLabel, 0, QtCore.Qt.AlignHCenter)
+        self.progressBar = QtWidgets.QProgressBar(self.centralwidget)
+        self.progressBar.setMaximumSize(QtCore.QSize(16777215, 5))
+        self.progressBar.setProperty("value", 0)
+        self.progressBar.setTextVisible(False)
+        self.progressBar.setInvertedAppearance(False)
+        self.progressBar.setTextDirection(QtWidgets.QProgressBar.TopToBottom)
+        self.progressBar.setObjectName("progressBar")
+        self.verticalLayout_3.addWidget(self.progressBar)
         self.bottombuttonsLayout = QtWidgets.QHBoxLayout()
         self.bottombuttonsLayout.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
         self.bottombuttonsLayout.setContentsMargins(0, -1, -1, -1)
@@ -810,7 +812,7 @@ class Ui_MainWindow(object):
         self.testCaseExcelLabel.setBuddy(self.testCaseExcelEdit)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(3)
+        self.tabWidget.setCurrentIndex(4)
         self.exitButton.clicked.connect(self.actionExit.trigger)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.testCaseExcelEdit, self.browseTestCaseExcelBtn)
@@ -894,6 +896,8 @@ class Ui_MainWindow(object):
         self.dSpaceReadExcelButton.setText(_translate("MainWindow", "Read dSPACE Excel"))
         self.copyButton.setToolTip(_translate("MainWindow", "Copy Yes/No column"))
         self.copyButton.setText(_translate("MainWindow", "Copy Yes/No"))
+        self.exportExcelButton.setToolTip(_translate("MainWindow", "Export to Polarion Excel Format"))
+        self.exportExcelButton.setText(_translate("MainWindow", "Copy Yes/No"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_5), _translate("MainWindow", "dSPACE"))
         self.polarionRevisionLineEdit.setPlaceholderText(_translate("MainWindow", "Revision number"))
         self.polarionReadExcelButton.setToolTip(_translate("MainWindow", "Read Polarion excel file"))
@@ -911,6 +915,7 @@ class Ui_MainWindow(object):
         self.updateHyperlinksButton.setToolTip(_translate("MainWindow", "Pull hyperlinks from Polarion server"))
         self.updateHyperlinksButton.setText(_translate("MainWindow", "Hyperlinks"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_6), _translate("MainWindow", "Polarion"))
+        self.progressBar.setFormat(_translate("MainWindow", "%p%"))
         self.autorunCheckBox.setText(_translate("MainWindow", "Autorun"))
         self.exitButton.setText(_translate("MainWindow", "Continue"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))

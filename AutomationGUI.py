@@ -78,16 +78,9 @@ class App(QMainWindow, Ui_MainWindow):
         self.updateVariablePool = False  # update variable pool in AutomationDesk
         self.defaultProfile = True  # false when a profile is loaded
 
-        # busy indicator
-        # self.busyIndicatorMovie = QMovie(":/animation/graphics/ring-alt_1.gif")
-        # self.busyIndicatorMovie.setScaledSize(QSize(32, 32))
-        # self.busyIndicatorLabel.setMovie(self.busyIndicatorMovie)
-        # self.busyIndicatorLabel.hide()
-
-        # loading bar
-        self.loadingBarMovie = QMovie(":/animation/graphics/loading_bar.gif")
-        self.loadingBarLabel.setMovie(self.loadingBarMovie)
-        self.loadingBarLabel.hide()
+        # progress bar
+        self.progressBarTimer = QTimer()
+        self.progressBarTimer.timeout.connect(self.progressBarAnimation)
 
         # Qt item models
         self.addSignalModel = QStandardItemModel()
@@ -264,22 +257,16 @@ class App(QMainWindow, Ui_MainWindow):
     #     self.gridLayout.width
     #     # QtGui.QMainWindow.resizeEvent(self, event)
 
+    def progressBarAnimation(self):
+        value = self.progressBar.value()
+        self.progressBar.setValue(0 if value > 99 else value + 4)
+
     def showLoadingBar(self):
-        self.loadingBarMovie.setScaledSize(QSize(self.width(), 3))
-        self.loadingBarMovie.start()
-        self.loadingBarLabel.show()
+        self.progressBarTimer.start(40)
 
     def hideLoadingBar(self):
-        self.loadingBarLabel.hide()
-        self.loadingBarMovie.stop()
-
-    # def showBusyIndicator(self):
-    #     self.busyIndicatorLabel.show()
-    #     self.busyIndicatorMovie.start()
-    #
-    # def hideBusyIndicator(self):
-    #     self.busyIndicatorLabel.hide()
-    #     self.busyIndicatorMovie.stop()
+        self.progressBarTimer.stop()
+        self.progressBar.setValue(0)
 
     def runTableContextMenuEvent(self, qpoint):
         menu = QMenu(self)
@@ -1049,9 +1036,6 @@ class App(QMainWindow, Ui_MainWindow):
             print('Nothing to copy.')
 
     def polarionReadExcelStart(self):
-        polarionExcel = self.polarionExcelEdit.text()
-        self.loadPolarionWorkBook(polarionExcel)
-
         """Read and process the polarion excel file in a thread."""
         class polarionReadExcelThread(QThread):
             finishedSignal = pyqtSignal('PyQt_PyObject')
@@ -1073,8 +1057,9 @@ class App(QMainWindow, Ui_MainWindow):
                 stepNumberCol = self.polarionWs['D']  # step numbers
 
                 # get all testcase names and row start
-                allSteps = [str(x.value) for x in stepNumberCol]
-                while (allSteps[-1] == None):
+                allSteps = [str(x.value).replace('.0','') for x in stepNumberCol]
+
+                while (allSteps[-1] == 'None' or allSteps[-1] == ''):
                     allSteps.pop()
 
                 # read revision number
@@ -1097,7 +1082,7 @@ class App(QMainWindow, Ui_MainWindow):
                         try:
                             end = allSteps.index(endMarker, start + 1)
                         except ValueError:
-                            end = len(allSteps) - 1
+                            end = len(allSteps)
 
                         self.polarionDict[testCase] = OrderedDict()
                         self.polarionDict[testCase]['startRow'] = start
@@ -1111,7 +1096,11 @@ class App(QMainWindow, Ui_MainWindow):
                 self.finishedSignal.emit('Reading Polarion excel finished.')
 
         self.showLoadingBar()
+        polarionExcel = self.polarionExcelEdit.text()
+        self.loadPolarionWorkBook(polarionExcel)
         self.polarionDict.clear()
+        self.polarionTableViewModel.clear()
+        self.polarionTableView.model().clear()
         self.polarionReadExcelThreadObject = polarionReadExcelThread()
         self.polarionReadExcelThreadObject.polarionDict = self.polarionDict
         self.polarionReadExcelThreadObject.polarionWb = self.polarionWb
@@ -1530,11 +1519,13 @@ class App(QMainWindow, Ui_MainWindow):
         )
         if len(filePath) > 0:
             self.showLoadingBar()
-            self.polarionWb.save(filePath)
-            self.polarionWb.close()
+            try:
+                self.polarionWb.save(filePath)
+                self.polarionLogAppend('Save successful.')
+            except IOError as error:
+                if str(error).__contains__('Permission denied'):
+                    self.polarionLogAppend('Permission Denied. Unable to save excel file.')
             self.hideLoadingBar()
-            self.polarionLogAppend('Save successful.')
-
 
     # use the profile dictionary to update the gui
     def updateGuiFromProfileDict(self):
