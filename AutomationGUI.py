@@ -1,6 +1,26 @@
 # -*- coding: utf-8 -*-
 #!/usr/bin/env python
 
+# 8/20/19 Changelog
+# Updated Polarion table context menu
+# Added Pause with step number feature
+# Added option for selecting print output
+
+# 8/14/19 Changelog
+# Additional exceptions and traceback information
+# Removed dSpace excel and call function edit boxes
+# Updated Sequence builder
+
+# 8/1/19 Changelog
+# Improved Polarion context menu
+# Improved tableview speed
+# Added editable comments column
+# Added modified column
+# Improved tableview add/remove functionality
+# Updating polarion steps feature now use polarion excel
+# Removed dSPACE excel support
+# Added pause step feature
+
 # 7/23/19 Changelog
 # Added dark theme
 # Fixed total wait time bug
@@ -52,9 +72,9 @@
 # Added threading for excel reading
 
 
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
+from PyQt5.QtWidgets import QApplication, QMenu, QAction, QMainWindow, QCompleter, QTableWidgetItem, QFileDialog, QMessageBox, QInputDialog, QLineEdit
+from PyQt5.QtGui import QPalette, QColor, QIcon, QStandardItemModel, QStandardItem, QCursor, QPixmap
+from PyQt5.QtCore import Qt, QTimer, QSettings, QStringListModel, QThread, pyqtSignal
 #import xmltodict
 from pathlib import Path
 from AutomationGUI_ui import *
@@ -69,7 +89,7 @@ import xlrd
 from datetime import datetime
 from openpyxl import load_workbook
 from collections import OrderedDict
-
+import traceback
 import webbrowser
 # from functools import partial # used for calling with args
 
@@ -84,33 +104,34 @@ if sys.version_info[0] < 3:
     FileNotFoundError = IOError
 
 debug = False
-version = 'v1.5.2'
+version = 'v1.6.4'
 
 def debugPrint(msg):
     if debug:
         print(msg)
 
 class App(QMainWindow, Ui_MainWindow):
-    def __init__(self, aud=None):
+    def __init__(self):
         super(self.__class__, self).__init__()
         self.setupUi(self)
 
         # create a frameless window without titlebar
         # self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-
-        # platform independent settings
+        self.setWindowIcon(QIcon(':/icon/karmalogo24'))
+        # self.screen = QtWidgets.QApplication(sys.argv).primaryScreen()
+        # print(self.screen.size())
 
         # set default xml config file path
         self.configFile = 'C:/DS_Config/config.xml'
         # self.profileFile = 'C:/DS_Config/profile1.xml'
 
+        self.profileFile = ''
         self.configDict = {}
         self.profileDict = {}
         self.runList = []
-        # dict to hold data from all log files
+        self.runDict = {}
+        self.excelData = {}
         self.logDict = OrderedDict()
-        # dict to hold data from polarion sheet
-        self.runDict = OrderedDict()
         self.polarionDict = OrderedDict()
         self.polarionWs = None
         self.polarionWb = None
@@ -127,44 +148,56 @@ class App(QMainWindow, Ui_MainWindow):
         self.progressBarTimer = QTimer()
         self.progressBarTimer.timeout.connect(self.progressBarAnimation)
 
-        # Qt item models
+        # models
         self.versionTableModel = QStandardItemModel()
         self.versionTableView.setModel(self.versionTableModel)
         self.versionTableModel.itemChanged.connect(self.versionTableViewItemChanged)
+        self.versionTableHeader = [
+            'ECU',
+            'Software',
+            'Hardware'
+        ]
+        self.versionTableModel.setHorizontalHeaderLabels(self.versionTableHeader)
 
         self.addSignalModel = QStandardItemModel()
         self.addSignalListView.setModel(self.addSignalModel)
-
 
         self.dtcTableModel = QStandardItemModel()
         self.dtcTableView.setModel(self.dtcTableModel)
         self.dtcTableModel.itemChanged.connect(self.dtcTableModelItemChanged)
 
+        self.dtcTableHeader = [
+            'Hex Code',
+            'Description',
+            'Module',
+        ]
+        self.dtcTableModel.setHorizontalHeaderLabels(self.dtcTableHeader)
+
         self.loadSettings()
-        self.changesSaved = True
+        self.unsavedChanges = False
 
         # general tab
         self.browsePolarionExcelBtn.clicked.connect(self.browsePolarionExcel)
-        self.browseTestCaseExcelBtn.clicked.connect(self.browseTestCaseExcel)
-        self.browseCallFunctionBtn.clicked.connect(self.browseCallFunction)
+        # self.browseTestCaseExcelBtn.clicked.connect(self.browseTestCaseExcel)
+        # self.browseCallFunctionBtn.clicked.connect(self.browseCallFunction)
         self.browseCsvReportBtn.clicked.connect(self.browseCsvReport)
         self.browseVariablePoolBtn.clicked.connect(self.browseVariablePool)
-        self.testCaseExcelEdit.textChanged.connect(self.useTestCaseFolderForLogs)
+        # self.testCaseExcelEdit.textChanged.connect(self.useTestCaseFolderForLogs)
 
         # connections for changes
-        self.polarionExcelEdit.textChanged.connect(self.unsavedChanges)
-        self.testCaseExcelEdit.textChanged.connect(self.unsavedChanges)
-        self.callFunctionEdit.textChanged.connect(self.unsavedChanges)
-        self.csvReportEdit.textChanged.connect(self.unsavedChanges)
-        self.versionCheckBox.clicked.connect(self.unsavedChanges)
-        self.variablePoolEdit.textChanged.connect(self.unsavedChanges)
-        self.dtcExCheckBox.clicked.connect(self.unsavedChanges)
-        self.callFunctionDebugCheckbox.clicked.connect(self.unsavedChanges)
-        self.versionCheckBox.clicked.connect(self.unsavedChanges)
+        self.polarionExcelEdit.textChanged.connect(self.setUnsavedChanges)
+        self.polarionExcelEdit.textChanged.connect(self.clearPolarionDict)
+        # self.testCaseExcelEdit.textChanged.connect(self.SetUnsavedChanges)
+        # self.callFunctionEdit.textChanged.connect(self.SetUnsavedChanges)
+        self.csvReportEdit.textChanged.connect(self.setUnsavedChanges)
+        self.versionCheckBox.clicked.connect(self.setUnsavedChanges)
+        self.variablePoolEdit.textChanged.connect(self.setUnsavedChanges)
+        self.dtcExCheckBox.clicked.connect(self.setUnsavedChanges)
+        self.callFunctionDebugCheckbox.clicked.connect(self.setUnsavedChanges)
 
-        self.logRadioBtn0.clicked.connect(self.unsavedChanges)
-        self.logRadioBtn1.clicked.connect(self.unsavedChanges)
-        self.logRadioBtn2.clicked.connect(self.unsavedChanges)
+        self.logRadioBtn0.clicked.connect(self.setUnsavedChanges)
+        self.logRadioBtn1.clicked.connect(self.setUnsavedChanges)
+        self.logRadioBtn2.clicked.connect(self.setUnsavedChanges)
 
         self.versionAddButton.clicked.connect(self.versionAddRow)
         self.versionRemoveButton.clicked.connect(self.versionRemoveRow)
@@ -173,50 +206,50 @@ class App(QMainWindow, Ui_MainWindow):
         self.polarionExcelMenu = QMenu()
 
         openPolarionExcelFileAction = QAction(QIcon(':/icon/excel'), 'Open Test Case File', self)
-        openPolarionExcelFileAction.triggered.connect(self.openPolarionExcelFile)
+        openPolarionExcelFileAction.triggered.connect(lambda: self.openFileInPath(self.polarionExcelEdit.text()))
         self.polarionExcelMenu.addAction(openPolarionExcelFileAction)
 
 
         openPolarionExcelFolderAction = QAction(QIcon(':/icon/folderOpen'), 'Open Test Case Folder', self)
-        openPolarionExcelFolderAction.triggered.connect(self.openPolarionExcelFolder)
+        openPolarionExcelFolderAction.triggered.connect(lambda: self.openFolderInPath(self.polarionExcelEdit.text()))
         self.polarionExcelMenu.addAction(openPolarionExcelFolderAction)
 
         self.polarionExcelToolButton.setMenu(self.polarionExcelMenu)
 
         # test case excel toolbutton
-        testCaseExcelMenu = QMenu()
-
-        openTestCaseExcelFileAction = QAction(QIcon(':/icon/excel'), 'Open Test Case File', self)
-        openTestCaseExcelFileAction.triggered.connect(self.openTestCaseExcelFile)
-        testCaseExcelMenu.addAction(openTestCaseExcelFileAction)
-
-        openTestCaseExcelFolderAction = QAction(QIcon(':/icon/folderOpen'), 'Open Test Case Folder', self)
-        openTestCaseExcelFolderAction.triggered.connect(self.openTestCaseExcelFolder)
-        testCaseExcelMenu.addAction(openTestCaseExcelFolderAction)
-
-        self.testCaseExcelToolButton.setMenu(testCaseExcelMenu)
+        # testCaseExcelMenu = QMenu()
+        #
+        # openTestCaseExcelFileAction = QAction(QIcon(':/icon/excel'), 'Open Test Case File', self)
+        # openTestCaseExcelFileAction.triggered.connect(lambda: self.openFileInPath(self.testCaseExcelEdit.text()))
+        # testCaseExcelMenu.addAction(openTestCaseExcelFileAction)
+        #
+        # openTestCaseExcelFolderAction = QAction(QIcon(':/icon/folderOpen'), 'Open Test Case Folder', self)
+        # openTestCaseExcelFolderAction.triggered.connect(self.openTestCaseExcelFolder)
+        # testCaseExcelMenu.addAction(openTestCaseExcelFolderAction)
+        #
+        # self.testCaseExcelToolButton.setMenu(testCaseExcelMenu)
 
         # csv report toolbutton
         csvReportFolderMenu = QMenu()
 
         openCsvReportFolderAction = QAction(QIcon(':/icon/folderOpen'), 'Open Report Folder', self)
-        openCsvReportFolderAction.triggered.connect(self.openCsvReportFolder)
+        openCsvReportFolderAction.triggered.connect(lambda: self.openFolderInPath(self.csvReportEdit.text()))
         csvReportFolderMenu.addAction(openCsvReportFolderAction)
 
         useTestCasePathAction = QAction(QIcon(':/icon/folderOpen'), 'Use {TestCaseFolder}\\Logs', self)
-        useTestCasePathAction.triggered.connect(self.useTestCasePath)
+        useTestCasePathAction.triggered.connect(self.useTestCaseFolderForLogs)
         csvReportFolderMenu.addAction(useTestCasePathAction)
 
         self.csvReportFolderToolButton.setMenu(csvReportFolderMenu)
 
         # call function toolbutton
-        callFunctionFolderMenu = QMenu()
-
-        openCallFunctionFolderAction = QAction(QIcon(':/icon/folderOpen'), 'Open Call Function Folder', self)
-        openCallFunctionFolderAction.triggered.connect(self.openCallFunctionFolder)
-        callFunctionFolderMenu.addAction(openCallFunctionFolderAction)
-
-        self.callFunctionFolderToolButton.setMenu(callFunctionFolderMenu)
+        # callFunctionFolderMenu = QMenu()
+        #
+        # openCallFunctionFolderAction = QAction(QIcon(':/icon/folderOpen'), 'Open Call Function Folder', self)
+        # openCallFunctionFolderAction.triggered.connect(lambda: self.openFolderInPath(self.callFunctionEdit.text()))
+        # callFunctionFolderMenu.addAction(openCallFunctionFolderAction)
+        #
+        # self.callFunctionFolderToolButton.setMenu(callFunctionFolderMenu)
 
         # variable pool toolbutton
         variablePoolMenu = QMenu()
@@ -226,11 +259,11 @@ class App(QMainWindow, Ui_MainWindow):
         variablePoolMenu.addAction(reloadVariablePoolFileAction)
 
         openVariablePoolFileAction = QAction(QIcon(':/icon/copy'), 'Open Variable Pool File', self)
-        openVariablePoolFileAction.triggered.connect(self.openVarPoolFile)
+        openVariablePoolFileAction.triggered.connect(lambda: self.openFileInPath(self.variablePoolEdit.text()))
         variablePoolMenu.addAction(openVariablePoolFileAction)
 
         openVariablePoolFolderAction = QAction(QIcon(':/icon/folderOpen'), 'Open Variable Pool Folder', self)
-        openVariablePoolFolderAction.triggered.connect(self.openVarPoolFolder)
+        openVariablePoolFolderAction.triggered.connect(lambda: self.openFolderInPath(self.variablePoolEdit.text()))
         variablePoolMenu.addAction(openVariablePoolFolderAction)
 
         self.variablePoolToolButton.setMenu(variablePoolMenu)
@@ -247,7 +280,6 @@ class App(QMainWindow, Ui_MainWindow):
 
         # dtc tab
 
-        self.updateDtcTableView()
         self.addDtcExBtn.clicked.connect(self.addDtcEx2)
 
         self.addDtcExEdit.setInputMask('>NN NN NN NN;_')
@@ -255,20 +287,15 @@ class App(QMainWindow, Ui_MainWindow):
         self.addDtcExEdit.returnPressed.connect(self.addDtcEx2)
         self.removeDtcExBtn.clicked.connect(self.removeDtcEx2)
 
-        # # run list tab
-        # self.dSpaceReadExcelButton.clicked.connect(self.dSpaceReadExcel)
-        # self.runTableViewModel = QStandardItemModel()
-        # self.runTableView.setModel(self.runTableViewModel)
-        #
-        # self.copyButton.clicked.connect(self.copyRunList)
-        # self.runTableView.setContextMenuPolicy(Qt.CustomContextMenu)
-        # self.runTableView.customContextMenuRequested.connect(self.runTableContextMenuEvent)
-
         # polarion tab
         self.polarionReadExcelButton.clicked.connect(self.readPolarionExcel)
         self.polarionTableViewModel = QStandardItemModel()
         self.polarionTableView.setModel(self.polarionTableViewModel)
         self.polarionTableView.clicked.connect(self.polarionTableViewClicked)
+        self.polarionTableHeader = ['TestCase', 'Steps', 'Total Wait Time', 'Run Test',
+                                    'TestCase Verdict', 'Modified', 'Comments',
+                                    'Hyperlinks']
+        self.polarionTableViewModel.setHorizontalHeaderLabels(self.polarionTableHeader)
 
 
         self.polarionUpdatePassedButton.clicked.connect(lambda: self.updatePolarionVerdicts('Passed'))
@@ -277,11 +304,11 @@ class App(QMainWindow, Ui_MainWindow):
         self.polarionUpdateRevisionButton.clicked.connect(self.udpatePolarionRevision)
         self.updateHyperlinksButton.clicked.connect(self.updateHyperlinks)
         self.updateStepsButton.clicked.connect(self.updatePolarionSteps)
-        self.polarionCopyRunListButton.clicked.connect(self.polarionCopyRunList)
+        # self.polarionCopyRunListButton.clicked.connect(self.polarionCopyRunList)
 
-
-        # self.polarionTableView.setContextMenuPolicy(Qt.ActionsContextMenu)
         self.polarionTableView.customContextMenuRequested.connect(self.polarionTableContextMenuEvent)
+        self.polarionTableSelectionModel = self.polarionTableView.selectionModel()
+        self.polarionTableSelectionModel.selectionChanged.connect(self.polarionTableSelectionChanged)
 
         self.loadPolarionJson()
         self.loadLogResults()
@@ -289,12 +316,12 @@ class App(QMainWindow, Ui_MainWindow):
         # settings tab
         self.updateVariablePoolCheckBox.clicked.connect(self.toggleUpdateVariablePool)
 
-        # TBX 2 Text tab
-        self.tbxBrowseButton.clicked.connect(self.browseTbxFile)
-        self.tbxConvertButton.clicked.connect(self.tbx2text)
-        self.tbxCopyTitleButton.clicked.connect(lambda: self.tbxCopy(self.tbxTitleLineEdit))
-        self.tbxCopyDescButton.clicked.connect(lambda: self.tbxCopy(self.tbxDescLineEdit))
-        self.tbxCopyTextButton.clicked.connect(lambda: self.tbxCopy(self.tbxPlainTextEdit))
+        # Convert sequence tab
+        self.sequenceBrowseButton.clicked.connect(self.browseSequenceFile)
+        self.sequenceConvertButton.clicked.connect(self.convertSequence)
+        # self.tbxCopyTitleButton.clicked.connect(lambda: self.sequenceCopy(self.tbxTitleLineEdit))
+        # self.tbxCopyDescButton.clicked.connect(lambda: self.sequenceCopy(self.tbxDescLineEdit))
+        # self.tbxCopyTextButton.clicked.connect(lambda: self.sequenceCopy(self.tbxPlainTextEdit))
 
         # file menu
         self.actionLoad.triggered.connect(self.browseProfile)
@@ -303,7 +330,7 @@ class App(QMainWindow, Ui_MainWindow):
         self.actionSaveAs.triggered.connect(self.saveAsProfile)
         self.actionAbout.triggered.connect(self.about)
         self.actionExit.triggered.connect(self.exit)
-        self.actionConfigFolder.triggered.connect(self.openConfigFolder)
+        self.actionOpenProfileFolder.triggered.connect(lambda: self.openFolderInPath(str(self.profileFile)))
 
         # gui layout related
         # dropShadow = QGraphicsDropShadowEffect()
@@ -335,26 +362,66 @@ class App(QMainWindow, Ui_MainWindow):
     #     # QtGui.QMainWindow.resizeEvent(self, event)
 
     def progressBarAnimation(self):
-        value = self.progressBar.value()
-        self.progressBar.setValue(0 if value > 99 else value + 20)
+        """Animate progress bar"""
+        try:
+            value = self.progressBar.value()
+            self.progressBar.setValue(0 if value > 99 else value + 20)
+        except:
+            print(traceback.format_exc())
 
     def showLoadingBar(self):
-        self.progressBarTimer.start(1000)
+        """Show progress bar animation"""
+        try:
+            self.progressBarTimer.start(1000)
+            self.polarionToolbarLayout.setEnabled(False)
+            self.setCursor(QCursor(Qt.WaitCursor))
+        except:
+            print(traceback.format_exc())
 
     def hideLoadingBar(self):
-        self.progressBarTimer.stop()
-        self.progressBar.setValue(0)
+        """Stop progress bar animation"""
+        try:
+            self.progressBarTimer.stop()
+            self.progressBar.setValue(0)
+            self.polarionToolbarLayout.setEnabled(True)
+            self.unsetCursor()
+        except:
+            print(traceback.format_exc())
 
-    def savePolarionJson(self):
-        # save results to a file
-        if len(self.polarionExcelEdit.text()) > 0:
-            polarionJsonPath = '{}.json'.format(self.polarionExcelEdit.text()[:-5])
+    def getExcelData(self):
+        """Get excel data for AutomationDesk"""
+        try:
+            polarionDict = self.polarionDict
+            self.excelData = {}
+            excelData = self.excelData
 
-            with open(polarionJsonPath, 'w') as f:
-                polarionJson = json.dumps(self.polarionDict)
-                f.write(polarionJson)
+            for t in polarionDict:
+                stepsCompact = []
+                steps = polarionDict[t]['steps']
+
+                for i, s in enumerate(steps):
+                    row = [str(i + 1)]
+                    row.extend(s[5:12])
+                    stepsCompact.append(row)
+
+                excelData['{}_Steps'.format(t)] = stepsCompact
+        except:
+            print(traceback.format_exc())
+
+    def savePolarionDict(self):
+        """Save Polarion results to a JSON file"""
+        try:
+            if len(self.polarionExcelEdit.text()) > 0:
+                polarionJsonPath = '{}.json'.format(self.polarionExcelEdit.text()[:-5])
+
+                with open(polarionJsonPath, 'w') as f:
+                    polarionJson = json.dumps(self.polarionDict, sort_keys=True, indent=4)
+                    f.write(polarionJson)
+        except:
+            print(traceback.format_exc())
 
     def loadPolarionJson(self):
+        """Load polarion results from a JSON file"""
         polarionJsonPath = '{}.json'.format(self.polarionExcelEdit.text()[:-5])
         if os.path.exists(polarionJsonPath):
             with open(polarionJsonPath) as f:
@@ -362,865 +429,1103 @@ class App(QMainWindow, Ui_MainWindow):
                 self.updatePolarionTableModel()
 
     def saveLogResults(self):
-        # save log file results to a pickle file
-        csvReportFolder = self.csvReportEdit.text()
-        logPicklePath = os.path.join(csvReportFolder, 'LogResults.pkl')
-        with open(logPicklePath, 'wb') as f:
-            pickle.dump(self.logDict, f)
+        """Save log file results to a pickle file"""
+        try:
+            csvReportFolder = self.csvReportEdit.text()
+            logPicklePath = os.path.join(csvReportFolder, 'LogResults.pkl')
+            with open(logPicklePath, 'wb') as f:
+                pickle.dump(self.logDict, f)
+        except:
+            print(traceback.format_exc())
 
     def loadLogResults(self):
-        logPicklePath = os.path.join(self.csvReportEdit.text(), 'LogResults.pkl')
+        """Load log file results if it exists"""
         try:
-            with open(logPicklePath, 'rb') as f:
-                self.logDict = pickle.load(f)
+            logPicklePath = os.path.join(self.csvReportEdit.text(), 'LogResults.pkl')
+            try:
+                with open(logPicklePath, 'rb') as f:
+                    self.logDict = pickle.load(f)
+            except:
+                print('Exception for loadLogResults')
         except:
-            print('Exception for def loadLogResults')
+            print(traceback.format_exc())
 
-    def polarionTableContextMenuEvent(self, qpoint):
-        menu = QMenu(self)
+    def markAllModified(self, all):
+        """Set modified column for all"""
+        try:
+            model = self.polarionTableViewModel
+            header = self.polarionTableHeader
+            modifiedCol = header.index('Modified')
+            rowCount = model.rowCount()
 
-        testCaseCol = self.polarionTableHeader.index('TestCase')
-        runtestCol = self.polarionTableHeader.index('Run Test')
-        totalWaitTimeCol = self.polarionTableHeader.index('Total Wait Time')
-        hyperlinksCol = self.polarionTableHeader.index('Hyperlinks')
+            for i in range(0, rowCount):
+                modifiedItem = model.item(i, modifiedCol)
+                modifiedItem.setCheckState(Qt.Checked if all else Qt.Unchecked)
+        except:
+            print(traceback.format_exc())
 
-        modelIndex = self.polarionTableView.indexAt(qpoint)
-        selectedColumn = modelIndex.column()
-        item = self.polarionTableViewModel.itemFromIndex(modelIndex)
+    def markSelectedModified(self, modified):
+        """Mark selected testcases as modified"""
+        try:
+            model = self.polarionTableViewModel
+            view = self.polarionTableView
+            header = self.polarionTableHeader
 
-        if selectedColumn == testCaseCol:
-            copyAction = QAction(QIcon(':/icon/copy'), 'Copy TestCase ID', self)
-            copyAction.triggered.connect(self.copySelectionPolarionTable)
-            menu.addAction(copyAction)
-            menu.addSeparator()
+            if self.polarionTableView.model():
+                modifiedCol = header.index('Modified')
 
-        # if selectedColumn == runtestCol:
-        #     runPassedAction = QAction(QIcon(':/icon/passed'), 'Run Passed testcases', self)
-        #     runPassedAction.triggered.connect(lambda: self.runTestCasesWithVerdict('Passed'))
-        #     menu.addAction(runPassedAction)
-        #
-        #     runDeferredAction = QAction(QIcon(':/icon/failed'), 'Run Deferred testcases', self)
-        #     runDeferredAction.triggered.connect(lambda: self.runTestCasesWithVerdict('Deferred'))
-        #     menu.addAction(runDeferredAction)
-        #
-        #     runWithoutLogsAction = QAction(QIcon(':/icon/notInterested'), 'Run testcases without logs', self)
-        #     runWithoutLogsAction.triggered.connect(lambda: self.runTestCasesWithVerdict('No log found'))
-        #     menu.addAction(runWithoutLogsAction)
-        #
-        #     runTotalWaitTimeAction = QAction(QIcon(':/icon/clock'), 'Run testcases with TotalWaitTime =< 400s', self)
-        #     runTotalWaitTimeAction.triggered.connect(lambda: self.runTotalWaitTimeTestCases('=<', 400))
-        #     menu.addAction(runTotalWaitTimeAction)
-        #
-        #     runTotalWaitTimeAction = QAction(QIcon(':/icon/clock'), 'Run testcases with TotalWaitTime > 400s',
-        #                                      self)
-        #     runTotalWaitTimeAction.triggered.connect(lambda: self.runTotalWaitTimeTestCases('>', 400))
-        #     menu.addAction(runTotalWaitTimeAction)
-        #
-        #     runTestCasesWithHyperlinksAction = QAction(QIcon(':/icon/link'), 'Run Deferred with Hyperlinks', self)
-        #     runTestCasesWithHyperlinksAction.triggered.connect(lambda: self.runTestCasesWithVerdictHyperlinks(verdict='Deferred', hasHyperlinks=True))
-        #     menu.addAction(runTestCasesWithHyperlinksAction)
-        #
-        #
-        #     runTestCasesWithNoHyperlinksAction = QAction(QIcon(':/icon/noLink'), 'Run Deferred with no Hyperlinks', self)
-        #     runTestCasesWithNoHyperlinksAction.triggered.connect(
-        #         lambda: self.runTestCasesWithVerdictHyperlinks(verdict='Deferred', hasHyperlinks=False))
-        #     menu.addAction(runTestCasesWithNoHyperlinksAction)
-        #
-        #
-        #     menu.addSeparator()
+                for each in view.selectedIndexes():
+                    modifiedItem = model.item(each.row(), modifiedCol)
+                    modifiedItem.setCheckState(Qt.Checked if modified else Qt.Unchecked)
+        except:
+            print(traceback.format_exc())
 
-        if selectedColumn == hyperlinksCol:
-            hyperlink = item.text()
-            if len(hyperlink) > 0:
-                openLinkAction = QAction(QIcon(':/icon/link'), 'Open Hyperlink', self)
-                openLinkAction.triggered.connect(lambda: self.openHyperlink(hyperlink))
-                menu.addAction(openLinkAction)
-                menu.addSeparator()
+    def runSelected(self, run):
+        """Run selected test cases"""
+        try:
+            model = self.polarionTableViewModel
+            view = self.polarionTableView
+            header = self.polarionTableHeader
 
-        openLogFileAction = QAction(QIcon(':/icon/openNew'), 'Open Log File', self)
-        openLogFileAction.triggered.connect(self.openLogFile)
-        menu.addAction(openLogFileAction)
+            if self.polarionTableView.model():
+                runTestCol = header.index('Run Test')
 
-        checkAllAction = QAction(QIcon(':icon/checked'), 'Check All', self)
-        checkAllAction.triggered.connect(self.checkAllPolarionTable)
-        menu.addAction(checkAllAction)
+                for each in view.selectedIndexes():
+                    runTestItem = model.item(each.row(), runTestCol)
+                    runTestItem.setCheckState(Qt.Checked if run else Qt.Unchecked)
+        except:
+            print(traceback.format_exc())
 
-        decheckAllAction = QAction(QIcon(':icon/notChecked'), 'Check None', self)
-        decheckAllAction.triggered.connect(self.decheckAllPolarionTable)
-        menu.addAction(decheckAllAction)
+    def runAll(self, all):
+        """Run all test cases"""
+        try:
+            model = self.polarionTableViewModel
+            header = self.polarionTableHeader
+            runTestCol = header.index('Run Test')
 
-        menu.addSeparator()
-
-        runSelectedTestCasesAction = QAction(QIcon(':/icon/selectAll'), 'Run selected test cases', self)
-        runSelectedTestCasesAction.triggered.connect(lambda: self.runSelectedTestCases(True))
-        menu.addAction(runSelectedTestCasesAction)
-
-        dontRunSelectedTestCasesAction = QAction(QIcon(':/icon/gridOff'), 'Do not run selected test cases', self)
-        dontRunSelectedTestCasesAction.triggered.connect(lambda: self.runSelectedTestCases(False))
-        menu.addAction(dontRunSelectedTestCasesAction)
-
-        runAllTestCasesAction = QAction(QIcon(':/icon/selectAll'), 'Run ALL test cases', self)
-        runAllTestCasesAction.triggered.connect(lambda: self.runAllTestCases(all=True))
-        menu.addAction(runAllTestCasesAction)
-
-        dontRunAllTestCasesAction = QAction(QIcon(':/icon/gridOff'), 'Do NOT run ALL test cases', self)
-        dontRunAllTestCasesAction.triggered.connect(lambda: self.runAllTestCases(all=False))
-        menu.addAction(dontRunAllTestCasesAction)
-
-        if menu.actions().__len__() > 0:
-            menu.popup(QCursor.pos())
-
-    def checkAllPolarionTable(self):
-        model = self.polarionTableViewModel
-        rowCount = model.rowCount()
-
-        for i in range(0, rowCount):
-            item = model.item(i, 0)
-            item.setCheckState(Qt.Checked)
-
-    def decheckAllPolarionTable(self):
-        model = self.polarionTableViewModel
-        rowCount = model.rowCount()
-
-        for i in range(0, rowCount):
-            item = model.item(i, 0)
-            item.setCheckState(Qt.Unchecked)
-
-    def runSelectedTestCases(self, run):
-        model = self.polarionTableViewModel
-        view = self.polarionTableView
-
-        if self.polarionTableView.model():
-            selectionModel = self.polarionTableView.selectionModel()
-
-            runTestCol = self.polarionTableHeader.index('Run Test')
-
-            for each in view.selectedIndexes():
-                runTestItem = model.item(each.row(), runTestCol)
-                runTestItem.setText('Yes' if run else 'No')
-                # runTestItem.setIcon(QIcon(':/icon/checkBoxChecked') if run else QIcon(':/icon/checkBoxBlank'))
-                runTestItem.setCheckState(Qt.Checked if run else Qt.Unchecked)
-
-    def runAllTestCases(self, all):
-        model = self.polarionTableViewModel
-        runTestCol = self.polarionTableHeader.index('Run Test')
-
-        for row in range(0, model.rowCount()):
-            runTestItem = model.item(row, runTestCol)
-            runTestItem.setText('Yes' if all else 'No')
-            # runTestItem.setIcon(QIcon(':/icon/checkBoxChecked') if all else QIcon(':/icon/checkBoxBlank'))
-            runTestItem.setCheckState(Qt.Checked if all else Qt.Unchecked)
+            for row in range(0, model.rowCount()):
+                runTestItem = model.item(row, runTestCol)
+                runTestItem.setCheckState(Qt.Checked if all else Qt.Unchecked)
+        except:
+            print(traceback.format_exc())
 
     def makeRunList(self):
-        testCaseCol = self.polarionTableHeader.index('TestCase')
-        runTestCol = self.polarionTableHeader.index('Run Test')
-        model = self.polarionTableViewModel
-        rowCount = model.rowCount()
+        """Scan the run test checkboxes and make the run list/dict"""
+        try:
+            header = self.polarionTableHeader
+            testCaseCol = header.index('TestCase')
+            runTestCol = header.index('Run Test')
+            model = self.polarionTableViewModel
+            rowCount = model.rowCount()
 
-        self.runList = []
-        runList = self.runList
+            self.runList = []
+            runList = self.runList
+            runDict = self.runDict
 
-        for i in range(0, rowCount):
-            testCaseItem = model.item(i, testCaseCol)
-            runTestItem = model.item(i, runTestCol)
-            testCase = testCaseItem.text()
-            runTest = runTestItem.text()
-            runList.append([testCase, runTest])
+            for i in range(0, rowCount):
+                testCaseItem = model.item(i, testCaseCol)
+                runTestItem = model.item(i, runTestCol)
+                testCase = testCaseItem.text()
+                runTest = runTestItem.text()
+                runList.append([testCase, runTest])
 
-            try:
-                self.polarionDict[testCase]['run'] = runTest
-            except KeyError:
-                pass
+                try:
+                    self.polarionDict[testCase]['run'] = runTest
+                except KeyError:
+                    pass
+
+                try:
+                    runDict[testCase] = runTest
+                except:
+                    pass
+
+            def sortfunc(x):
+                return x[0]
+
+            runList.sort(key=sortfunc)
+        except:
+            print(traceback.format_exc())
+
+    def polarionTableContextMenuEvent(self, qpoint):
+        """Show context menu for Polarion tableview"""
+        try:
+            menu = QMenu(self)
+            view = self.polarionTableView
+            selectedIndexes = view.selectedIndexes()
+
+            if len(selectedIndexes) > 0:
+                copyAction = QAction(QIcon(':/icon_white/copy'), 'Copy TestCase ID', self)
+                copyAction.triggered.connect(self.copySelectionPolarionTable)
+                menu.addAction(copyAction)
+                menu.addSeparator()
+
+                openLinkAction = QAction(QIcon(':/icon_white/link'), 'Open Hyperlink', self)
+                openLinkAction.triggered.connect(self.openHyperlink)
+                menu.addAction(openLinkAction)
+
+                openLogFileAction = QAction(QIcon(':/icon_white/openNew'), 'Open Log File', self)
+                openLogFileAction.triggered.connect(self.openLogFile)
+                menu.addAction(openLogFileAction)
+
+                menu.addSeparator()
+
+                # checkAllAction = QAction(QIcon(':icon_white/checked'), 'Check All', self)
+                # checkAllAction.triggered.connect(self.checkAllPolarionTable)
+                # menu.addAction(checkAllAction)
+                #
+                # decheckAllAction = QAction(QIcon(':icon_white/notChecked'), 'Check None', self)
+                # decheckAllAction.triggered.connect(self.decheckAllPolarionTable)
+                # menu.addAction(decheckAllAction)
+
+                modifySelectedAction = QAction(QIcon(':icon_white/checked'), 'Mark as modified', self)
+                modifySelectedAction.triggered.connect(lambda: self.markSelectedModified(True))
+                menu.addAction(modifySelectedAction)
+
+                modifyAllAction = QAction(QIcon(':icon_white/checked'), 'Mark All as modified', self)
+                modifyAllAction.triggered.connect(lambda: self.markAllModified(True))
+                menu.addAction(modifyAllAction)
+
+                menu.addSeparator()
+
+                unmodifySelectedAction = QAction(QIcon(':icon_white/notChecked'), 'Mark as unmodified', self)
+                unmodifySelectedAction.triggered.connect(lambda: self.markSelectedModified(False))
+                menu.addAction(unmodifySelectedAction)
+
+                unmodifyAllAction = QAction(QIcon(':icon_white/notChecked'), 'Mark All as unmodified', self)
+                unmodifyAllAction.triggered.connect(lambda: self.markAllModified(False))
+                menu.addAction(unmodifyAllAction)
+
+                menu.addSeparator()
+
+                runSelectedTestCasesAction = QAction(QIcon(':/icon_white/checked'), 'Run selected', self)
+                runSelectedTestCasesAction.triggered.connect(lambda: self.runSelected(True))
+                menu.addAction(runSelectedTestCasesAction)
+
+                runAllTestCasesAction = QAction(QIcon(':/icon_white/checked'), 'Run All', self)
+                runAllTestCasesAction.triggered.connect(lambda: self.runAll(all=True))
+                menu.addAction(runAllTestCasesAction)
+
+                menu.addSeparator()
+
+                dontRunSelectedTestCasesAction = QAction(QIcon(':/icon_white/notChecked'), 'Do Not run selected', self)
+                dontRunSelectedTestCasesAction.triggered.connect(lambda: self.runSelected(False))
+                menu.addAction(dontRunSelectedTestCasesAction)
+
+                dontRunAllTestCasesAction = QAction(QIcon(':/icon_white/notChecked'), 'Do Not Run All', self)
+                dontRunAllTestCasesAction.triggered.connect(lambda: self.runAll(all=False))
+                menu.addAction(dontRunAllTestCasesAction)
+
+                if menu.actions().__len__() > 0:
+                    menu.popup(QCursor.pos())
+        except:
+            print(traceback.format_exc())
 
     def polarionTableViewClicked(self, qmodelindex):
-        # QModelIndex
-        row = qmodelindex.row()
-        column = qmodelindex.column()
-
-        testCaseCol = self.polarionTableHeader.index('TestCase')
-        testCaseId = self.polarionTableViewModel.item(row, testCaseCol).text()
-        runTestCol = self.polarionTableHeader.index('Run Test')
-
+        """Handler for Polarion tableview clicked event"""
         try:
-            csvFilePath = self.logDict[testCaseId]['filePath']
-            if os.path.exists(csvFilePath):
-                self.updateLogTableWidget(csvFilePath)
-        except KeyError:
-            print('KeyError for def polarionTableViewClicked, csvFilePath')
+            header = self.polarionTableHeader
+            row = qmodelindex.row()
+            column = qmodelindex.column()
 
-        try:
-            title = self.polarionDict[testCaseId]['title']
-            description = self.polarionDict[testCaseId]['desc']
-            self.titleEdit.setText(title)
-            self.descriptionEdit.setText(description)
-        except KeyError:
-            print('KeyError for def polarionTableViewClicked, title')
+            testCaseCol = header.index('TestCase')
+            runTestCol = header.index('Run Test')
+            testCaseId = self.polarionTableViewModel.item(row, testCaseCol).text()
 
-        # if column == runTestCol:
-        #     runTestItem = self.polarionTableViewModel.item(row, column)
-        #     runTestItem.setText('Yes' if runTestItem.checkState() else 'No')
+            try:
+                csvFilePath = self.logDict[testCaseId]['filePath']
+                if os.path.exists(csvFilePath):
+                    self.updateLogTableWidget(csvFilePath)
+                    self.logTableWidget.scrollToTop()
+            except:
+                self.logTableWidget.clear()
+                pass
 
-        # if column == testCaseCol:
-        #     item = self.polarionTableViewModel.item(row, column)
-        #     testCaseId = item.text()
-        #     checked = item.checkState() == 2
-        #     # print(row, column, testCaseId, checked)
-        #     self.polarionDict[testCaseId]['update'] = checked
+            try:
+                title = self.polarionDict[testCaseId]['title']
+                description = self.polarionDict[testCaseId]['desc']
+                self.titleEdit.setText(title)
+                self.descriptionEdit.setText(description)
+            except KeyError:
+                print('KeyError for def polarionTableViewClicked, title & description')
+        except:
+            print(traceback.format_exc())
 
     def polarionTableViewModelItemChanged(self, item):
-        column = item.column()
-        runTestCol = self.polarionTableHeader.index('Run Test')
+        """Handler for Polarion model item changed event"""
+        try:
+            row = item.row()
+            column = item.column()
+            model = self.polarionTableViewModel
+            polarionDict = self.polarionDict
+            testcaseCol = self.polarionTableHeader.index('TestCase')
+            runTestCol = self.polarionTableHeader.index('Run Test')
+            commentsCol = self.polarionTableHeader.index('Comments')
+            modifiedCol = self.polarionTableHeader.index('Modified')
 
-        if column == runTestCol:
-            # print('Changed')
-            item.setText('Yes' if item.checkState() else 'No')
+            testcaseItem = model.item(row, testcaseCol)
+            testcase = testcaseItem.text()
+
+            if column == runTestCol:
+                run = item.checkState() == Qt.Checked
+                item.setText('Yes' if run else 'No')
+                try:
+                    polarionDict[testcase]['run'] = run
+                except:
+                    pass
+
+            if column == commentsCol:
+                comments = item.text()
+                if 'comments' not in polarionDict[testcase]:
+                    polarionDict[testcase]['comments'] = ''
+                try:
+                    polarionDict[testcase]['comments'] = comments
+                except:
+                    pass
+
+            if column == modifiedCol:
+                checkedState = item.checkState() == Qt.Checked
+                item.setText('Yes' if checkedState else 'No')
+                if 'modified' not in polarionDict[testcase]:
+                    polarionDict[testcase]['modified'] = False
+                try:
+                    polarionDict[testcase]['modified'] = True if checkedState else False
+                except:
+                    pass
+        except:
+            print(traceback.format_exc())
+
+    def polarionTableSelectionChanged(self):
+        """Show number of testcases that are selected"""
+        try:
+            view = self.polarionTableView
+            if view.model():
+                self.selectedEdit.setText(view.selectedIndexes().__len__().__str__())
+        except:
+            print(traceback.format_exc())
 
     def updateLogTableWidget(self, csvFilePath):
-        self.logTableHeader = ['Action', 'Description', 'Variable', 'Settings', 'Value', 'Wait', 'Actual Value', 'Step Verdict', 'Step Message']
+        """Update the log table view when clicking on test case"""
+        try:
+            self.logTableHeader = ['Action', 'Description', 'Variable', 'Settings', 'Value', 'Wait', 'Actual Value', 'Step Verdict', 'Step Message']
+            header = self.logTableHeader
 
-        # stepCol = self.logTableHeader.index('Step')
-        actionCol = self.logTableHeader.index('Action')
-        descriptionCol = self.logTableHeader.index('Description')
-        variableCol = self.logTableHeader.index('Variable')
-        settingsCol = self.logTableHeader.index('Settings')
-        valueCol = self.logTableHeader.index('Value')
-        waitCol = self.logTableHeader.index('Wait')
-        actualCol = self.logTableHeader.index('Actual Value')
-        verdictCol = self.logTableHeader.index('Step Verdict')
-        statusCol = self.logTableHeader.index('Step Message')
+            # stepCol = header.index('Step')
+            actionCol = header.index('Action')
+            descriptionCol = header.index('Description')
+            variableCol = header.index('Variable')
+            settingsCol = header.index('Settings')
+            valueCol = header.index('Value')
+            waitCol = header.index('Wait')
+            actualCol = header.index('Actual Value')
+            verdictCol = header.index('Step Verdict')
+            statusCol = header.index('Step Message')
 
-        self.logTableWidget.clear()
+            self.logTableWidget.clear()
 
-        with open(csvFilePath) as csvFile:
-            csvReader = csv.DictReader(csvFile)
-            allRows = [row for row in csvReader]
+            with open(csvFilePath) as csvFile:
+                csvReader = csv.DictReader(csvFile)
+                allRows = [row for row in csvReader]
 
-            self.logTableWidget.setRowCount(allRows.__len__())
-            self.logTableWidget.setColumnCount(self.logTableHeader.__len__())
+                self.logTableWidget.setRowCount(allRows.__len__())
+                self.logTableWidget.setColumnCount(header.__len__())
 
-            rowIndex = 0
+                rowIndex = 0
 
-            for row in allRows:
-                try:
-                    self.logTableWidget.setItem(rowIndex, actionCol, QTableWidgetItem(row['Action']))
-                except KeyError:
-                    pass
+                for row in allRows:
+                    try:
+                        self.logTableWidget.setItem(rowIndex, actionCol, QTableWidgetItem(row['Action']))
+                    except KeyError:
+                        pass
 
-                try:
-                    self.logTableWidget.setItem(rowIndex, descriptionCol, QTableWidgetItem(row['Description']))
-                except KeyError:
-                    pass
+                    try:
+                        self.logTableWidget.setItem(rowIndex, descriptionCol, QTableWidgetItem(row['Description']))
+                    except KeyError:
+                        pass
 
-                try:
-                    self.logTableWidget.setItem(rowIndex, variableCol, QTableWidgetItem(row['Variable']))
-                except KeyError:
-                    pass
+                    try:
+                        self.logTableWidget.setItem(rowIndex, variableCol, QTableWidgetItem(row['Variable']))
+                    except KeyError:
+                        pass
 
-                try:
-                    self.logTableWidget.setItem(rowIndex, settingsCol, QTableWidgetItem(row['Settings']))
-                except KeyError:
-                    pass
+                    try:
+                        self.logTableWidget.setItem(rowIndex, settingsCol, QTableWidgetItem(row['Settings']))
+                    except KeyError:
+                        pass
 
-                try:
-                    self.logTableWidget.setItem(rowIndex, valueCol, QTableWidgetItem(row['Value']))
-                except KeyError:
-                    pass
+                    try:
+                        self.logTableWidget.setItem(rowIndex, valueCol, QTableWidgetItem(row['Value']))
+                    except KeyError:
+                        pass
 
-                try:
-                    self.logTableWidget.setItem(rowIndex, waitCol, QTableWidgetItem(row['Wait']))
-                except KeyError:
-                    pass
+                    try:
+                        self.logTableWidget.setItem(rowIndex, waitCol, QTableWidgetItem(row['Wait']))
+                    except KeyError:
+                        pass
 
-                try:
-                    self.logTableWidget.setItem(rowIndex, actualCol, QTableWidgetItem(row['Actual Value']))
-                except KeyError:
-                    pass
+                    try:
+                        self.logTableWidget.setItem(rowIndex, actualCol, QTableWidgetItem(row['Actual Value']))
+                    except KeyError:
+                        pass
 
-                try:
-                    verdict = row['Step Verdict']
-                    verdictItem = QTableWidgetItem(verdict)
-                    if verdict == 'Passed':
-                        verdictItem.setIcon(QIcon(':/icon/passed'))
-                    elif verdict == 'Deferred' or verdict == 'Error' or verdict == 'Not Passed':
-                        verdictItem.setIcon(QIcon(':/icon/failed'))
+                    try:
+                        verdict = row['Step Verdict']
+                        verdictItem = QTableWidgetItem(verdict)
+                        if verdict == 'Passed':
+                            verdictItem.setIcon(QIcon(':/icon/passed'))
+                        elif verdict == 'Deferred' or verdict == 'Error' or verdict == 'Not Passed':
+                            verdictItem.setIcon(QIcon(':/icon/failed'))
 
-                    self.logTableWidget.setItem(rowIndex, verdictCol, verdictItem)
+                        self.logTableWidget.setItem(rowIndex, verdictCol, verdictItem)
 
-                except KeyError:
-                    print('KeyError for updateLogTableWidget, verdict')
+                    except KeyError:
+                        print('KeyError for updateLogTableWidget, verdict')
 
-                try:
-                    self.logTableWidget.setItem(rowIndex, statusCol, QTableWidgetItem(row['Step Message']))
-                except KeyError:
-                    print('KeyError for updateLogTableWidget, QTableWidgetItem')
+                    try:
+                        self.logTableWidget.setItem(rowIndex, statusCol, QTableWidgetItem(row['Step Message']))
+                    except KeyError:
+                        print('KeyError for updateLogTableWidget, QTableWidgetItem')
 
-                rowIndex += 1
+                    rowIndex += 1
 
-            self.logTableWidget.setHorizontalHeaderLabels(self.logTableHeader)
-            self.logTableWidget.setAlternatingRowColors(True)
-            self.logTableWidget.resizeColumnsToContents()
-            self.logTableWidget.setColumnWidth(descriptionCol, 20)
+                self.logTableWidget.setHorizontalHeaderLabels(header)
+                self.logTableWidget.setAlternatingRowColors(True)
+                self.logTableWidget.resizeColumnsToContents()
+                self.logTableWidget.setColumnWidth(descriptionCol, 20)
+        except:
+            print(traceback.format_exc())
 
     def openLogFile(self):
-        if self.polarionTableView.model():
-            selectionModel = self.polarionTableView.selectionModel()
+        """Open log file in system's default editor"""
+        try:
+            if self.polarionTableView.model():
+                selectionModel = self.polarionTableView.selectionModel()
 
-            openList = []
+                openList = []
 
-            for each in selectionModel.selectedIndexes():
-                item = self.polarionTableViewModel.item(each.row(), 0)
-                openList.append(item.text())
-            try:
-                filePaths = [self.logDict[x]['filePath'] for x in openList]
+                for each in selectionModel.selectedIndexes():
+                    item = self.polarionTableViewModel.item(each.row(), 0)
+                    openList.append(item.text())
+                try:
+                    filePaths = [self.logDict[x]['filePath'] for x in openList]
 
-                for p in filePaths:
-                    if os.path.exists(str(p)):
-                        os.startfile(str(p))
+                    for p in filePaths:
+                        if os.path.exists(str(p)):
+                            os.startfile(str(p))
 
-            except KeyError:
-                self.statusbar.showMessage('No log file found.')
-        else:
-            self.statusbar.showMessage('No model found.')
+                except KeyError:
+                    self.statusbar.showMessage('No log file found')
+            else:
+                self.statusbar.showMessage('No model found')
+        except:
+            print(traceback.format_exc())
 
     def copySelectionPolarionTable(self):
-        if self.polarionTableView.model():
-            selectionModel = self.polarionTableView.selectionModel()
+        """Copy selection in Polarion table"""
+        try:
+            model = self.polarionTableViewModel
+            view = self.polarionTableView
+            selectedIndexes = view.selectedIndexes()
+            testcaseCol = self.polarionTableHeader.index('TestCase')
 
             copyList = []
 
-            for each in selectionModel.selectedIndexes():
-                item = self.polarionTableViewModel.item(each.row(), each.column())
-                copyList.append(item.text())
+            for i in selectedIndexes:
+                testcase = model.item(i.row(), testcaseCol).text()
+                copyList.append(testcase)
 
             copyString = '\n'.join(copyList)
 
             cb = QApplication.clipboard()
             cb.clear(mode=cb.Clipboard)
             cb.setText(copyString, mode=cb.Clipboard)
-        else:
-            print("No model found")
+        except:
+            print(traceback.format_exc())
 
-    def openHyperlink(self, link):
-        if len(link) > 0:
-            linkSplit = link.split(',')
+    def openHyperlink(self):
+        """Open hyperlink in system's default web browser"""
+        try:
+            model = self.polarionTableViewModel
+            view = self.polarionTableView
+            selectedIndexes = view.selectedIndexes()
+            hyperlinkCol = self.polarionTableHeader.index('Hyperlinks')
 
-            for l in linkSplit:
-                webbrowser.open_new_tab(l)
+            for i in selectedIndexes:
+                link = model.item(i.row(), hyperlinkCol).text()
+
+                if len(link) > 0:
+                    linkSplit = link.split(',')
+
+                    for l in linkSplit:
+                        webbrowser.open_new_tab(l)
+        except:
+            print(traceback.format_exc())
 
     def autoRunClicked(self):
-        if self.autorunCheckBox.isChecked():
-            self.startTimer.start(1000)
-            self.startTimerCount = self.autorunSpinBox.value()
-        else:
-            self.startTimer.stop()
-            self.autorunCheckBox.setText('Autorun')
+        """Handler for autorun checkbox clicked event"""
+        try:
+            if self.autorunCheckBox.isChecked():
+                self.startTimer.start(1000)
+                self.startTimerCount = self.autorunSpinBox.value()
+            else:
+                self.startTimer.stop()
+                self.autorunCheckBox.setText('Autorun')
+        except:
+            print(traceback.format_exc())
 
     def tick(self):
-        if self.startTimerCount > 0:
-            self.autorunCheckBox.setText('Autorun in {}s'.format(self.startTimerCount))
-            # self.exitButton.setText('Continue ({})'.format(self.startTimerCount))
-            debugPrint(self.startTimerCount)
-            self.startTimerCount = self.startTimerCount - 1
-        else:
-            self.startTimer.stop()
-            debugPrint('Timer stop')
-            self.autorunCheckBox.setText('Autorun')
-            # self.exitButton.setText('Continue')
-            if self.autorunCheckBox.isChecked():
-                self.exit()
-
-    def toggleDebug(self):
-        debug = ~debug
-        print('ShowDebug={}'.format(debug))
+        """Ticker for autorun timer"""
+        try:
+            if self.startTimerCount > 0:
+                self.autorunCheckBox.setText('Autorun in {}s'.format(self.startTimerCount))
+                # self.exitButton.setText('Continue ({})'.format(self.startTimerCount))
+                debugPrint(self.startTimerCount)
+                self.startTimerCount = self.startTimerCount - 1
+            else:
+                self.startTimer.stop()
+                debugPrint('Timer stop')
+                self.autorunCheckBox.setText('Autorun')
+                # self.exitButton.setText('Continue')
+                if self.autorunCheckBox.isChecked():
+                    self.exit()
+        except:
+            print(traceback.format_exc())
 
     def toggleUpdateVariablePool(self):
-        self.updateVariablePool = self.updateVariablePoolCheckBox.isChecked()
-        debugPrint('UpdateVariablePool={}'.format(self.updateVariablePool))
+        """Toggle update variablepool checkbox"""
+        try:
+            self.updateVariablePool = self.updateVariablePoolCheckBox.isChecked()
+            debugPrint('UpdateVariablePool={}'.format(self.updateVariablePool))
+        except:
+            print(traceback.format_exc())
 
-    def openCallFunctionFolder(self):
-        callFunctionPath = Path(self.callFunctionEdit.text())
-        if os.path.exists(str(callFunctionPath)):
-            os.startfile(str(callFunctionPath))
+    def openFolderInPath(self, path):
+        """Open folder contained in path"""
+        try:
+            if os.path.exists(path):
+                if os.path.isdir(path):
+                    os.startfile(path)
+                else:
+                    os.startfile(os.path.dirname(path))
+        except:
+            print(traceback.format_exc())
 
-    def openCsvReportFolder(self):
-        csvReportPath = Path(self.csvReportEdit.text())
-        if os.path.exists(str(csvReportPath)):
-            os.startfile(str(csvReportPath))
-
-    def openVarPoolFolder(self):
-        varPoolPath = Path(self.variablePoolEdit.text())
-        dirName = os.path.dirname(str(varPoolPath))
-        if os.path.exists(str(dirName)):
-            os.startfile(str(dirName))
-
-    def openVarPoolFile(self):
-        varPoolPath = Path(self.variablePoolEdit.text())
-        dirName = os.path.dirname(str(varPoolPath))
-        if os.path.exists(str(dirName)):
-            os.startfile(str(varPoolPath))
-
-    def openPolarionExcelFolder(self):
-        polarionExcelPath = Path(self.polarionExcelEdit.text())
-        dirName = os.path.dirname(str(polarionExcelPath))
-        if os.path.exists(str(dirName)):
-            os.startfile(str(dirName))
-
-    def openPolarionExcelFile(self):
-        polarionExcelPath = Path(self.polarionExcelEdit.text())
-        dirName = os.path.dirname(str(polarionExcelPath))
-        if os.path.exists(str(dirName)):
-            os.startfile(str(polarionExcelPath))
-
-    def openTestCaseExcelFolder(self):
-        testCaseExcelPath = Path(self.testCaseExcelEdit.text())
-        dirName = os.path.dirname(str(testCaseExcelPath))
-        if os.path.exists(str(dirName)):
-            os.startfile(str(dirName))
-
-    def openTestCaseExcelFile(self):
-        testCaseExcelPath = Path(self.testCaseExcelEdit.text())
-        dirName = os.path.dirname(str(testCaseExcelPath))
-        if os.path.exists(str(dirName)):
-            os.startfile(str(testCaseExcelPath))
-
-    def openConfigFolder(self):
-        configFolder = os.path.dirname(str(self.configFile))
-        # param = 'explorer "{}"'.format(configFolder)
-        # subprocess.Popen(param)
-        if os.path.exists(configFolder):
-            os.startfile(configFolder)
-
-    def useTestCasePath(self):
-        testCaseExcelPath = Path(self.testCaseExcelEdit.text())
-        dirName = os.path.dirname(str(testCaseExcelPath))
-        newCsvReportFolder = os.path.join(dirName, 'Logs')
-        self.csvReportEdit.setText(str(newCsvReportFolder))
-        if not os.path.exists(newCsvReportFolder):
-            os.mkdir(newCsvReportFolder)
+    def openFileInPath(self, path):
+        """Open file contained in path"""
+        try:
+            if os.path.exists(path):
+                os.startfile(path)
+        except:
+            print(traceback.format_exc())
 
     def useTestCaseFolderForLogs(self):
-        testCaseExcelPath = Path(self.testCaseExcelEdit.text())
-        dirName = os.path.dirname(str(testCaseExcelPath))
-        newCsvReportFolder = os.path.join(dirName, 'Logs')
-
-        if os.path.exists(dirName):
-            msgReply = QMessageBox.question(
-                self,
-                'CSV Report Folder',
-                'Use [{}] to store reports?'.format(newCsvReportFolder),
-                QMessageBox.Yes | QMessageBox.No, QMessageBox.No
-            )
-
-            if msgReply == QMessageBox.Yes:
-                newCsvReportFolder = os.path.join(dirName, 'Logs')
-                self.csvReportEdit.setText(str(newCsvReportFolder))
-                if not os.path.exists(newCsvReportFolder):
-                    os.mkdir(newCsvReportFolder)
-
-    def hideAddSignal(self):
-        self.addSignalGroupBox.hide()
-
-    def showAddSignal(self):
-        self.addSignalGroupBox.show()
-
-    def dtcExToggle(self):
-        self.showDtcException(self.dtcExCheckBox.isChecked())
-
-    def showDtcException(self, visible=True):
-        if visible:
-            self.dtcExGroupBox.show()
-        else:
-            self.dtcExGroupBox.hide()
-
-    def unsavedChanges(self):
-        self.changesSaved = False
-        self.statusbar.showMessage('You have unsaved changes.')
-
-    def newProfile(self):
-        self.setDefaultProfile()
-        self.profileFile = ''
-        self.setTitle('Untitled Profile')
-        self.updateGuiFromProfileDict()
-        self.statusbar.showMessage('Default profile loaded.')
-
-    def browseProfile(self):
-        profileFolder = os.path.dirname(self.profileFile)
-        filePath, fileType = QFileDialog.getOpenFileName(
-            self,
-            "Open Profile",
-            profileFolder,
-            "JSON Files (*.json);;All Files (*)"
-        )
-
-        if filePath:
-            self.profileFile = filePath
-            self.loadProfile()
-            self.saveSettings()
-
-    def browsePolarionExcel(self):
-        filePath = self.browseFile(self.polarionExcelEdit.text(), 'Select Polarion TestCase Excel File', 'Excel Files (*.xlsx)')
-        self.polarionExcelEdit.setText(filePath)
-
-        msgReply = QMessageBox.question(
-            self,
-            'KA File Path',
-            'Use default KA file path?',
-            QMessageBox.Yes | QMessageBox.No, QMessageBox.No
-        )
-
-        if msgReply == QMessageBox.Yes:
-            fileName = self.polarionExcelEdit.text()[:-5]
-            fileExtension = self.polarionExcelEdit.text()[-4:]
-            kaFilePath = '{}_KA.xlsm'.format(fileName)
-            self.testCaseExcelEdit.setText(kaFilePath)
-
-    def browseTestCaseExcel(self):
-        filePath = self.browseFile(self.testCaseExcelEdit.text(), 'Select Test Case Excel File', 'Excel Files (*.xlsm)')
-        self.testCaseExcelEdit.setText(filePath)
-
-    def browseCallFunction(self):
-        self.callFunctionEdit.setText(self.browseFolder(self.callFunctionEdit.text(), 'Select Call Function Directory'))
-
-    def browseCsvReport(self):
-        self.browseFolder(self.csvReportEdit, 'Select CSV Report Directory')
-
-    def browseVariablePool(self):
-        filePath = self.browseFile(self.variablePoolEdit.text(), 'Open Variable Pool', 'TXT Files (*.txt)')
-        self.variablePoolEdit.setText(filePath)
-        self.loadVariablePool()
-
-    def browseFile(self, filePath='', titleDialog='', fileType=''):
-        if len(filePath) > 0:
-            folder = str(os.path.dirname(filePath))
-        else:
-            folder = ''
-
-        openFilePath, openFileType = QFileDialog.getOpenFileName(
-            self,
-            titleDialog,
-            folder,
-            "{};;All Files (*)".format(fileType)
-        )
-
-        return openFilePath.replace('/', '\\') if len(openFilePath) > 0 else filePath
-
-    def browseFolder(self, folder, title):
-        folderPath = QFileDialog.getExistingDirectory(self, title, folder)
-
-        return folderPath.replace('/', '\\') if len(folderPath) > 0 else folder
-
-    def browseTbxFile(self):
-        filePath = self.browseFile(self.tbxLineEdit.text(), 'Select TBX file', 'TBX Files (*.tbx)')
-        self.tbxLineEdit.setText(filePath)
-
-    def tbx2text(self):
-        import xmltodict
-
-        txtEdit = self.tbxPlainTextEdit
-        txtEdit.clear()
+        """Use test case folder for logs"""
         try:
-            with open(self.tbxLineEdit.text(), 'r') as f:
-                xml_input = f.read()
+            testCaseExcelPath = Path(self.polarionExcelEdit.text())
+            dirName = os.path.dirname(str(testCaseExcelPath))
+            newCsvReportFolder = os.path.join(dirName, 'Logs')
 
-                testCase = xmltodict.parse(xml_input)
-
-                dob = testCase['TemplateBlock']['Block']['DataObjects']['DOB']
-                titleDescNames = [x['@Name'].strip('\'') for x in dob]
-                title = dob[titleDescNames.index('Title')]['@Value'].strip('\'')
-                desc = dob[titleDescNames.index('Desc')]['@Value'].strip('\'')
-
-                self.tbxTitleLineEdit.setText(title)
-                self.tbxDescLineEdit.setText(desc)
-
-                blocks = testCase['TemplateBlock']['Block']['SubSystems']['Block']
-
-                for i, block in enumerate(blocks):
-                    blockLink = block['@CustomLibraryLink'].strip('\'')
-                    blockName = blockLink.split('.')[-1]
-                    blockEnable = block['@EnableMode']
-
-                    dataObjects = block['InheritedDataObjects']['DOB']
-                    dataObjectsNames = [x['@Name'].strip('\'') for x in block['InheritedDataObjects']['DOB']]
-
-                    action = dataObjects[dataObjectsNames.index('Action')]['@Value']
-                    desc = dataObjects[dataObjectsNames.index('Descrip')]['@Value']
-                    variable = dataObjects[dataObjectsNames.index('Variable')]['@Value']
-                    settings = dataObjects[dataObjectsNames.index('Settings')]['@Value']
-                    value = dataObjects[dataObjectsNames.index('Value')]['@Value']
-                    wait = dataObjects[dataObjectsNames.index('Wait')]['@Value']
-                    remarks = dataObjects[dataObjectsNames.index('Remarks')]['@Value']
-
-                    def checkValue(s):
-                        if isinstance(s, str):
-                            s = s.strip('\'')
-                            return '-' if len(s) == 0 else s
-                        return str(s)
-
-                    if eval(blockEnable):
-                        stepList = [checkValue(x) for x in [blockName, desc, variable, settings, value, wait, remarks]]
-                        txtEdit.appendPlainText('\t'.join(stepList))
-        except KeyError as e:
-            print(e)
-
-    def tbxCopy(self, edit):
-        edit.selectAll()
-        edit.copy()
-
-    def newConfig(self):
-        self.setDefaultConfigDict()
-
-    def saveProfile(self):
-        configFolder = os.path.dirname(str(self.configFile))
-
-        # save config file as well
-        self.saveSettings()
-        self.makeRunList()
-        self.savePolarionJson()
-
-        # updates the profile dict before dumping to json
-        self.updateProfileDictFromGui()
-
-        try:
-            with open(self.profileFile, 'w') as f:
-                jsonDump = json.dumps(self.profileDict)
-                f.write(jsonDump)
-                self.setTitle(self.profileFile)
-                self.defaultProfile = False
-                self.changesSaved = True
-                self.statusbar.showMessage('Saving Profile...OK!')
-
-        except FileNotFoundError:
-            self.statusbar.showMessage('Unable to save profile.')
-
-    def saveAsProfile(self):
-        profileFolder = os.path.dirname(self.profileFile)
-        filePath, fileType = QFileDialog.getSaveFileName(
-            self,
-            "Save Profile As",
-            profileFolder,
-            "JSON Files (*.json);;All Files (*)"
-        )
-
-        if filePath:
-            self.profileFile = filePath
-            self.saveProfile()
-
-    def updateProfileDictFromGui(self):
-        """Updates the profile dict from GUI elements."""
-
-        # generate the log mode number based on checkboxes
-        logMode = (self.logRadioBtn0.isChecked() + self.logRadioBtn1.isChecked() * 2 + self.logRadioBtn2.isChecked() * 3) - 1
-
-        # update signal list
-        signalList = []
-        for i in range(0, self.addSignalModel.rowCount()):
-            signalList.append(self.addSignalModel.item(i, 0).text())
-
-
-        dtcExList = []
-        dtcModel = self.dtcTableModel
-        dtcHexCodeCol = self.dtcTableHeader.index('Hex Code')
-        dtcDescCol = self.dtcTableHeader.index('Description')
-        dtcModuleCol = self.dtcTableHeader.index('Module')
-
-        for row in range(0, dtcModel.rowCount()):
-            hexCode = dtcModel.item(row, dtcHexCodeCol).text()
-            desc = dtcModel.item(row, dtcDescCol).text()
-            module = dtcModel.item(row, dtcModuleCol).text()
-            dtcExList.append({
-                'Hex Code': hexCode,
-                'Description': desc,
-                'Module': module,
-            })
-
-        versionDict = {}
-        versionModel = self.versionTableModel
-        versionHeader = self.versionTableHeader
-
-        swCol = versionHeader.index('Software')
-        hwCol = versionHeader.index('Hardware')
-        ecuCol = versionHeader.index('ECU')
-        for row in range(0, versionModel.rowCount()):
-            ecu = versionModel.item(row, ecuCol).text()
-            sw = versionModel.item(row, swCol).text()
-            hw = versionModel.item(row, hwCol).text()
-
-            try:
-                versionDict[ecu] = {
-                    'Software': sw,
-                    'Hardware': hw,
-                }
-            except:
-                pass
-
-        self.profileDict = {
-            'Profile': {
-                '@version': '1.0',
-                'PolarionExcel': self.polarionExcelEdit.text(),
-                'TestCaseExcel': self.testCaseExcelEdit.text(),
-                'CallFunctionFolder': self.callFunctionEdit.text(),
-                'CSVReportFolder': self.csvReportEdit.text(),
-                'VariablePoolPath': self.variablePoolEdit.text(),
-                'UpdateVariablePool': self.updateVariablePool,
-                'Version': {'@include': self.versionCheckBox.isChecked()},
-                'CallFunctionDebug': {'@enable': self.callFunctionDebugCheckbox.isChecked()},
-                'Log': {
-                    '@mode': logMode,
-                    'Signal': signalList
-                },
-                'DTC': {
-                    '@enable': self.dtcExCheckBox.isChecked(),
-                    'Except': dtcExList
-                },
-                'Versions': versionDict,
-            }
-        }
-
-    def dtcTableModelItemChanged(self, item):
-        model = self.dtcTableModel
-        header = self.dtcTableHeader
-        try:
-            dtcExList = self.profileDict['Profile']['DTC']['Except']
-            row = item.row()
-            column = item.column()
-            colName = header[column]
-
-            if column > 0:
-                # print(row, colName, item.text())
-                try:
-                    dtcExList[row][colName] = item.text()
-                except:
-                    pass
-        except KeyError:
-            print('KeyError for dtcTableModelItemChanged, profileDict')
-
-    def addSignal(self):
-        signal = self.addSignalEdit.text()
-
-        try:
-            variablePoolKeys = list(self.variablePoolDict)
-
-            try:
-                foundInVp = variablePoolKeys.index(signal) >= 0
-            except:
-                foundInVp = False
-
-            foundInModel = self.addSignalModel.findItems(signal)
-
-            if foundInModel:
-                self.statusbar.showMessage('Duplicate signal. Try again.')
-
-            if foundInVp and not foundInModel:
-                self.addSignalModel.appendRow(QStandardItem(self.addSignalEdit.text()))
-                self.addSignalEdit.clear()
-                self.addSignalEdit.setFocus()
-                self.statusbar.showMessage('Signal added...OK!')
-        except:
-            self.statusbar.showMessage('Signal not found in variable pool.')
-
-    def removeSignal(self):
-        self.addSignalModel.removeRow(self.addSignalListView.currentIndex().row())
-
-    def addDtcEx2(self):
-        hexCode = self.addDtcExEdit.text()
-        model = self.dtcTableModel
-
-        model.appendRow([QStandardItem(x) for x in [hexCode, '', '']])
-        self.addDtcExEdit.clear()
-        self.addDtcExEdit.setFocus()
-        self.statusbar.showMessage('DTC exception added...OK!')
-
-    def removeDtcEx2(self):
-        selectedIndexes = self.dtcTableView.selectedIndexes()
-        model = self.dtcTableModel
-        for i in selectedIndexes:
-            model.removeRow(i.row())
-
-    def saveSettings(self):
-        self.settings = QSettings('AutomationGUI', 'AutomationGUI')
-        self.settings.setValue('AutoRun', self.autorunCheckBox.isChecked())
-        self.settings.setValue('AutoRunTimer', int(self.autorunSpinBox.value()))
-        self.settings.setValue('LastProfile', self.profileFile)
-        self.settings.setValue('Width', self.width())
-        self.settings.setValue('Height', self.height())
-        self.settings.setValue('PolarionUsername', self.polarionUsername)
-        self.settings.setValue('PolarionLeftTableWidth', self.polarionTableView.width())
-
-        del self.settings
-
-    def loadProfile(self):
-        try:
-            with open(self.profileFile) as f:
-                self.profileDict = json.load(f)
-
-                profileValid = True
-
-                try:
-                    profileversion = self.profileDict['Profile']['@version']
-                    if profileversion == '1.0':
-                        profileValid &= True
-                    else:
-                        debugPrint('Invalid profile version.')
-                except:
-                    debugPrint('No profile version defined.')
-
-                try:
-                    varpoolfile = self.profileDict['Profile']['VariablePoolPath']
-                    if not os.path.exists(str(varpoolfile)):
-                        self.statusbar.showMessage('Variable pool file not found.')
-                    profileValid &= True
-                except:
-                    debugPrint('No variable pool file defined in profile.')
-                    self.statusbar.showMessage('No variable pool file found.')
-
-                if profileValid:
-                    # updates the gui after loading a valid profile
-                    self.defaultProfile = False
-                    self.updateGuiFromProfileDict()
-                    if os.path.exists(str(varpoolfile)):
-                        self.loadVariablePool()
-                    self.setTitle(self.profileFile)
-                    self.statusbar.showMessage('Profile loaded OK!')
-                else:
-                    self.statusbar.showMessage('Invalid profile detected.')
-        except IOError:
-            # self.newProfile()
-            self.statusbar.showMessage('Profile does not exist. Please load profile.')
-        except ValueError:
-            self.statusbar.showMessage('No valid profile found.')
-
-    def checkFolderExist(self, path):
-        basename = os.path.basename(str(path))
-        if not os.path.exists(path):
-            msgReply = QMessageBox.question(
-                self,
-                'Create Folder',
-                '\'' + basename + '\'' + ' folder was not found. Would you like to create it?',
-                QMessageBox.Yes | QMessageBox.No, QMessageBox.No
-            )
-
-            if msgReply == QMessageBox.Yes:
-                os.mkdir(path)
-
-    def checkVarPoolExist(self, path):
-        if path is not None:
-            basename = os.path.basename(str(path))
-            if not os.path.exists(path):
+            if os.path.exists(dirName):
                 msgReply = QMessageBox.question(
                     self,
-                    'Varpool Not Found',
-                    'Varpool {} does not exist. Browse for one?'.format(basename),
-                    # '\'' + basename + '\'' + ' file was not found. Would you like to browse for one?',
+                    'CSV Report Folder',
+                    'Use \'{}\' to store reports?'.format(newCsvReportFolder),
                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No
                 )
 
                 if msgReply == QMessageBox.Yes:
-                    self.browseVariablePool()
+                    self.csvReportEdit.setText(str(newCsvReportFolder))
+                    if not os.path.exists(newCsvReportFolder):
+                        try:
+                            os.mkdir(newCsvReportFolder)
+                        except:
+                            pass
+        except:
+            print(traceback.format_exc())
 
-    # read all log files and extract data
+    def hideAddSignal(self):
+        """Hide add signal groupbox"""
+        try:
+            self.addSignalGroupBox.hide()
+        except:
+            print(traceback.format_exc())
+
+    def showAddSignal(self):
+        """Show add signal groupbox"""
+        try:
+            self.addSignalGroupBox.show()
+        except:
+            print(traceback.format_exc())
+
+    def dtcExToggle(self):
+        """Toggle DTC exception checkbox"""
+        try:
+            self.showDtcException(self.dtcExCheckBox.isChecked())
+        except:
+            print(traceback.format_exc())
+
+    def showDtcException(self, visible=True):
+        """Show DTC exception groubox"""
+        try:
+            if visible:
+                self.dtcExGroupBox.show()
+            else:
+                self.dtcExGroupBox.hide()
+        except:
+            print(traceback.format_exc())
+
+    def setUnsavedChanges(self):
+        """Set unsaved changes flag"""
+        try:
+            self.unsavedChanges = True
+            self.statusbar.showMessage('You have unsaved changes')
+        except:
+            print(traceback.format_exc())
+
+    def newProfile(self):
+        """Create new profile and clearing edits boxes, tables, etc."""
+        try:
+            self.setTitle('New Profile')
+            self.profileFile = ''
+            self.testCaseExcelEdit.clear()
+            self.polarionExcelEdit.clear()
+            self.csvReportEdit.clear()
+            self.callFunctionEdit.clear()
+            self.variablePoolEdit.clear()
+            self.versionTableModel.clear()
+            self.versionCheckBox.setChecked(False)
+            self.callFunctionDebugCheckbox.setChecked(False)
+            self.dtcExCheckBox.setChecked(False)
+            self.dtcTableModel.clear()
+            self.statusbar.showMessage('Default profile loaded')
+        except:
+            print(traceback.format_exc())
+
+    def browseProfile(self):
+        """Browse for a profile"""
+        try:
+            profileFolder = os.path.dirname(self.profileFile)
+            filePath, fileType = QFileDialog.getOpenFileName(
+                self,
+                "Open Profile",
+                profileFolder,
+                "JSON Files (*.json);;All Files (*)"
+            )
+
+            if filePath:
+                self.profileFile = filePath
+                self.loadProfile()
+                self.saveSettings()
+        except:
+            print(traceback.format_exc())
+
+    def browsePolarionExcel(self):
+        """Browse for Polarion excel file"""
+        try:
+            filePath = self.browseFile(self.polarionExcelEdit.text(), 'Select Polarion TestCase Excel File', 'Excel Files (*.xlsx)')
+            self.polarionExcelEdit.setText(filePath)
+
+            # msgReply = QMessageBox.question(
+            #     self,
+            #     'KA File Path',
+            #     'Use default KA file path?',
+            #     QMessageBox.Yes | QMessageBox.No, QMessageBox.No
+            # )
+            #
+            # if msgReply == QMessageBox.Yes:
+            #     fileName = self.polarionExcelEdit.text()[:-5]
+            #     fileExtension = self.polarionExcelEdit.text()[-4:]
+            #     kaFilePath = '{}_KA.xlsm'.format(fileName)
+            #     self.testCaseExcelEdit.setText(kaFilePath)
+
+            self.useTestCaseFolderForLogs()
+            self.polarionTableViewModel.clear()
+            self.polarionDict.clear()
+        except:
+            print(traceback.format_exc())
+
+    def browseCsvReport(self):
+        """Browse for csv report folder"""
+        try:
+            self.csvReportEdit.setText(self.browseFolder(self.csvReportEdit.text(), 'Select CSV Report Directory'))
+        except:
+            print(traceback.format_exc())
+
+    def browseVariablePool(self):
+        """"Browse for variable pool file and load"""
+        try:
+            filePath = self.browseFile(self.variablePoolEdit.text(), 'Open Variable Pool', 'TXT Files (*.txt)')
+            self.variablePoolEdit.setText(filePath)
+            self.loadVariablePool()
+        except:
+            print(traceback.format_exc())
+
+    def browseFile(self, filePath='', titleDialog='', fileType=''):
+        """Browse for file"""
+        try:
+            if len(filePath) > 0:
+                folder = str(os.path.dirname(filePath))
+            else:
+                folder = ''
+
+            openFilePath, openFileType = QFileDialog.getOpenFileName(
+                self,
+                titleDialog,
+                folder,
+                "{};;All Files (*)".format(fileType)
+            )
+
+            return openFilePath.replace('/', '\\') if len(openFilePath) > 0 else filePath
+        except:
+            print(traceback.format_exc())
+
+    def browseFolder(self, folder, title):
+        """Browse for a folder"""
+        try:
+            folderPath = QFileDialog.getExistingDirectory(self, title, folder)
+            return folderPath.replace('/', '\\') if len(folderPath) > 0 else folder
+        except:
+            print(traceback.format_exc())
+
+    def browseSequenceFile(self):
+        try:
+            filePath = self.browseFile(self.sequenceFileEdit.text(), 'Select Sequence File', 'SQX Files (*.sqx)')
+            self.sequenceFileEdit.setText(filePath)
+        except:
+            print(traceback.format_exc())
+
+    def convertSequence(self):
+        """Convert AD sequence to tab delimited text"""
+        try:
+            import xmltodict
+
+            txtEdit = self.sequenceEdit
+            txtEdit.clear()
+
+            with open(self.sequenceFileEdit.text(), 'r') as f:
+                xml_input = f.read()
+                testCase = xmltodict.parse(xml_input)
+
+                sequence = testCase['Standard.Sequence']
+                subsystems = sequence['SubSystems']
+                block = subsystems['Block']
+                subsystems2 = block['SubSystems']
+                block2 = subsystems2['Block']
+                inheritedDataObjects = [x['InheritedDataObjects']['DOB'] for x in block2]
+                steps = []
+                stepString = ''
+
+                def checkValue(s):
+                    if isinstance(s, str):
+                        s = s.strip('\'')
+                        return '-' if len(s) == 0 else s
+                    return str(s)
+
+                for i, cBlock in enumerate(block2):
+                    blockLink = cBlock['@CustomLibraryLink'].strip('\'')
+                    blockName = blockLink.split('.')[-1]
+                    blockEnable = eval(cBlock['@EnableMode'])
+
+                    if blockName in ['InitMAPort', 'ReleaseMAPort']:
+                        continue
+
+                    if blockEnable:
+                        dob = cBlock['InheritedDataObjects']['DOB']
+                        dataObjectsNames = [x['@Name'].strip('\'') for x in dob]
+                        desc = dob[dataObjectsNames.index('Descrip')]['@Value']
+                        variable = dob[dataObjectsNames.index('Variable')]['@Value']
+                        settings = dob[dataObjectsNames.index('Settings')]['@Value']
+                        value = dob[dataObjectsNames.index('Value')]['@Value']
+                        wait = dob[dataObjectsNames.index('Wait')]['@Value']
+                        remarks = dob[dataObjectsNames.index('Remarks')]['@Value']
+
+                        stepList = [checkValue(x) for x in
+                                    [blockName, desc, variable, settings, value, wait, remarks]]
+                        # print('\t'.join(stepList))
+                        # txtEdit.appendPlainText('\t'.join(stepList))
+                        steps.append('\t'.join(stepList))
+                        # stepString += '\t'.join(stepList) + '\n'
+
+                stepString = '\n'.join(steps)
+                txtEdit.appendPlainText(stepString)
+                cb = QApplication.clipboard()
+                cb.clear(mode=cb.Clipboard)
+                cb.setText(stepString, mode=cb.Clipboard)
+                self.statusbar.showMessage('Sequence copied to clipboard')
+
+        except:
+            print(traceback.format_exc())
+
+        # try:
+        #     with open(self.tbxLineEdit.text(), 'r') as f:
+        #         xml_input = f.read()
+        #
+        #         testCase = xmltodict.parse(xml_input)
+        #
+        #         dob = testCase['TemplateBlock']['Block']['DataObjects']['DOB']
+        #         titleDescNames = [x['@Name'].strip('\'') for x in dob]
+        #         title = dob[titleDescNames.index('Title')]['@Value'].strip('\'')
+        #         desc = dob[titleDescNames.index('Desc')]['@Value'].strip('\'')
+        #
+        #         self.tbxTitleLineEdit.setText(title)
+        #         self.tbxDescLineEdit.setText(desc)
+        #
+        #         blocks = testCase['TemplateBlock']['Block']['SubSystems']['Block']
+        #
+        #         for i, block in enumerate(blocks):
+        #             blockLink = block['@CustomLibraryLink'].strip('\'')
+        #             blockName = blockLink.split('')[-1]
+        #             blockEnable = block['@EnableMode']
+        #
+        #             dataObjects = block['InheritedDataObjects']['DOB']
+        #             dataObjectsNames = [x['@Name'].strip('\'') for x in block['InheritedDataObjects']['DOB']]
+        #
+        #             action = dataObjects[dataObjectsNames.index('Action')]['@Value']
+        #             desc = dataObjects[dataObjectsNames.index('Descrip')]['@Value']
+        #             variable = dataObjects[dataObjectsNames.index('Variable')]['@Value']
+        #             settings = dataObjects[dataObjectsNames.index('Settings')]['@Value']
+        #             value = dataObjects[dataObjectsNames.index('Value')]['@Value']
+        #             wait = dataObjects[dataObjectsNames.index('Wait')]['@Value']
+        #             remarks = dataObjects[dataObjectsNames.index('Remarks')]['@Value']
+        #
+        #             def checkValue(s):
+        #                 if isinstance(s, str):
+        #                     s = s.strip('\'')
+        #                     return '-' if len(s) == 0 else s
+        #                 return str(s)
+        #
+        #             if eval(blockEnable):
+        #                 stepList = [checkValue(x) for x in [blockName, desc, variable, settings, value, wait, remarks]]
+        #                 txtEdit.appendPlainText('\t'.join(stepList))
+        # except KeyError as e:
+        #     print(e)
+
+    def saveProfile(self):
+        """Save current profile as a json"""
+        try:
+            if self.profileFile == '':
+                filePath, fileType = QFileDialog.getSaveFileName(
+                    self,
+                    "Save Profile As",
+                    '',
+                    "JSON Files (*.json);;All Files (*)"
+                )
+
+                if filePath:
+                    self.profileFile = filePath
+
+            # save config file as well
+            # self.makeRunList()
+            self.saveSettings()
+            self.savePolarionDict()
+
+            # updates the profile dict before dumping to json
+            self.updateProfileFromGui()
+
+            try:
+                with open(self.profileFile, 'w') as f:
+                    jsonDump = json.dumps(self.profileDict, sort_keys=True, indent=4)
+                    f.write(jsonDump)
+                    self.setTitle(self.profileFile)
+                    # self.defaultProfile = False
+                    self.unsavedChanges = False
+                    self.statusbar.showMessage('Saving Profile...OK!')
+
+            except FileNotFoundError:
+                self.statusbar.showMessage('Unable to save profile')
+            except:
+                print(traceback.format_exc())
+        except:
+            print(traceback.format_exc())
+
+    def saveAsProfile(self):
+        """Save as current profile as a JSON file"""
+        try:
+            profileFolder = os.path.dirname(self.profileFile)
+            filePath, fileType = QFileDialog.getSaveFileName(
+                self,
+                "Save Profile As",
+                profileFolder,
+                "JSON Files (*.json);;All Files (*)"
+            )
+
+            if filePath:
+                self.profileFile = filePath
+                self.saveProfile()
+        except:
+            print(traceback.format_exc())
+
+    def updateProfileFromGui(self):
+        """Updates the profile dict from GUI elements"""
+        try:
+            # generate the log mode number based on checkboxes
+            logMode = (self.logRadioBtn0.isChecked() + self.logRadioBtn1.isChecked() * 2 + self.logRadioBtn2.isChecked() * 3) - 1
+
+            # update signal list
+            signalList = []
+            for i in range(0, self.addSignalModel.rowCount()):
+                signalList.append(self.addSignalModel.item(i, 0).text())
+
+            dtcExList = []
+            dtcModel = self.dtcTableModel
+            dtcHexCodeCol = self.dtcTableHeader.index('Hex Code')
+            dtcDescCol = self.dtcTableHeader.index('Description')
+            dtcModuleCol = self.dtcTableHeader.index('Module')
+
+            for row in range(0, dtcModel.rowCount()):
+                hexCode = dtcModel.item(row, dtcHexCodeCol).text()
+                desc = dtcModel.item(row, dtcDescCol).text()
+                module = dtcModel.item(row, dtcModuleCol).text()
+                dtcExList.append({
+                    'Hex Code': hexCode,
+                    'Description': desc,
+                    'Module': module,
+                })
+
+            versionDict = {}
+            versionModel = self.versionTableModel
+            versionHeader = self.versionTableHeader
+
+            swCol = versionHeader.index('Software')
+            hwCol = versionHeader.index('Hardware')
+            ecuCol = versionHeader.index('ECU')
+
+            for row in range(0, versionModel.rowCount()):
+                sw = ''
+                hw = ''
+                try:
+                    sw = versionModel.item(row, swCol).text()
+                except:
+                    pass
+                try:
+                    hw = versionModel.item(row, hwCol).text()
+                except:
+                    pass
+
+                try:
+                    ecu = versionModel.item(row, ecuCol).text()
+                    versionDict[ecu] = {
+                        'Software': sw,
+                        'Hardware': hw,
+                    }
+                except:
+                    pass
+
+            self.profileDict = {
+                'Profile': {
+                    '@version': '1.0',
+                    'PolarionExcel': self.polarionExcelEdit.text(),
+                    'TestCaseExcel': self.polarionExcelEdit.text(),
+                    # 'CallFunctionFolder': self.callFunctionEdit.text(),
+                    'CSVReportFolder': self.csvReportEdit.text(),
+                    'VariablePoolPath': self.variablePoolEdit.text(),
+                    'UpdateVariablePool': self.updateVariablePool,
+                    'Version': {'@include': self.versionCheckBox.isChecked()},
+                    'CallFunctionDebug': {'@enable': self.callFunctionDebugCheckbox.isChecked()},
+                    'Log': {
+                        '@mode': logMode,
+                        'Signal': signalList
+                    },
+                    'DTC': {
+                        '@enable': self.dtcExCheckBox.isChecked(),
+                        'Except': dtcExList
+                    },
+                    'Versions': versionDict,
+                    # 'UseGuiRunList': self.useGuiRunListCheckbox.isChecked(),
+                    'PauseEnable': self.pauseCheckbox.isChecked(),
+                    'PauseStep': str(self.pauseStepSpinbox.value()),
+                    'PrintStepsInOutput': self.printStepsInOutputCheckbox.isChecked(),
+                    'MaxPrintsInOutput': self.maxPrintsInOutputSpinbox.value(),
+                }
+            }
+        except:
+            print(traceback.format_exc())
+
+    def dtcTableModelItemChanged(self, item):
+        """Handler for dtc model changed"""
+        try:
+            model = self.dtcTableModel
+            header = self.dtcTableHeader
+            try:
+                dtcExList = self.profileDict['Profile']['DTC']['Except']
+                row = item.row()
+                column = item.column()
+                colName = header[column]
+
+                if column > 0:
+                    # print(row, colName, item.text())
+                    try:
+                        dtcExList[row][colName] = item.text()
+                    except:
+                        pass
+            except KeyError:
+                print('KeyError for dtcTableModelItemChanged, profileDict')
+        except:
+            print(traceback.format_exc())
+
+    def addSignal(self):
+        """Add signal to signal list"""
+        try:
+            signal = self.addSignalEdit.text()
+            try:
+                variablePoolKeys = list(self.variablePoolDict)
+
+                try:
+                    foundInVp = variablePoolKeys.index(signal) >= 0
+                except:
+                    foundInVp = False
+
+                foundInModel = self.addSignalModel.findItems(signal)
+
+                if foundInModel:
+                    self.statusbar.showMessage('Duplicate signal. Try again')
+
+                if foundInVp and not foundInModel:
+                    self.addSignalModel.appendRow(QStandardItem(self.addSignalEdit.text()))
+                    self.addSignalEdit.clear()
+                    self.addSignalEdit.setFocus()
+                    self.statusbar.showMessage('Signal added...OK!')
+            except:
+                self.statusbar.showMessage('Signal not found in variable pool')
+        except:
+            print(traceback.format_exc())
+
+    def removeSignal(self):
+        """Remove signal from signal list"""
+        try:
+            self.addSignalModel.removeRow(self.addSignalListView.currentIndex().row())
+        except:
+            print(traceback.format_exc())
+
+    def addDtcEx2(self):
+        """Add DTC exception to table"""
+        try:
+            hexCode = self.addDtcExEdit.text()
+            model = self.dtcTableModel
+
+            model.appendRow([QStandardItem(x) for x in [hexCode, '', '']])
+            self.addDtcExEdit.clear()
+            self.addDtcExEdit.setFocus()
+            self.statusbar.showMessage('DTC exception added...OK!')
+
+            self.unsavedChanges = True
+        except:
+            print(traceback.format_exc())
+
+    def removeDtcEx2(self):
+        """Remove DTC exception from table"""
+        try:
+            model = self.dtcTableModel
+            selectedRows = self.dtcTableView.selectionModel().selectedRows()
+
+            if model.rowCount() > 0 and len(selectedRows) > 0:
+                selectedRowsIndex = [x.row() for x in selectedRows]
+                model.removeRows(selectedRowsIndex[0], selectedRowsIndex[-1] - selectedRowsIndex[0] + 1)
+
+            self.unsavedChanges = True
+        except:
+            print(traceback.format_exc())
+
+    def saveSettings(self):
+        """Save settings"""
+        try:
+            self.settings = QSettings('Karma', 'AutomationGUI')
+            self.settings.setValue('AutoRun', self.autorunCheckBox.isChecked())
+            self.settings.setValue('AutoRunTimer', int(self.autorunSpinBox.value()))
+            self.settings.setValue('LastProfile', self.profileFile)
+            if not self.isMaximized():
+                self.settings.setValue('Width', self.width())
+                self.settings.setValue('Height', self.height())
+            self.settings.setValue('PolarionUsername', self.polarionUsername)
+            self.settings.setValue('PolarionLeftTableWidth', self.polarionTableView.width())
+
+            del self.settings
+        except:
+            print(traceback.format_exc())
+
+    def loadProfile(self):
+        """Load profile"""
+        try:
+            # self.newProfile()
+            try:
+                with open(self.profileFile) as f:
+                    self.profileDict = json.load(f)
+
+                    profileValid = True
+
+                    try:
+                        profileversion = self.profileDict['Profile']['@version']
+                        if profileversion == '1.0':
+                            profileValid &= True
+                        else:
+                            debugPrint('Invalid profile version')
+                    except:
+                        debugPrint('No profile version defined')
+
+                    varpoolfile = ''
+                    try:
+                        varpoolfile = self.profileDict['Profile']['VariablePoolPath']
+                        if not os.path.exists(str(varpoolfile)):
+                            self.statusbar.showMessage('Variable pool file not found')
+                        profileValid &= True
+                    except:
+                        debugPrint('No variable pool file defined in profile')
+                        self.statusbar.showMessage('No variable pool file found')
+
+                    if profileValid:
+                        # updates the gui after loading a valid profile
+                        self.defaultProfile = False
+                        self.updateGuiFromProfile()
+                        if os.path.exists(str(varpoolfile)):
+                            self.loadVariablePool()
+                        self.setTitle(self.profileFile)
+                        self.statusbar.showMessage('Profile loaded OK!')
+                    else:
+                        self.statusbar.showMessage('Invalid profile detected')
+            except IOError:
+                self.statusbar.showMessage('Profile does not exist. Please load profile')
+            except ValueError:
+                self.statusbar.showMessage('No valid profile found')
+        except:
+            print(traceback.format_exc())
+
+    def checkFolderExist(self, path):
+        """Check if folder exists"""
+        try:
+            basename = os.path.basename(str(path))
+            if not os.path.exists(path):
+                msgReply = QMessageBox.question(
+                    self,
+                    'Create Folder',
+                    '\'' + basename + '\'' + ' folder was not found. Would you like to create it?',
+                    QMessageBox.Yes | QMessageBox.No, QMessageBox.No
+                )
+
+                if msgReply == QMessageBox.Yes:
+                    os.mkdir(path)
+        except:
+            print(traceback.format_exc())
+
+    def checkVarPoolExist(self, path):
+        """Check if variable pool file exists"""
+        try:
+            if path is not None:
+                basename = os.path.basename(str(path))
+                if not os.path.exists(path):
+                    msgReply = QMessageBox.question(
+                        self,
+                        'Varpool Not Found',
+                        'Varpool {} does not exist. Browse for one?'.format(basename),
+                        # '\'' + basename + '\'' + ' file was not found. Would you like to browse for one?',
+                        QMessageBox.Yes | QMessageBox.No, QMessageBox.No
+                    )
+
+                    if msgReply == QMessageBox.Yes:
+                        self.browseVariablePool()
+        except:
+            print(traceback.format_exc())
+
     def getLogDict(self):
-        """Enumerate the latest log files and extract results"""
-
+        """Enumerate the latest log files and extract results in new thread"""
         class getLogDictThread(QThread):
             showLoadingBarSignal = pyqtSignal()
             hideLoadingBarSignal = pyqtSignal()
@@ -1304,43 +1609,49 @@ class App(QMainWindow, Ui_MainWindow):
 
                 self.hideLoadingBarSignal.emit()
 
-        self.logDict.clear()
-        self.getLogDictThread = getLogDictThread()
+        try:
+            self.logDict.clear()
+            self.getLogDictThread = getLogDictThread()
 
-        myThread = self.getLogDictThread
-        myThread.logDict = self.logDict
-        myThread.showLoadingBarSignal.connect(self.showLoadingBar)
-        myThread.hideLoadingBarSignal.connect(self.hideLoadingBar)
-        myThread.hideLoadingBarSignal.connect(self.saveLogResults)
-        myThread.csvReportFolder = self.csvReportEdit.text()
-        myThread.start()
+            myThread = self.getLogDictThread
+            myThread.logDict = self.logDict
+            myThread.showLoadingBarSignal.connect(self.showLoadingBar)
+            myThread.hideLoadingBarSignal.connect(self.hideLoadingBar)
+            myThread.hideLoadingBarSignal.connect(self.saveLogResults)
+            myThread.csvReportFolder = self.csvReportEdit.text()
+            myThread.start()
+        except:
+            print(traceback.format_exc())
 
-    def polarionCopyRunList(self):
-        """Copy the yes/no rerun list to clipboard."""
-        runtestCol = self.polarionTableHeader.index('Run Test')
-        testCaseCol = self.polarionTableHeader.index('TestCase')
-        self.polarionTableView.sortByColumn(testCaseCol, Qt.AscendingOrder)
-        self.polarionTableView.selectColumn(runtestCol)
-        selectionModel = self.polarionTableView.selectionModel()
-        selectedIndexes = selectionModel.selectedIndexes()
-
-        if len(selectedIndexes) > 0:
-            copyList = []
-
-            for each in selectedIndexes:
-                item = self.polarionTableViewModel.item(each.row(), each.column())
-                copyList.append(item.text())
-
-            copyString = '\n'.join(copyList)
-
-            cb = QApplication.clipboard()
-            cb.clear(mode=cb.Clipboard)
-            cb.setText(copyString, mode=cb.Clipboard)
-
-            self.statusbar.showMessage('Copy Yes/No successful.')
+    # def polarionCopyRunList(self):
+    #     """Copy the yes/no run list to clipboard"""
+    #     try:
+    #         runtestCol = self.polarionTableHeader.index('Run Test')
+    #         testCaseCol = self.polarionTableHeader.index('TestCase')
+    #         self.polarionTableView.sortByColumn(testCaseCol, Qt.AscendingOrder)
+    #         self.polarionTableView.selectColumn(runtestCol)
+    #         selectionModel = self.polarionTableView.selectionModel()
+    #         selectedIndexes = selectionModel.selectedIndexes()
+    #
+    #         if len(selectedIndexes) > 0:
+    #             copyList = []
+    #
+    #             for each in selectedIndexes:
+    #                 item = self.polarionTableViewModel.item(each.row(), each.column())
+    #                 copyList.append(item.text())
+    #
+    #             copyString = '\n'.join(copyList)
+    #
+    #             cb = QApplication.clipboard()
+    #             cb.clear(mode=cb.Clipboard)
+    #             cb.setText(copyString, mode=cb.Clipboard)
+    #
+    #             self.statusbar.showMessage('Copy Yes/No successful')
+    #     except:
+    #         print(traceback.format_exc())
 
     def savePolarionExcel(self):
-        """Save to Polarion excel file"""
+        """Save to Polarion excel file in new thread"""
         class savePolarionExcelThread(QThread):
             showLoadingBarSignal = pyqtSignal()
             hideLoadingBarSignal = pyqtSignal()
@@ -1400,36 +1711,39 @@ class App(QMainWindow, Ui_MainWindow):
                                 pass
 
                         self.polarionWb.save(self.filePath)
-                        self.appendMessageSignal.emit('Save successful.')
+                        self.appendMessageSignal.emit('Save successful')
                     except IOError as error:
                         if str(error).__contains__('Permission denied'):
-                            self.appendMessageSignal.emit('Permission Denied. Unable to save excel file.')
+                            self.appendMessageSignal.emit('Permission Denied. Unable to save excel file')
                     self.hideLoadingBarSignal.emit()
 
-        folder = os.path.dirname(self.polarionExcelEdit.text())
-        filePath, fileType = QFileDialog.getSaveFileName(
-            self,
-            "Save Polarion Excel File",
-            folder,
-            'XLSX Files (*.xlsx);;All Files (*)'
-        )
+        try:
+            folder = os.path.dirname(self.polarionExcelEdit.text())
+            filePath, fileType = QFileDialog.getSaveFileName(
+                self,
+                "Save Polarion Excel File",
+                folder,
+                'XLSX Files (*.xlsx);;All Files (*)'
+            )
 
-        self.savePolarionExcelThreadObject = savePolarionExcelThread()
-        myThread = self.savePolarionExcelThreadObject
-        myThread.filePath = filePath
-        myThread.polarionExcelPath = self.polarionExcelEdit.text()
-        myThread.polarionWb = self.polarionWb
-        myThread.polarionWs = self.polarionWs
-        myThread.polarionDict = self.polarionDict
-        myThread.logDict = self.logDict
-        myThread.showLoadingBarSignal.connect(self.showLoadingBar)
-        myThread.hideLoadingBarSignal.connect(self.hideLoadingBar)
-        myThread.appendMessageSignal.connect(self.appendPolarionLog)
-        myThread.updatePolarionRevisionSignal.connect(self.udpatePolarionRevision)
-        myThread.start()
+            self.savePolarionExcelThreadObject = savePolarionExcelThread()
+            myThread = self.savePolarionExcelThreadObject
+            myThread.filePath = filePath
+            myThread.polarionExcelPath = self.polarionExcelEdit.text()
+            myThread.polarionWb = self.polarionWb
+            myThread.polarionWs = self.polarionWs
+            myThread.polarionDict = self.polarionDict
+            myThread.logDict = self.logDict
+            myThread.showLoadingBarSignal.connect(self.showLoadingBar)
+            myThread.hideLoadingBarSignal.connect(self.hideLoadingBar)
+            myThread.appendMessageSignal.connect(self.appendPolarionLog)
+            myThread.updatePolarionRevisionSignal.connect(self.udpatePolarionRevision)
+            myThread.start()
+        except:
+            print(traceback.format_exc())
 
     def readPolarionExcel(self):
-        """Read and process the polarion excel file in a thread."""
+        """Read and process the polarion excel file in new thread"""
         class readPolarionExcelThread(QThread):
             finishedSignal = pyqtSignal('PyQt_PyObject')
             updatePolarionRevisionSignal = pyqtSignal('PyQt_PyObject')
@@ -1438,20 +1752,20 @@ class App(QMainWindow, Ui_MainWindow):
             def __init__(self):
                 QThread.__init__(self)
 
-
             def run(self):
-                self.appendMessageSignal.emit('Loading Polarion excel.')
+                self.appendMessageSignal.emit('Loading Polarion excel')
 
                 # self.polarionWb = load_workbook(filename=self.polarionExcel, read_only=True)
                 # self.polarionWs = self.polarionWb['Sheet1']
                 book = xlrd.open_workbook(filename=self.polarionExcel)
                 sheet = book.sheet_by_name('Sheet1')
 
-                self.appendMessageSignal.emit('Loading Polarion excel...OK')
-                self.appendMessageSignal.emit('Reading Polarion excel data.')
+                # self.appendMessageSignal.emit('Loading Polarion excel...OK')
+                # self.appendMessageSignal.emit('Reading Polarion excel data')
 
                 testStepList = []
-                self.polarionDict.clear()
+                # self.polarionDict.clear()
+                polarionDict = self.polarionDict
                 startRow = 0
                 endRow = 0
                 testCaseIdCol = 0
@@ -1481,20 +1795,36 @@ class App(QMainWindow, Ui_MainWindow):
                                     except:
                                         return 0.0
 
-                                totalWaitTime = round(sum([conv2float(x[waitCol]) for x in testStepList]), 1)
+                                totalWaitTime = round(sum([conv2float(x[waitCol]) for x in testStepList]), 0)
 
-                                self.polarionDict[testStepList[0][testCaseIdCol]] = {
-                                    'title': title,
-                                    'desc': desc,
-                                    'steps': copy.copy(testStepList),
-                                    'startRow': startRow,
-                                    'endRow': endRow,
-                                    'length': length,
-                                    'testCaseVerdict': '',
-                                    'hyperlinks': '',
-                                    'run': 'No',
-                                    'totalWaitTime': totalWaitTime
-                                }
+                                testcase = testStepList[0][testCaseIdCol]
+
+                                if testcase not in polarionDict:
+                                    polarionDict[testcase] = {}
+
+                                polarionDict[testcase]['title'] = title
+                                polarionDict[testcase]['desc'] = desc
+                                polarionDict[testcase]['steps'] = copy.copy(testStepList)
+                                polarionDict[testcase]['startRow'] = startRow
+                                polarionDict[testcase]['endRow'] = endRow
+                                polarionDict[testcase]['length'] = length
+                                polarionDict[testcase]['totalWaitTime'] = totalWaitTime
+                                # polarionDict[testcase]['testCaseVerdict'] = ''
+                                # polarionDict[testcase]['hyperlinks'] = ''
+                                # polarionDict[testcase]['run'] = 'No'
+
+                                # self.polarionDict[testCase] = {
+                                #     'title': title,
+                                #     'desc': desc,
+                                #     'steps': copy.copy(testStepList),
+                                #     'startRow': startRow,
+                                #     'endRow': endRow,
+                                #     'length': length,
+                                #     'testCaseVerdict': '',
+                                #     'hyperlinks': '',
+                                #     'run': 'No',
+                                #     'totalWaitTime': totalWaitTime
+                                # }
                                 testStepList = []
                         testStepList.append(row)
 
@@ -1510,329 +1840,337 @@ class App(QMainWindow, Ui_MainWindow):
                             self.updatePolarionRevisionSignal.emit(revisionNumber)
                             break
 
-                # maxRow = self.polarionWs.max_row
-                # maxCol = 16
-                #
-                # # def conv2str(y):
-                # # 	if type(y) is unicode:
-                # # 		return y.encode('utf-8') if y is not None else None
-                # # 	else:
-                # # 		return '{}'.format(y) if y is not None else None
-                # # 	return None
-                #
-                # polarionData = [x for x in
-                #                 self.polarionWs.iter_rows(min_row=2, max_row=maxRow, min_col=1, max_col=maxCol,
-                #                                           values_only=True)]
-                #
-                # testStepList = []
-                # self.polarionDict = OrderedDict()
-                # startRow = 0
-                # endRow = 0
-                # testCaseIdCol = 0
-                # titleCol = 1
-                # descCol = 2
-                # stepCol = 3
-                #
-                # for i, row in enumerate(polarionData):
-                #     testCaseStep = row[stepCol]
-                #     if testCaseStep in ['1', '1.0', 1, 1.0] or i == len(polarionData) - 1:
-                #         if len(testStepList) > 0:
-                #             endRow = i + 1
-                #             length = len(testStepList)
-                #             startRow = endRow - length + 1
-                #             title = testStepList[0][titleCol]
-                #             desc = testStepList[0][descCol]
-                #
-                #             self.polarionDict[testStepList[0][testCaseIdCol]] = {
-                #                 'title': title,
-                #                 'desc': desc,
-                #                 'steps': copy.copy(testStepList),
-                #                 'startRow': startRow,
-                #                 'endRow': endRow,
-                #                 'length': length,
-                #                 'testCaseVerdict': '',
-                #                 'hyperlinks': '',
-                #                 'update': False
-                #             }
-                #             testStepList = []
-                #     testStepList.append(row)
-
-                # # grab necessary columns to work from polarion excel file
-                # testCaseIdCol = self.polarionWs['A']  # test case names
-                # stepNumberCol = self.polarionWs['D']  # step numbers
-                #
-                # # get all testcase names and row start
-                # allSteps = [str(x.value).replace('.0','') for x in stepNumberCol]
-                #
-                # while (allSteps[-1] == 'None' or allSteps[-1] == ''):
-                #     allSteps.pop()
-                #
-                # # read revision number
-                # revisionWs = self.polarionWb['_polarion']
-                # polarionColA = [x.value for x in revisionWs['A']]
-                # revisionRow = polarionColA.index('testRunRevision') + 1
-                # revision = str(revisionWs.cell(row=revisionRow, column=2).value)
-                # self.updatePolarionRevisionSignal.emit(revision)
-                #
-                # startMarker = '1'
-                # endMarker = '1'
-                #
-                # for eachRow in testCaseIdCol:
-                #     if re.match('\w+-\w+', str(eachRow.value)) is not None:
-                #         testCase = str(eachRow.value)
-                #         # grab the start and end row for each test case
-                #         start = allSteps.index(startMarker, eachRow.row - 1) + 1
-                #         try:
-                #             end = allSteps.index(endMarker, start + 1)
-                #         except ValueError:
-                #             end = len(allSteps)
-                #
-                #         self.polarionDict[testCase] = OrderedDict()
-                #         self.polarionDict[testCase]['startRow'] = start
-                #         self.polarionDict[testCase]['endRow'] = end
-                #         self.polarionDict[testCase]['length'] = end - start + 1
-                #         self.polarionDict[testCase]['testCaseVerdict'] = ''
-                #         self.polarionDict[testCase]['hyperlinks'] = ''
-                #         self.polarionDict[testCase]['update'] = False
-
-
-                self.finishedSignal.emit('Reading Polarion excel data...OK')
-
-        self.showLoadingBar()
-
-        self.polarionDict.clear()
-        self.polarionTableViewModel.clear()
-        self.polarionTableView.model().clear()
-        self.polarionReadExcelThread = readPolarionExcelThread()
-        myThread = self.polarionReadExcelThread
-        myThread.polarionDict = self.polarionDict
-        # myThread.polarionWb = self.polarionWb
-        # myThread.polarionWs = self.polarionWs
-        myThread.getLogDict = self.getLogDict
-        myThread.polarionExcel = self.polarionExcelEdit.text()
-        # myThread.loadPolarionWorkBook = self.loadPolarionWorkBook
-        myThread.appendMessageSignal.connect(self.appendPolarionLog)
-        myThread.updatePolarionRevisionSignal.connect(self.polarionRevisionLineEdit.setText)
-        myThread.finishedSignal.connect(self.polarionReadExcelFinished)
-        myThread.start()
-
-    def loadPolarionWorkBook(self):
-        polarionExcel = self.polarionExcelEdit.text()
-        self.polarionWb = load_workbook(filename=polarionExcel, read_only=True)
-        self.polarionWs = self.polarionWb.active
-        if self.polarionReadExcelThread is not None:
-            self.polarionReadExcelThread.polarionWb = self.polarionWb
-            self.polarionReadExcelThread.polarionWs = self.polarionWs
-
-    def updateDtcTableView(self):
-        self.dtcTableHeader = [
-            'Hex Code',
-            'Description',
-            'Module',
-        ]
-        model = self.dtcTableModel
-        view = self.dtcTableView
-        model.setHorizontalHeaderLabels(self.dtcTableHeader)
-        view.resizeColumnsToContents()
-
-    def updateVersionTableModel(self):
-        self.versionTableHeader = [
-            'ECU',
-            'Software',
-            'Hardware'
-        ]
-
-        # self.versionDict = {
-        #     'VCMB': {'Hardware': '00_00', 'Software': '00_16'},
-        #     'VCMS': {'Hardware': '00_00', 'Software': '00_21'}
-        # }
-
-
-        header = self.versionTableHeader
-        view = self.versionTableView
-        model = self.versionTableModel
-        model.setHorizontalHeaderLabels(header)
+                self.finishedSignal.emit('Polarion excel loaded')
 
         try:
-            versionDict = self.profileDict['Profile']['Versions']
-            ecuCol = header.index('ECU')
-            swVersionCol = header.index('Software')
-            hwVersionCol = header.index('Hardware')
+            self.showLoadingBar()
+            # self.polarionDict.clear()
+            # self.polarionTableViewModel.clear()
+            # self.polarionTableView.model().clear()
+            self.polarionReadExcelThread = readPolarionExcelThread()
+            myThread = self.polarionReadExcelThread
+            myThread.polarionDict = self.polarionDict
+            # myThread.getLogDict = self.getLogDict
+            myThread.polarionExcel = self.polarionExcelEdit.text()
+            myThread.appendMessageSignal.connect(self.appendPolarionLog)
+            myThread.updatePolarionRevisionSignal.connect(self.polarionRevisionLineEdit.setText)
+            myThread.finishedSignal.connect(self.polarionReadExcelFinished)
+            myThread.start()
+        except:
+            print(traceback.format_exc())
 
-            for ecu in versionDict:
-                ecuItem = QStandardItem(ecu)
-                ecuItem.setEditable(False)
-                swVersionItem = QStandardItem(versionDict[ecu]['Software'])
-                hwVersionItem = QStandardItem(versionDict[ecu]['Hardware'])
-                model.appendRow([ecuItem, swVersionItem, hwVersionItem])
+    def loadPolarionWorkBook(self):
+        """Load Polarion excel workbook"""
+        try:
+            polarionExcel = self.polarionExcelEdit.text()
+            self.polarionWb = load_workbook(filename=polarionExcel, read_only=True)
+            self.polarionWs = self.polarionWb.active
+            if self.polarionReadExcelThread is not None:
+                self.polarionReadExcelThread.polarionWb = self.polarionWb
+                self.polarionReadExcelThread.polarionWs = self.polarionWs
+        except:
+            print(traceback.format_exc())
 
+    def updateDtcTableModel(self):
+        """Update DTC table model"""
+        try:
+            model = self.dtcTableModel
+            view = self.dtcTableView
+            header = self.dtcTableHeader
+            model.clear()
+            model.setHorizontalHeaderLabels(header)
+
+            try:
+                dtcExList = self.profileDict['Profile']['DTC']['Except']
+                for dtc in dtcExList:
+                    model.appendRow([QStandardItem(x) for x in [dtc['Hex Code'], dtc['Description'], dtc['Module']]])
+            except:
+                print('KeyError for updateGuiFromProfileDict, dtcExList2')
 
             view.resizeColumnsToContents()
-            view.setAlternatingRowColors(True)
-        except KeyError:
-            print('There was an error with updating version table model')
+            model.itemChanged.connect(self.setUnsavedChanges)
+        except:
+            print(traceback.format_exc())
+
+    def updateVersionTableModel(self):
+        """Update version table model"""
+        try:
+            header = self.versionTableHeader
+            view = self.versionTableView
+            model = self.versionTableModel
+            model.clear()
+            model.setHorizontalHeaderLabels(header)
+
+            try:
+                versionDict = self.profileDict['Profile']['Versions']
+                ecuCol = header.index('ECU')
+                swVersionCol = header.index('Software')
+                hwVersionCol = header.index('Hardware')
+
+                for ecu in versionDict:
+                    ecuItem = QStandardItem(ecu)
+                    ecuItem.setEditable(False)
+
+                    try:
+                        swVersionItem = QStandardItem(versionDict[ecu]['Software'])
+                    except:
+                        swVersionItem = QStandardItem('')
+
+                    try:
+                        hwVersionItem = QStandardItem(versionDict[ecu]['Hardware'])
+                    except:
+                        hwVersionItem = QStandardItem('')
+
+                    model.appendRow([ecuItem, swVersionItem, hwVersionItem])
+
+
+
+                view.resizeColumnsToContents()
+                view.setAlternatingRowColors(True)
+            except KeyError:
+                print('There was an error with updating version table model')
+
+            self.versionTableModel.itemChanged.connect(self.setUnsavedChanges)
+        except:
+            print(traceback.format_exc())
 
     def versionAddRow(self):
-        model = self.versionTableModel
-        model.appendRow(QStandardItem(''))
+        """Add version of a module"""
+        try:
+            model = self.versionTableModel
+            model.appendRow(QStandardItem(''))
+            self.unsavedChanges = True
+        except:
+            print(traceback.format_exc())
 
     def versionRemoveRow(self):
-        model = self.versionTableModel
-        selectedIndexes = self.versionTableView.selectedIndexes()
+        """Remove version for a module"""
+        try:
+            model = self.versionTableModel
+            selectedRows = self.versionTableView.selectionModel().selectedRows()
 
-        for s in selectedIndexes:
-            model.removeRow(s.row())
+            if model.rowCount() > 0 and len(selectedRows) > 0:
+                selectedRowsIndex = [x.row() for x in selectedRows]
+                model.removeRows(selectedRowsIndex[0], selectedRowsIndex[-1] - selectedRowsIndex[0] + 1)
+
+            self.unsavedChanges = True
+        except:
+            print(traceback.format_exc())
 
     def versionTableViewItemChanged(self, item):
-        model = self.versionTableModel
-        header = self.versionTableHeader
-        row = item.row()
-        column = item.column()
-        versionDict = self.profileDict['Profile']['Versions']
-        ecuCol = header.index('ECU')
-        ecu = model.item(row, ecuCol).text()
-        colName = header[column]
-        if column > 0 and len(ecu) > 0:
-            try:
-                versionDict[ecu][colName] = item.text()
-            except KeyError:
-                versionDict[ecu] = {}
-                versionDict[ecu][colName] = item.text()
+        """Handler for version table model changed"""
+        try:
+            model = self.versionTableModel
+            header = self.versionTableHeader
+            row = item.row()
+            column = item.column()
+            versionDict = self.profileDict['Profile']['Versions']
+            ecuCol = header.index('ECU')
+            ecu = model.item(row, ecuCol).text()
+            colName = header[column]
+            if column > 0 and len(ecu) > 0:
+                try:
+                    versionDict[ecu][colName] = item.text()
+                except KeyError:
+                    versionDict[ecu] = {}
+                    versionDict[ecu][colName] = item.text()
+        except:
+            print(traceback.format_exc())
 
     def polarionReadExcelFinished(self, msg):
-        self.savePolarionJson()
-        self.appendPolarionLog(msg)
-        self.updatePolarionTableModel()
+        """Slot for reading excel finished"""
+        try:
+            self.savePolarionDict()
+            self.appendPolarionLog(msg)
+            self.updatePolarionTableModel()
+        except:
+            print(traceback.format_exc())
 
     def updatePolarionTableModel(self):
-        """Update the model for polarion table view."""
-        model = self.polarionTableViewModel
+        """Update the model for Polarion table view"""
+        try:
+            model = self.polarionTableViewModel
+            header = self.polarionTableHeader
+            model.setHorizontalHeaderLabels(header)
 
-        self.polarionTableHeader = ['TestCase', 'Steps', 'Total Wait Time', 'Run Test',
-                                    'TestCase Verdict',
-                                    'Hyperlinks']
+            testCaseCol = header.index('TestCase')
+            stepsTotalCol = header.index('Steps')
+            totalWaitTimeCol = header.index('Total Wait Time')
+            runTestCol = header.index('Run Test')
+            stepVerdictCol = header.index('TestCase Verdict')
+            modifiedCol = header.index('Modified')
+            commentsCol = header.index('Comments')
+            hyperlinksCol = header.index('Hyperlinks')
 
-        testCaseCol = self.polarionTableHeader.index('TestCase')
-        # startRowCol = self.polarionTableHeader.index('StartRow')
-        # endRowCol = self.polarionTableHeader.index('EndRow')
-        stepsTotalCol = self.polarionTableHeader.index('Steps')
-        totalWaitTimeCol = self.polarionTableHeader.index('Total Wait Time')
-        runTestCol = self.polarionTableHeader.index('Run Test')
-        stepVerdictCol = self.polarionTableHeader.index('TestCase Verdict')
-        hyperlinksCol = self.polarionTableHeader.index('Hyperlinks')
+            polarionDict = self.polarionDict
 
-        for row, d in enumerate(self.polarionDict):
-            testCaseItem = QStandardItem(d)
-            testCaseItem.setCheckable(True)
-            testCaseItem.setEditable(False)
-            model.setItem(row, testCaseCol, testCaseItem)
+            for row, d in enumerate(polarionDict):
+                testCaseItem = QStandardItem()
+                testCaseItem.setCheckable(True)
+                testCaseItem.setEditable(False)
+                try:
+                    testCaseItem.setText(d)
+                except:
+                    pass
+                model.setItem(row, testCaseCol, testCaseItem)
 
-            try:
+
                 lengthItem = QStandardItem()
-                lengthItem.setData(self.polarionDict[d]['length'], Qt.DisplayRole)
                 lengthItem.setEditable(False)
+                try:
+                    lengthItem.setData(polarionDict[d]['length'], Qt.DisplayRole)
+                except KeyError:
+                    pass
                 model.setItem(row, stepsTotalCol, lengthItem)
-            except KeyError:
-                pass
 
-            try:
+
                 timeItem = QStandardItem()
-                timeItem.setData(self.polarionDict[d]['totalWaitTime'], Qt.DisplayRole)
                 timeItem.setEditable(False)
+                try:
+                    timeItem.setData(polarionDict[d]['totalWaitTime'], Qt.DisplayRole)
+                except KeyError:
+                    pass
                 model.setItem(row, totalWaitTimeCol, timeItem)
-            except KeyError:
-                pass
 
-            try:
-                testCaseVerdict = self.polarionDict[d]['testCaseVerdict']
-                testCaseVerdictItem = QStandardItem(testCaseVerdict)
+
+                testCaseVerdictItem = QStandardItem()
                 testCaseVerdictItem.setEditable(False)
-            except KeyError:
-                pass
+                try:
+                    testCaseVerdict = polarionDict[d]['testCaseVerdict']
+                    testCaseVerdictItem.setText(testCaseVerdict)
+                    if testCaseVerdict in ['Deferred', 'Error', 'Not Passed']:
+                        testCaseVerdictItem.setIcon(QIcon(':/icon/failed'))
+                    elif testCaseVerdict in ['Passed']:
+                        testCaseVerdictItem.setIcon(QIcon(':/icon/passed'))
+                except KeyError:
+                    pass
+                model.setItem(row, stepVerdictCol, testCaseVerdictItem)
 
-            try:
-                runTest = self.polarionDict[d]['run']
-                runTestItem = QStandardItem(runTest)
-                runTestItem.setCheckable(True)
-                if runTest == 'Yes':
-                    # runTestItem.setIcon(QIcon(':/icon/checkBoxChecked'))
-                    runTestItem.setCheckState(Qt.Checked)
-                else:
-                    # runTestItem.setIcon(QIcon(':/icon/checkBoxBlank'))
-                    runTestItem.setCheckState(Qt.Unchecked)
+
+                modifiedItem = QStandardItem()
+                modifiedItem.setCheckable(True)
+                modifiedItem.setEditable(False)
+                try:
+                    modified = polarionDict[d]['modified']
+                    modifiedItem.setText('Yes' if modified else 'No')
+                    modifiedItem.setCheckState(Qt.Checked if modified else Qt.Unchecked)
+                except:
+                    pass
+                model.setItem(row, modifiedCol, modifiedItem)
+
+
+                commentsItem = QStandardItem()
+                try:
+                    comments = polarionDict[d]['comments']
+                    commentsItem.setText(comments)
+                except:
+                    pass
+                model.setItem(row, commentsCol, commentsItem)
+
+
+                runTestItem = QStandardItem()
                 runTestItem.setEditable(False)
+                runTestItem.setCheckable(True)
+                try:
+                    runTest = polarionDict[d]['run']
+                    runTestItem.setText('Yes' if runTest else 'No')
+                    runTestItem.setCheckState(Qt.Checked if runTest else Qt.Unchecked)
+                except KeyError:
+                    runTestItem.setText('No')
+                    runTestItem.setCheckState(Qt.Unchecked)
                 model.setItem(row, runTestCol, runTestItem)
-            except KeyError:
-                model.setItem(row, runTestCol, QStandardItem('No'))
-
-            if testCaseVerdict == 'Passed':
-                testCaseVerdictItem.setIcon(QIcon(':/icon/passed'))
-            elif testCaseVerdict == 'Deferred' or testCaseVerdict == 'Error' or testCaseVerdict == 'Not Passed':
-                testCaseVerdictItem.setIcon(QIcon(':/icon/failed'))
 
 
-            model.setItem(row, stepVerdictCol, testCaseVerdictItem)
-            hyperlinksItem = QStandardItem(self.polarionDict[d]['hyperlinks'])
-            hyperlinksItem.setEditable(False)
-            model.setItem(row, hyperlinksCol, hyperlinksItem)
+                hyperlinksItem = QStandardItem()
+                hyperlinksItem.setEditable(False)
+                try:
+                    hyperlinks = polarionDict[d]['hyperlinks']
+                    hyperlinksItem.setText(hyperlinks)
+                except:
+                    pass
+                model.setItem(row, hyperlinksCol, hyperlinksItem)
 
-        model.setHorizontalHeaderLabels(self.polarionTableHeader)
-        # testCaseIdHeaderItem = model.horizontalHeaderItem(testCaseCol)
-        # testCaseIdHeaderItem.setCheckable(True)
+            self.polarionTableView.resizeColumnsToContents()
+            self.polarionTableView.setColumnWidth(testCaseCol, 150)
 
-        self.polarionTableView.resizeColumnsToContents()
-        self.polarionTableView.setColumnWidth(testCaseCol, 150)
+            self.polarionTableView.setSortingEnabled(True)
+            # self.polarionTableView.sortByColumn(testCaseCol, Qt.AscendingOrder)
+            # self.polarionTableView.setAlternatingRowColors(True)
 
-        self.polarionTableView.setSortingEnabled(True)
-        self.polarionTableView.sortByColumn(testCaseCol, Qt.AscendingOrder)
-        # self.polarionTableView.setAlternatingRowColors(True)
+            logDict = self.logDict
 
-        allTestCaseVerdicts = [self.logDict[x]['testCaseVerdict'] for x in self.logDict]
+            allTestCaseVerdicts = [logDict[x]['testCaseVerdict'] for x in logDict]
 
-        passedTotal = allTestCaseVerdicts.count('Passed')
-        deferredTotal = allTestCaseVerdicts.count('Deferred')
-        errorTotal = allTestCaseVerdicts.count('Error')
-        total = passedTotal + deferredTotal + errorTotal
+            passedTotal = allTestCaseVerdicts.count('Passed')
+            deferredTotal = allTestCaseVerdicts.count('Deferred')
+            errorTotal = allTestCaseVerdicts.count('Error')
+            total = passedTotal + deferredTotal + errorTotal
 
-        self.polarionOverViewLineEdit.setText(
-            'Total Logs Found: {}    Passed: {}    Deferred: {}    Error: {}'.format(total, passedTotal, deferredTotal,
-                                                                                     errorTotal))
-        self.hideLoadingBar()
+            self.polarionOverViewLineEdit.setText(
+                'Total Logs Found: {}    Passed: {}    Deferred: {}    Error: {}'.format(total, passedTotal, deferredTotal,
+                                                                                         errorTotal))
+            self.hideLoadingBar()
 
-        self.polarionTableViewModel.itemChanged.connect(self.polarionTableViewModelItemChanged)
+            self.polarionTableViewModel.itemChanged.connect(self.polarionTableViewModelItemChanged)
+            self.polarionTableViewModel.itemChanged.connect(self.setUnsavedChanges)
 
-    # update polarion dict with 'passed' only test cases
+            self.statusbar.showMessage('Polarion table updated')
+        except:
+            print(traceback.format_exc())
+
     def updatePolarionVerdicts(self, testCaseVerdict=''):
-        self.getLogDict()
-        self.getLogDictThread.hideLoadingBarSignal.connect(lambda: self.updatePolarionDict(testCaseVerdict))
+        """Update Polarion dict with verdicts from logs"""
+        try:
+            self.getLogDict()
+            self.getLogDictThread.hideLoadingBarSignal.connect(lambda: self.updatePolarionDict(testCaseVerdict))
+        except:
+            print(traceback.format_exc())
+
+    def clearPolarionDict(self):
+        """Clear Polarion dictionary"""
+        try:
+            self.polarionDict.clear()
+        except:
+            print(traceback.format_exc())
 
     def updatePolarionDict(self, testCaseVerdict):
-        for t in self.polarionDict:
-            self.polarionDict[t]['testCaseVerdict'] = ''
+        """Update Polarion dict with specific verdicts"""
+        try:
+            polarionDict = self.polarionDict
+            logDict = self.logDict
+            for t in polarionDict:
+                polarionDict[t]['testCaseVerdict'] = ''
 
-            try:
-                if self.polarionDict[t]['length'] == self.logDict[t]['length']:
-                    if self.logDict[t]['testCaseVerdict'] == testCaseVerdict or testCaseVerdict == 'All':
-                        self.polarionDict[t]['testCaseVerdict'] = self.logDict[t]['testCaseVerdict']
-                else:
-                    self.polarionDict[t]['testCaseVerdict'] = 'Log steps mismatch'
-            except KeyError:
-                self.polarionDict[t]['testCaseVerdict'] = 'No log found'
+                try:
+                    if logDict[t]['testCaseVerdict'] == testCaseVerdict or testCaseVerdict == 'All':
+                        polarionDict[t]['testCaseVerdict'] = logDict[t]['testCaseVerdict']
+                    if polarionDict[t]['length'] != logDict[t]['length']:
+                        polarionDict[t]['comments'] = 'Log steps mistmatch'
+                        # polarionDict[t]['modified'] = True
 
-        self.updatePolarionTableModel()
-        self.appendPolarionLog('Updated excel file with {} verdicts.'.format(testCaseVerdict))
-        self.getLogDictThread.disconnect()
+                except KeyError:
+                    self.polarionDict[t]['testCaseVerdict'] = 'No log found'
 
-    # update revision number in polarion excel
+            self.updatePolarionTableModel()
+            self.appendPolarionLog('Updated excel file with {} verdicts'.format(testCaseVerdict))
+            self.getLogDictThread.disconnect()
+        except:
+            print(traceback.format_exc())
+
     def udpatePolarionRevision(self):
-        polarionWs = self.polarionWb['_polarion']
-        polarionColA = [x.value for x in polarionWs['A']]
-        revisionRow = polarionColA.index('testRunRevision') + 1
-        polarionWs.cell(row=revisionRow, column=2).value = self.polarionRevisionLineEdit.text()
+        """Update revision number in Polarion excel"""
+        try:
+            polarionWs = self.polarionWb['_polarion']
+            polarionColA = [x.value for x in polarionWs['A']]
+            revisionRow = polarionColA.index('testRunRevision') + 1
+            polarionWs.cell(row=revisionRow, column=2).value = self.polarionRevisionLineEdit.text()
 
-        self.appendPolarionLog('Updated Polarion revision number.')
+            self.appendPolarionLog('Updated Polarion revision number')
+        except:
+            print(traceback.format_exc())
 
     def updateHyperlinks(self):
+        """Update hyperlinks in Polarion table view"""
         class updateHyperlinksThread(QThread):
             showLoadingBarSignal = pyqtSignal()
             hideLoadingBarSignal = pyqtSignal()
@@ -1891,38 +2229,45 @@ class App(QMainWindow, Ui_MainWindow):
                             query=queryString, sort='hyperlinks',
                             fields=['id', 'hyperlinks'])
 
-                        hyperDict = {}
-
-                        for q in query:
-                            hyperDict[q.id] = {'hyperlinks': q.hyperlinks}
-
                         loginClient.service.endSession()
+
+                        hyperDict = {}
+                        for q in query:
+                            try:
+                                hyperlinks = [x.uri for x in q.hyperlinks.Hyperlink]
+                            except:
+                                hyperlinks = ''
+                            hyperDict[q.id] = {'hyperlinks': hyperlinks}
+
                         self.finishedSignal.emit(hyperDict)
                     except zeep.exceptions.Fault as error:
                         if error.message.__contains__('Authentication failed'):
-                            self.appendMessageSignal.emit('Authentication failed. Invalid username or password.')
+                            self.appendMessageSignal.emit('Authentication failed. Invalid username or password')
 
                 except requests.exceptions.HTTPError:
-                    self.appendMessageSignal.emit('Unable to pull hyperlinks.')
+                    self.appendMessageSignal.emit('Unable to pull hyperlinks')
                     pass
 
                 self.hideLoadingBarSignal.emit()
 
-        self.getPolarionAccount()
-
-        if self.polarionUsername != '' and self.polarionPassword != '':
-            self.updateHyperlinksThreadObject = updateHyperlinksThread()
-            myThread = self.updateHyperlinksThreadObject
-            myThread.polarionDict = self.polarionDict
-            myThread.appendMessageSignal.connect(self.appendPolarionLog)
-            myThread.showLoadingBarSignal.connect(self.showLoadingBar)
-            myThread.hideLoadingBarSignal.connect(self.hideLoadingBar)
-            myThread.username = self.polarionUsername
-            myThread.password = self.polarionPassword
-            myThread.finishedSignal.connect(self.updatePolarionDictWithHyperlinks)
-            myThread.start()
+        try:
+            self.getPolarionAccount()
+            if self.polarionUsername != '' and self.polarionPassword != '':
+                self.updateHyperlinksThreadObject = updateHyperlinksThread()
+                myThread = self.updateHyperlinksThreadObject
+                myThread.polarionDict = self.polarionDict
+                myThread.appendMessageSignal.connect(self.appendPolarionLog)
+                myThread.showLoadingBarSignal.connect(self.showLoadingBar)
+                myThread.hideLoadingBarSignal.connect(self.hideLoadingBar)
+                myThread.username = self.polarionUsername
+                myThread.password = self.polarionPassword
+                myThread.finishedSignal.connect(self.updatePolarionDictWithHyperlinks)
+                myThread.start()
+        except:
+            print(traceback.format_exc())
 
     def updatePolarionSteps(self):
+        """Update Polarion server with modified steps in new thread"""
         class updatePolarionStepsThread(QThread):
             finishedSignal = pyqtSignal('PyQt_PyObject')
             appendMessageSignal = pyqtSignal('PyQt_PyObject')
@@ -1942,465 +2287,467 @@ class App(QMainWindow, Ui_MainWindow):
                     return self.last_response
 
             def run(self):
-                try:
-                    self.appendMessageSignal.emit('Connecting to Polarion server.')
+                self.appendMessageSignal.emit('Loading Polarion excel')
 
-                    # login session and get session id
-                    session = requests.Session()
-                    transport = self.TransportSubclass(session=session)
-                    loginClientWsdl = 'http://polarion.karmaautomotive.com/polarion/ws/services/SessionWebService?wsdl'
-                    loginClient = zeep.Client(wsdl=loginClientWsdl, transport=transport)
+                book = xlrd.open_workbook(filename=self.polarionExcel)
+                sheet = book.sheet_by_name('Sheet1')
 
+                testStepList = []
+                polarionDict = {}
+                startRow = 0
+                endRow = 0
+                testCaseIdCol = 0
+                titleCol = 1
+                descCol = 2
+                stepCol = 3
+                waitCol = 10
+                startCol = 0
+                endCol = 12
+                if sheet.nrows > 1:
+                    for i in range(1, sheet.nrows + 1):
+                        try:
+                            row = sheet.row_values(i, startCol, endCol)
+                        except IndexError:
+                            pass
+
+                        testCaseStep = row[stepCol]
+                        if testCaseStep in ['1', '1.0', 1, 1.0] or i == sheet.nrows:
+                            if len(testStepList) > 0:
+                                endRow = i
+                                length = len(testStepList)
+                                startRow = endRow - length + 1
+                                title = testStepList[0][titleCol]
+                                desc = testStepList[0][descCol]
+
+                                def conv2float(x):
+                                    try:
+                                        return float(x)
+                                    except:
+                                        return 0.0
+
+                                totalWaitTime = round(sum([conv2float(x[waitCol]) for x in testStepList]), 1)
+
+                                testStepListCompact = [x[4:] for x in testStepList]
+
+                                polarionDict[testStepList[0][testCaseIdCol]] = {
+                                    'title': title,
+                                    'desc': desc,
+                                    'steps': copy.copy(testStepList),
+                                    'stepsCompact': copy.copy(testStepListCompact),
+                                    'startRow': startRow,
+                                    'endRow': endRow,
+                                    'length': length,
+                                    'testCaseVerdict': '',
+                                    'hyperlinks': '',
+                                    'run': 'No',
+                                    'totalWaitTime': totalWaitTime
+                                }
+                                testStepList = []
+                        testStepList.append(row)
+
+                    # with open("C:\\Users\\pthil\\Documents\\TestRuns\\BL1015\\DMLR_Automated_V10_2019_7_29\\polarionDict.json", 'w') as f:
+                    #     polarionJson = json.dumps(polarionDict, sort_keys=True, indent=4)
+                    #     f.write(polarionJson)
+
+                    # read revision number
+                    revisionSheet = book.sheet_by_name('_polarion')
+
+                    for i in range(0, revisionSheet.nrows):
+                        row = revisionSheet.row_values(i, 0, 1)
+                        if row[0] == 'testRunRevision':
+                            revisionRow = i
+                            revisionNumber = revisionSheet.cell_value(revisionRow, 1)
+                            # self.updatePolarionRevisionSignal.emit(revisionNumber)
+                            break
+
+                self.appendMessageSignal.emit('Polarion excel loaded')
+
+                if True:
                     try:
-                        loginClient.service.logIn(self.username, self.password)
-                        self.showLoadingBarSignal.emit()
-                        # grab repsonse header and parse for session id
-                        root = etree.XML(transport.last_response.content)
-                        sessions = root.xpath('//ns1:sessionID', namespaces={'ns1': 'http://ws.polarion.com/session'})
-                        session_id = sessions[0]
+                        self.appendMessageSignal.emit('Connecting to Polarion server')
 
-                        # use the new session id for transports
-                        transport = zeep.transports.Transport(session=session)
+                        # login session and get session id
+                        session = requests.Session()
+                        transport = self.TransportSubclass(session=session)
+                        loginClientWsdl = 'http://polarion.karmaautomotive.com/polarion/ws/services/SessionWebService?wsdl'
+                        loginClient = zeep.Client(wsdl=loginClientWsdl, transport=transport)
 
-                        # use session id for web service
-                        testWsdl = 'http://polarion.karmaautomotive.com/polarion/ws/services/TestManagementWebService?wsdl'
-                        testClient = zeep.Client(testWsdl, transport=transport)
-                        testClient._default_soapheaders = [session_id]
+                        try:
+                            loginClient.service.logIn(self.username, self.password)
+                            self.showLoadingBarSignal.emit()
+                            # grab repsonse header and parse for session id
+                            root = etree.XML(transport.last_response.content)
+                            sessions = root.xpath('//ns1:sessionID', namespaces={'ns1': 'http://ws.polarion.com/session'})
+                            session_id = sessions[0]
 
-                        # use session id for web service
-                        trackerClientWsdl = 'http://polarion.karmaautomotive.com/polarion/ws/services/TrackerWebService?wsdl'
-                        trackerClient = zeep.Client(trackerClientWsdl, transport=transport)
-                        trackerClient._default_soapheaders = [session_id]
+                            # use the new session id for transports
+                            transport = zeep.transports.Transport(session=session)
 
-                        self.appendMessageSignal.emit('Connected to Polarion server.')
+                            # use session id for web service
+                            testWsdl = 'http://polarion.karmaautomotive.com/polarion/ws/services/TestManagementWebService?wsdl'
+                            testClient = zeep.Client(testWsdl, transport=transport)
+                            testClient._default_soapheaders = [session_id]
 
-                        # teExcel = r"C:\Users\pthil\Desktop\Test_Runs\K1_20_TestRun\BL_1000\BL_1000_Beta\SCM_Manual_V13\K1-20-1000_SCM_Manual_V13_KA_TE.xlsx"
-                        wb = load_workbook(self.teExcelPath)
-                        ws = wb.active
+                            # use session id for web service
+                            trackerClientWsdl = 'http://polarion.karmaautomotive.com/polarion/ws/services/TrackerWebService?wsdl'
+                            trackerClient = zeep.Client(trackerClientWsdl, transport=transport)
+                            trackerClient._default_soapheaders = [session_id]
 
+                            self.appendMessageSignal.emit('Connected to Polarion server')
 
-                        testCaseIdCol = ws['A']
-                        stepNumberCol = ws['H']
+                            # column indexes
+                            columnIndexes = {
+                                'Phase': 0,
+                                'Action': 1,
+                                'Description': 2,
+                                'Variable': 3,
+                                'Setting': 4,
+                                'ExpectedResult': 5,
+                                'Wait': 6,
+                                'Remark': 7
+                            }
 
-                        allSteps = [str(x.value) for x in stepNumberCol]
+                            # testStepCopy = None
+                            self.appendMessageSignal.emit('Updating testcases')
+                            for id in self.testCasesList:
+                                # get workitem from polarion using the testcase id
+                                query = trackerClient.service.queryWorkItems(query=id, sort='id', fields=['id'])
 
-                        polarionDict = OrderedDict()
-                        startMarker = '1'
-                        endMarker = 'None'
+                                # do update if a query returns
+                                if len(query) > 0:
+                                    testCaseUri = query[0]['uri']
 
-                        querySteps = None
+                                    # double check that id and test case uri matches
+                                    if id in testCaseUri:
+                                        # grab steps from query
+                                        # if testStepCopy is None:
+                                        querySteps = testClient.service.getTestSteps(testCaseUri)['steps']['TestStep']
 
-                        # grab data from polarion excel
-                        self.appendMessageSignal.emit('Grabbing data from excel file.')
-                        for eachRow in testCaseIdCol:
-                            if re.match('\w+-\w+', str(eachRow.value)) is not None:
-                                testCase = str(eachRow.value)
-                                start = allSteps.index(startMarker, eachRow.row - 1) + 1
+                                        updatedQuerySteps = []
 
-                                try:
-                                    end = allSteps.index(endMarker, start + 1)
-                                except ValueError:
-                                    end = len(allSteps)
+                                        if len(querySteps) > 0:
+                                            # fill updated query steps, use the first step as a copy
+                                            while len(updatedQuerySteps) < polarionDict[id]['length']:
+                                                testStepCopy = copy.deepcopy(querySteps[0])
+                                                updatedQuerySteps.append(testStepCopy)
 
-                                startRange = 'I{}'.format(start)
-                                endRange = 'P{}'.format(end)
+                                            for i in range(0, polarionDict[id]['length']):
+                                                for idx in columnIndexes.values():
+                                                    updatedQuerySteps[i]['values']['Text'][idx]['content'] = \
+                                                        polarionDict[id]['stepsCompact'][i][idx]
 
-                                # print(startRange,endRange)
+                                            # print(polarionDict[id]['stepsCompact'])
+                                            # service to update test steps for specific testcase
+                                            testClient.service.setTestSteps(testCaseUri, updatedQuerySteps)
 
-                                # convert excel cells into string values
-                                # print(ws[startRange:endRange] != None)
+                                            # print('Updated {}. Number of Steps: {} -> {}'.format(id, len(querySteps),
+                                            #                                                       len(updatedQuerySteps)))
+                                            self.appendMessageSignal.emit('Updated {}. Steps: {} -> {}'.format(id, len(querySteps), len(updatedQuerySteps)))
+                                            # time.sleep(2.0)
+                                else:
+                                    self.appendMessageSignal.emit('{} was not found'.format(id))
+                                    # print(id, 'not found')
 
-                                allRows = ws[startRange:endRange]
-                                querySteps = [list(col.value for col in row) for row in allRows]
+                            # close session
+                            loginClient.service.endSession()
+                            # self.finishedSignal.emit('Updating Polarion finished')
+                            self.appendMessageSignal.emit('Updating Polarion finished')
+                            self.hideLoadingBarSignal.emit()
+                        except zeep.exceptions.Fault as error:
+                            self.hideLoadingBarSignal.emit()
+                            if error.message.__contains__('Authentication failed'):
+                                self.appendMessageSignal.emit('Authentication failed. Invalid username or password')
+                    except:
+                        self.hideLoadingBarSignal.emit()
 
-                                title = ws['D{}'.format(start)].value
-                                desc = ws['E{}'.format(start)].value
-                                polarionDict[testCase] = {'startRow': start, 'endRow': end, 'length': end - start + 1,
-                                                          'title': title, 'desc': desc, 'steps': querySteps}
+        try:
+            polarionExcel = self.browseFile(self.polarionExcelEdit.text(), 'Open Polarion Excel file', 'XLSX Files (*.xlsx)')
+            self.getPolarionAccount()
 
-                        # column indexes
-                        columnIndexes = {
-                            'Phase': 0,
-                            'Action': 1,
-                            'Description': 2,
-                            'Variable': 3,
-                            'Setting': 4,
-                            'ExpectedResult': 5,
-                            'Wait': 6,
-                            'Remark': 7
-                        }
+            if len(polarionExcel) > 0 and self.polarionUsername != '' and self.polarionPassword != '':
+                self.udpatePolarionStepsThread = updatePolarionStepsThread()
+                myThread = self.udpatePolarionStepsThread
 
-                        # testStepCopy = None
-                        self.appendMessageSignal.emit('Updating testcases.')
-                        for id in self.testCasesList:
-                            # get workitem from polarion using the testcase id
-                            query = trackerClient.service.queryWorkItems(query=id, sort='id', fields=['id'])
+                myThread.polarionExcel = polarionExcel
+                myThread.polarionDict = self.polarionDict
+                myThread.username = self.polarionUsername
+                myThread.password = self.polarionPassword
 
-                            # do update if a query returns
-                            if len(query) > 0:
-                                testCaseUri = query[0]['uri']
+                testCasesList = []
+                model = self.polarionTableViewModel
+                testCaseCol = self.polarionTableHeader.index('TestCase')
+                modifiedCol = self.polarionTableHeader.index('Modified')
 
-                                # double check that id and test case uri matches
-                                if id in testCaseUri:
-                                    # grab steps from query
-                                    # if testStepCopy is None:
-                                    querySteps = testClient.service.getTestSteps(testCaseUri)['steps']['TestStep']
+                for i in range(0, model.rowCount()):
+                    testcaseItem = model.item(i, testCaseCol)
+                    modifiedItem = model.item(i, modifiedCol)
+                    if modifiedItem.checkState() == Qt.Checked:
+                        testCasesList.append(testcaseItem.text())
 
-                                    updatedQuerySteps = []
-
-                                    if len(querySteps) > 0:
-                                        # fill updated query steps, use the first step as a copy
-                                        while len(updatedQuerySteps) < polarionDict[id]['length']:
-                                            testStepCopy = copy.deepcopy(querySteps[0])
-                                            updatedQuerySteps.append(testStepCopy)
-
-                                        for i in range(0, polarionDict[id]['length']):
-                                            for idx in columnIndexes.values():
-                                                updatedQuerySteps[i]['values']['Text'][idx]['content'] = \
-                                                    polarionDict[id]['steps'][i][idx]
-
-                                        # service to update test steps for specific testcase
-                                        testClient.service.setTestSteps(testCaseUri, updatedQuerySteps)
-
-                                        # print('Updated {}. Number of Steps: {} -> {}.'.format(id, len(querySteps),
-                                        #                                                       len(updatedQuerySteps)))
-                                        self.appendMessageSignal.emit('Updated {}. Steps: {} -> {}.'.format(id, len(querySteps), len(updatedQuerySteps)))
-                                        # time.sleep(2.0)
-                            else:
-                                self.appendMessageSignal.emit('{} was not found'.format(id))
-                                # print(id, 'not found.')
-
-                        # close session
-                        loginClient.service.endSession()
-                        self.finishedSignal.emit('Updating Polarion finished.')
-                        self.appendMessageSignal.emit('Updating Polarion finished.')
-                    except zeep.exceptions.Fault as error:
-                        if error.message.__contains__('Authentication failed'):
-                            self.appendMessageSignal.emit('Authentication failed. Invalid username or password.')
-                except:
-                    self.hideLoadingBarSignal.emit()
-
-        teExcelPath = self.browseFile(self.polarionExcelEdit.text(), 'Open Polarion TE excel file', 'XLSX Files (*.xlsx)')
-
-        # teExcelPath, fileType = QFileDialog.getOpenFileName(
-        #     self.parent(),
-        #     "Open Polarion TE File",
-        #     '',
-        #     "XLSX Files (*.xlsx);;All Files (*)"
-        # )
-
-        self.getPolarionAccount()
-
-        if len(teExcelPath) > 0 and self.polarionUsername != '' and self.polarionPassword != '':
-            self.udpatePolarionStepsThread = updatePolarionStepsThread()
-            myThread = self.udpatePolarionStepsThread
-
-            myThread.teExcelPath = teExcelPath
-            myThread.polarionDict = self.polarionDict
-            myThread.username = self.polarionUsername
-            myThread.password = self.polarionPassword
-
-            testCasesList = []
-            model = self.polarionTableViewModel
-            rowCount = model.rowCount()
-            testCaseCol = self.polarionTableHeader.index('TestCase')
-
-            for i in range(0, rowCount):
-                item = model.item(i, testCaseCol)
-                if item.checkState():
-                    testCasesList.append(item.text())
-
-            myThread.testCasesList = testCasesList
-            myThread.appendMessageSignal.connect(self.appendPolarionLog)
-            myThread.showLoadingBarSignal.connect(self.showLoadingBar)
-            myThread.hideLoadingBarSignal.connect(self.hideLoadingBar)
-            myThread.finishedSignal.connect(self.updatePolarionDictWithQuerySteps)
-            myThread.start()
-        else:
-            self.appendPolarionLog('Update steps cancelled.')
+                myThread.testCasesList = testCasesList
+                myThread.appendMessageSignal.connect(self.appendPolarionLog)
+                myThread.showLoadingBarSignal.connect(self.showLoadingBar)
+                myThread.hideLoadingBarSignal.connect(self.hideLoadingBar)
+                # myThread.finishedSignal.connect(self.updatePolarionDictWithQuerySteps)
+                myThread.start()
+            else:
+                self.appendPolarionLog('Update steps cancelled')
+        except:
+            print(traceback.format_exc())
 
     def getPolarionAccount(self):
-        username, okPressed1 = QInputDialog.getText(self, 'Enter Polarion Account', 'Username:',
-                                                    QLineEdit.Normal, self.polarionUsername)
-        password, okPressed2 = QInputDialog.getText(self, 'Enter Polarion Account', 'Password:',
-                                                    QLineEdit.Password, self.polarionPassword)
+        """Get Polarion account info from user"""
+        try:
+            username, okPressed1 = QInputDialog.getText(self, 'Enter Polarion Account', 'Username:',
+                                                        QLineEdit.Normal, self.polarionUsername)
+            password, okPressed2 = QInputDialog.getText(self, 'Enter Polarion Account', 'Password:',
+                                                        QLineEdit.Password, self.polarionPassword)
 
-        if okPressed1:
-            self.polarionUsername = username
-        if okPressed2:
-            self.polarionPassword = password
+            if okPressed1:
+                self.polarionUsername = username
+            if okPressed2:
+                self.polarionPassword = password
+        except:
+            print(traceback.format_exc())
 
     def appendPolarionLog(self, msg):
-        self.polarionLogEdit.appendPlainText('{} - {}'.format(datetime.now().__str__(), msg))
-
-    def updatePolarionDictWithQuerySteps(self, msg):
-        self.hideLoadingBar()
+        """Append to Polarion log"""
+        try:
+            self.polarionLogEdit.appendPlainText('{} - {}'.format(datetime.now().__str__(), msg))
+        except:
+            print(traceback.format_exc())
 
     def updatePolarionDictWithHyperlinks(self, hyperDict):
-        for t in self.polarionDict:
-            try:
-                links = ','.join([x['uri'] for x in hyperDict[t]['hyperlinks']['Hyperlink']])
-                self.polarionDict[t]['hyperlinks'] = links
-            except KeyError:
-                # print('{} was not found in hyperlink dict'.format(str(error)))
-                pass
-            except TypeError:
-                pass
-
-        self.savePolarionJson()
-        self.appendPolarionLog('Updated Polarion table with hyperlinks.')
-        self.updatePolarionTableModel()
-
-    # use the profile dictionary to update the gui
-    def updateGuiFromProfileDict(self):
-        # print(self.profileDict)
+        """Update Polarion dict with hyperlinks"""
         try:
-            polarionExcelPath = self.profileDict['Profile']['PolarionExcel']
-            self.polarionExcelEdit.setText(polarionExcelPath)
-        except KeyError:
-            self.polarionExcelEdit.setText('')
+            for t in self.polarionDict:
+                try:
+                    hyperlinks = [x.strip() for x in hyperDict[t]['hyperlinks']]
+                    hyperlinksStr = ', '.join(hyperlinks)
 
-        try:
-            testcasepath = self.profileDict['Profile']['TestCaseExcel']
-            self.testCaseExcelEdit.setText(testcasepath)
-        except KeyError:
-            self.testCaseExcelEdit.setText('')
+                    self.polarionDict[t]['hyperlinks'] = hyperlinksStr
+                except KeyError:
+                    pass
+                except TypeError:
+                    pass
 
-        try:
-            callFunctionFolder = self.profileDict['Profile']['CallFunctionFolder']
-            if callFunctionFolder:
-                self.callFunctionEdit.setText(callFunctionFolder)
-                self.checkFolderExist(callFunctionFolder)
-        except KeyError:
-            self.callFunctionEdit.setText('')
-
-        try:
-            csvPath = self.profileDict['Profile']['CSVReportFolder']
-            if csvPath:
-                self.csvReportEdit.setText(csvPath)
-                self.checkFolderExist(csvPath)
-        except KeyError:
-            self.csvReportEdit.setText('')
-
-        try:
-            varPoolPath = self.profileDict['Profile']['VariablePoolPath']
-            self.variablePoolEdit.setText(varPoolPath)
-            # self.checkVarPoolExist(varPoolPath)
-        except KeyError:
-            self.variablePoolEdit.setText('')
-
-        try:
-            dtcExceptionEnable = self.profileDict['Profile']['DTC']['@enable']
-            self.dtcExCheckBox.setChecked(dtcExceptionEnable)
-            self.showDtcException(dtcExceptionEnable)
-        except KeyError:
-            self.dtcExCheckBox.setChecked(False)
-            self.showDtcException(False)
-        except TypeError:
-            print('TypeError: eval() arg 1 must be a string or code object')
-
-        try:
-            callFunctionDebug = self.profileDict['Profile']['CallFunctionDebug']['@enable']
-            self.callFunctionDebugCheckbox.setChecked(callFunctionDebug)
-        except KeyError:
-            self.callFunctionDebugCheckbox.setChecked(False)
-
-        try:
-            versionCheckbox = self.profileDict['Profile']['Version']['@include']
-            self.versionCheckBox.setChecked(versionCheckbox)
-        except KeyError:
-            self.versionCheckBox.setChecked(False)
-
-        self.addSignalModel.clear()
-        try:
-            templist = self.profileDict['Profile']['Log']['Signal']
-            signalList = []
-            # if temp is a list we iterate and add, else we append a single element
-            if isinstance(templist, list):
-                signalList.extend(x for x in templist)
-            else:
-                signalList.append(templist)
-
-            for s in signalList:
-                self.addSignalModel.appendRow(QStandardItem(str(s)))
-        except KeyError:
-            debugPrint('Signal list is empty')
-
-        # self.dtcExModel.clear()
-        #
-        # # if temp is a list we iterate and add, else we append a single element
-        # try:
-        #     exceptlist = self.profileDict['Profile']['DTC']['Except']
-        #     dtcExList = []
-        #     if isinstance(exceptlist, list):
-        #         dtcExList.extend(x for x in exceptlist)
-        #     else:
-        #         dtcExList.append(exceptlist)
-        #
-        #     # add rows into qt list widget
-        #     for s in dtcExList:
-        #         self.dtcExModel.appendRow(QStandardItem(str(s)))
-        # except KeyError:
-        #     debugPrint('DTCs exception list is empty')
-
-        self.dtcTableModel.clear()
-        try:
-            dtcExList = self.profileDict['Profile']['DTC']['Except']
-
-            for dtc in dtcExList:
-                self.dtcTableModel.appendRow([QStandardItem(x) for x in [dtc['Hex Code'], dtc['Description'], dtc['Module']]])
+            self.savePolarionDict()
+            self.appendPolarionLog('Updated Polarion table with hyperlinks')
+            self.updatePolarionTableModel()
         except:
-            print('KeyError for updateGuiFromProfileDict, dtcExList2')
+            print(traceback.format_exc())
 
-        self.updateVersionTableModel()
+    def updateGuiFromProfile(self):
+        """Update GUI from profile dictionary"""
+        try:
+            if 'Profile' in self.profileDict:
+                profile = self.profileDict['Profile']
+                try:
+                    polarionExcelPath = profile['PolarionExcel']
+                    self.polarionExcelEdit.setText(polarionExcelPath)
+                except KeyError:
+                    self.polarionExcelEdit.setText('')
+
+                # try:
+                #     testcasepath = profile['TestCaseExcel']
+                #     self.testCaseExcelEdit.setText(testcasepath)
+                # except KeyError:
+                #     self.testCaseExcelEdit.setText('')
+
+                # try:
+                #     callFunctionFolder = profile['CallFunctionFolder']
+                #     if callFunctionFolder:
+                #         self.callFunctionEdit.setText(callFunctionFolder)
+                #         # self.checkFolderExist(callFunctionFolder)
+                # except KeyError:
+                #     self.callFunctionEdit.setText('')
+
+                try:
+                    csvPath = profile['CSVReportFolder']
+                    if csvPath:
+                        self.csvReportEdit.setText(csvPath)
+                        self.checkFolderExist(csvPath)
+                except KeyError:
+                    self.csvReportEdit.setText('')
+
+                try:
+                    varPoolPath = profile['VariablePoolPath']
+                    self.variablePoolEdit.setText(varPoolPath)
+                    # self.checkVarPoolExist(varPoolPath)
+                except KeyError:
+                    self.variablePoolEdit.setText('')
+
+                try:
+                    dtcExceptionEnable = profile['DTC']['@enable']
+                    self.dtcExCheckBox.setChecked(dtcExceptionEnable)
+                    self.showDtcException(dtcExceptionEnable)
+                except KeyError:
+                    self.dtcExCheckBox.setChecked(False)
+                    self.showDtcException(False)
+                except TypeError:
+                    print('TypeError: eval() arg 1 must be a string or code object')
+
+                try:
+                    callFunctionDebug = profile['CallFunctionDebug']['@enable']
+                    self.callFunctionDebugCheckbox.setChecked(callFunctionDebug)
+                except KeyError:
+                    self.callFunctionDebugCheckbox.setChecked(False)
+
+                try:
+                    versionCheckbox = profile['Version']['@include']
+                    self.versionCheckBox.setChecked(versionCheckbox)
+                except KeyError:
+                    self.versionCheckBox.setChecked(False)
+
+                # try:
+                #     useGuiRunList = profile['UseGuiRunList']
+                #     self.useGuiRunListCheckbox.setChecked(useGuiRunList)
+                # except KeyError:
+                #     self.useGuiRunListCheckbox.setChecked(False)
+
+                try:
+                    self.pauseCheckbox.setChecked(profile['PauseEnable'])
+                except:
+                    self.pauseCheckbox.setChecked(False)
+
+                try:
+                    self.pauseStepSpinbox.setValue(int(profile['PauseStep']))
+                except:
+                    self.pauseStepSpinbox.setValue(1)
+
+                try:
+                    self.printStepsInOutputCheckbox.setChecked(profile['PrintStepsInOutput'])
+                except:
+                    self.printStepsInOutputCheckbox.setChecked(False)
+
+                try:
+                    self.maxPrintsInOutputSpinbox.setValue(profile['MaxPrintsInOutput'])
+                except:
+                    self.maxPrintsInOutputSpinbox.setValue(5)
+
+
+                self.addSignalModel.clear()
+                try:
+                    templist = profile['Log']['Signal']
+                    signalList = []
+                    # if temp is a list we iterate and add, else we append a single element
+                    if isinstance(templist, list):
+                        signalList.extend(x for x in templist)
+                    else:
+                        signalList.append(templist)
+
+                    for s in signalList:
+                        self.addSignalModel.appendRow(QStandardItem(str(s)))
+                except KeyError:
+                    debugPrint('Signal list is empty')
+
+                self.updateDtcTableModel()
+                self.updateVersionTableModel()
+        except:
+            print(traceback.format_exc())
 
     def loadSettings(self):
-        self.settings = QSettings('AutomationGUI', 'AutomationGUI')
-        self.profileFile = self.settings.value('LastProfile', type=str)
-        autoRun = self.settings.value('AutoRun', type=bool)
-        self.autorunCheckBox.setChecked(autoRun)
-        self.autorunSpinBox.setValue(self.settings.value('AutoRunTimer', type=int))
-        width = self.settings.value('Width', type=int)
-        height = self.settings.value('Height', type=int)
-        self.resize(width, height)
-        self.polarionUsername = self.settings.value('PolarionUsername', type=str)
+        """Load settings"""
+        try:
+            self.settings = QSettings('Karma', 'AutomationGUI')
+            self.profileFile = self.settings.value('LastProfile', type=str)
+            autoRun = self.settings.value('AutoRun', type=bool)
+            self.autorunCheckBox.setChecked(autoRun)
+            self.autorunSpinBox.setValue(self.settings.value('AutoRunTimer', type=int))
+            width = self.settings.value('Width', type=int)
+            height = self.settings.value('Height', type=int)
+            self.resize(1280 if width > 1900 else width, 720 if height > 1000 else height)
 
-        polarionLeftTableWidth = self.settings.value('PolarionLeftTableWidth', type=int)
+            self.polarionUsername = self.settings.value('PolarionUsername', type=str)
 
-        self.polarionTableView.resize(polarionLeftTableWidth, self.polarionTableView.height())
+            polarionLeftTableWidth = self.settings.value('PolarionLeftTableWidth', type=int)
 
-        if os.path.exists(self.profileFile):
-            self.loadProfile()
+            self.polarionTableView.resize(polarionLeftTableWidth, self.polarionTableView.height())
 
-    # load the variable pool from csv file and extract variable names only
+            if os.path.exists(self.profileFile):
+                self.loadProfile()
+        except:
+            print(traceback.format_exc())
+
     def loadVariablePool(self):
-        varpoolfile = Path(self.variablePoolEdit.text())
-        if os.path.exists(str(varpoolfile)):
-            try:
-                with open(str(varpoolfile)) as f:
-                    # self.variablePool.extend(row['VariableName'] for row in csv.DictReader(f))
-                    self.variablePoolDict = eval(f.read())
+        """Load variable pool from file"""
+        try:
+            varpoolfile = Path(self.variablePoolEdit.text())
+            if os.path.exists(str(varpoolfile)):
+                try:
+                    with open(str(varpoolfile)) as f:
+                        # self.variablePool.extend(row['VariableName'] for row in csv.DictReader(f))
+                        self.variablePoolDict = eval(f.read())
 
-                    variablePoolKeys = list(self.variablePoolDict)
+                        variablePoolKeys = list(self.variablePoolDict)
 
-                    model = QStringListModel()
-                    model.setStringList(variablePoolKeys)
-                    completer = QCompleter()
-                    completer.setModel(model)
-                    completer.setCaseSensitivity(0)
-                    self.addSignalEdit.setCompleter(completer)
-                    self.statusbar.showMessage('Variable pool loaded...OK!')
-            except FileNotFoundError:
-                self.statusbar.showMessage('Variable pool file not found.')
+                        model = QStringListModel()
+                        model.setStringList(variablePoolKeys)
+                        completer = QCompleter()
+                        completer.setModel(model)
+                        completer.setCaseSensitivity(0)
+                        self.addSignalEdit.setCompleter(completer)
+                        self.statusbar.showMessage('Variable pool loaded...OK!')
+                except FileNotFoundError:
+                    self.statusbar.showMessage('Variable pool file not found')
+        except:
+            print(traceback.format_exc())
 
     def setTitle(self, profilePath):
-        self.setWindowTitle('[' + str(profilePath) + '] - AutomationDesk GUI ' + version)
-
-    # def setProfileDict(
-    #         self,
-    #         testcaseexcel='',
-    #         callfolder='',
-    #         csvfolder='',
-    #         varpoolpath='',
-    #         includeversion='False',
-    #         callfuncdebug='False',
-    #         logmode='0',
-    #         signallist=[],
-    #         dtcenable='False',
-    #         dtcexlist=[],
-    #         updatevp='False'
-    # ):
-    #
-    #     self.profileDict = {
-    #         'Profile': {
-    #             '@version': '1.0',
-    #             'TestCaseExcel': testcaseexcel,
-    #             'CallFunctionFolder': callfolder,
-    #             'CSVReportFolder': csvfolder,
-    #             'VariablePoolPath': varpoolpath,
-    #             'UpdateVariablePool': updatevp,
-    #             'Version': {'@include': includeversion},
-    #             'CallFunctionDebug': {'@enable': callfuncdebug},
-    #             'Log': {
-    #                 '@mode': logmode,
-    #                 'Signal': signallist
-    #             },
-    #             'DTC': {
-    #                 '@enable': dtcenable,
-    #                 'Except': dtcexlist
-    #             }
-    #         }
-    #     }
-
-    def setDefaultProfile(self):
-        self.defaultProfile = True
-        # load default profile if no params are given
-        # self.setProfileDict()
-
-        self.profileDict = {
-            'Profile': {
-                '@version': '1.0',
-            }
-        }
-
-    def setConfigDict(
-            self, lastprofile='',
-            width=800,
-            height=480,
-            autorun=True,
-            autoruntimer=10
-    ):
-        self.configDict = {
-            'Config': {
-                '@version': '1.0',
-                'LastProfile': lastprofile,
-                'Width': width,
-                'Height': height,
-                'Autorun': autorun,
-                'AutorunTimer': autoruntimer
-            }
-        }
-
-    def setDefaultConfigDict(self):
-        self.unsavedChanges()
-        self.setConfigDict()  # load default config if no params are given
+        """Set window title"""
+        try:
+            self.setWindowTitle('[' + str(profilePath) + '] - AutomationDesk GUI ' + version)
+        except:
+            print(traceback.format_exc())
 
     def exit(self):
-        if not self.changesSaved:
-            msgReply = QMessageBox.question(
-                self,
-                'Save Changes',
-                'Would you like to save before exit?',
-                QMessageBox.Yes | QMessageBox.No,
-                QMessageBox.No
-            )
+        """Exit"""
+        try:
+            if self.unsavedChanges:
+                msgReply = QMessageBox.question(
+                    self,
+                    'Save Changes',
+                    'Would you like to save before exit?',
+                    QMessageBox.Yes | QMessageBox.No,
+                    QMessageBox.No
+                )
 
-            if msgReply == QMessageBox.Yes:
-                self.saveProfile()
-                debugPrint('File saved')
+                if msgReply == QMessageBox.Yes:
+                    self.saveProfile()
+                    debugPrint('File saved')
 
-        self.saveSettings()
-        self.makeRunList()
-        self.updateProfileDictFromGui()
-        self.close()
+            self.saveSettings()
+            self.makeRunList()
+            self.getExcelData()
+            self.updateProfileFromGui()
+            # self.saveProfile()
+            self.close()
+        except:
+            print(traceback.format_exc())
 
     def about(self):
-        about = QMessageBox()
-        about.setWindowIcon(QIcon(':/logo/graphics/karmalogo_48dp.png'))
-        about.setWindowTitle('About')
-        about.setText(version + '\n'
-                                'Developer: Vu Le\n'
-                                'The developer reserves all rights to this software.\n'
-                                'Do not distribute this software without permission.')
-        about.setInformativeText('Copyright (C) 2018')
-        pixmap = QPixmap(':/icon/karma')
-        pixmap = pixmap.scaledToWidth(128)
-        about.setIconPixmap(pixmap)
-        about.exec_()
+        """About dialog"""
+        try:
+            about = QMessageBox()
+            about.setWindowIcon(QIcon(':/icon/karmalogo24'))
+            about.setWindowTitle('About')
+            about.setText(version + '\n'
+                                    'Developer: Vu Le\n'
+                                    'The developer reserves all rights to this software.\n'
+                                    'Do not distribute this software without permission')
+            about.setInformativeText('Copyright (C) 2018')
+            pixmap = QPixmap(':/icon/karmalogolarge')
+            # pixmap = pixmap.scaledToWidth(128)
+            about.setIconPixmap(pixmap)
+            about.exec_()
+        except:
+            print(traceback.format_exc())
 
-def main(aud=None):
+def main():
     app = QApplication(sys.argv)
     app.setStyle('Fusion')
+
+    # app.setAttribute(Qt.AA_UseHighDpiPixmaps)
 
     dark_palette = QPalette()
     dark_palette.setColor(QPalette.Window, QColor(53, 53, 53))
@@ -2414,15 +2761,15 @@ def main(aud=None):
     dark_palette.setColor(QPalette.ButtonText, Qt.white)
     dark_palette.setColor(QPalette.BrightText, Qt.red)
     dark_palette.setColor(QPalette.Link, QColor(42, 130, 218))
-    dark_palette.setColor(QPalette.Highlight, QColor(42, 130, 218))
+    dark_palette.setColor(QPalette.Highlight, QColor(255, 170, 0))
     dark_palette.setColor(QPalette.HighlightedText, Qt.black)
     app.setPalette(dark_palette)
     app.setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }")
 
-    form = App(aud)
+    form = App()
     form.show()
     app.exec_()
-    return form.runList, form.profileDict, form.variablePoolDict  # return data to AutomationDesk
+    return form.excelData, form.runList, form.profileDict, form.variablePoolDict  # return data to AutomationDesk
 
 if __name__ == '__main__':
-    main(aud=None)
+    main()
