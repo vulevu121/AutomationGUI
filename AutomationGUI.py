@@ -1,6 +1,13 @@
 # -*- coding: utf-8 -*-
 #!/usr/bin/env python
 
+# 10/19/2019 Changelog
+# Added search query to filter out test cases in the polarion table
+# new functions: filterModel() and clearQueryButton()
+
+# 10/5/2019 Changelog
+# Added batch table context menu to allow user to open excel file or report folder
+
 # 10/4/2019 Changelog
 # Updated icons and colors
 # Updated about page
@@ -91,7 +98,7 @@
 
 from PyQt5.QtWidgets import QApplication, QMenu, QAction, QMainWindow, QCompleter, QTableWidgetItem, QFileDialog, QMessageBox, QInputDialog, QLineEdit
 from PyQt5.QtGui import QPalette, QColor, QIcon, QStandardItemModel, QStandardItem, QCursor, QPixmap
-from PyQt5.QtCore import Qt, QTimer, QSettings, QStringListModel, QThread, pyqtSignal
+from PyQt5.QtCore import Qt, QTimer, QSettings, QStringListModel, QThread, pyqtSignal, QRegExp, QSortFilterProxyModel
 #import xmltodict
 from pathlib import Path
 from AutomationGUI_ui import *
@@ -236,6 +243,10 @@ class App(QMainWindow, Ui_MainWindow):
         self.batchRemoveButton.clicked.connect(self.batchRemoveRow)
         self.batchClearButton.clicked.connect(self.batchClearAll)
 
+
+        self.batchTableView.customContextMenuRequested.connect(self.batchTableContextMenuEvent)
+        # self.batchTableSelectionModel = self.batchTableView.selectionModel()
+
         # polarion excel toolbutton
         self.polarionExcelMenu = QMenu()
 
@@ -331,7 +342,6 @@ class App(QMainWindow, Ui_MainWindow):
                                     'Hyperlinks']
         self.polarionTableViewModel.setHorizontalHeaderLabels(self.polarionTableHeader)
 
-
         self.polarionUpdatePassedButton.clicked.connect(lambda: self.updatePolarionVerdicts('Passed'))
         self.polarionUpdateAllButton.clicked.connect(lambda: self.updatePolarionVerdicts('All'))
         self.polarionSaveExcelButton.clicked.connect(self.savePolarionExcel)
@@ -348,6 +358,9 @@ class App(QMainWindow, Ui_MainWindow):
         self.loadLogResults()
 
         self.batchComboBox.currentTextChanged.connect(self.clearPolarionTab)
+
+        self.regexEdit.returnPressed.connect(self.filterModel)
+        self.clearQueryButton.pressed.connect(self.clearQuery)
 
         # settings tab
         self.updateVariablePoolCheckBox.clicked.connect(self.toggleUpdateVariablePool)
@@ -708,6 +721,39 @@ class App(QMainWindow, Ui_MainWindow):
             runList.sort(key=sortfunc)
         except:
             print(traceback.format_exc())
+
+    def batchTableContextMenuEvent(self, qpoint):
+        """Show context menu for batch tableview"""
+        try:
+            menu = QMenu(self)
+            view = self.batchTableView
+            model = self.batchTableModel
+            header = self.batchTableHeader
+            polarionExcelFileCol = header.index('Polarion Excel File')
+            csvReportFolderCol = header.index('CSV Report Folder')
+            selectedIndex = view.selectedIndexes()
+
+            if len(selectedIndex) == 1:
+
+                polarionExcelFileText = model.item(selectedIndex[0].row(), polarionExcelFileCol).text()
+                csvReportFolderText = model.item(selectedIndex[0].row(), csvReportFolderCol).text()
+
+                filePath = polarionExcelFileText.replace('\\', '/')
+                folderPath = csvReportFolderText.replace('\\', '/')
+
+                openPolarionExcelFileAction = QAction(QIcon(':/icons/file-excel-outline'), 'Open Polarion Excel File', self)
+                openPolarionExcelFileAction.triggered.connect(lambda: self.openFileInPath(filePath))
+                menu.addAction(openPolarionExcelFileAction)
+
+                openCSVReportFolderAction = QAction(QIcon(':/icons/folder-outline'), 'Open CSV Report Folder', self)
+                openCSVReportFolderAction.triggered.connect(lambda: self.openFolderInPath(folderPath))
+                menu.addAction(openCSVReportFolderAction)
+
+                if menu.actions().__len__() > 0:
+                    menu.popup(QCursor.pos())
+
+        except:
+            print(traceback.print_exc())
 
     def polarionTableContextMenuEvent(self, qpoint):
         """Show context menu for Polarion tableview"""
@@ -2068,6 +2114,7 @@ class App(QMainWindow, Ui_MainWindow):
                     self.hideLoadingBarSignal.emit()
 
         try:
+            self.clearQuery()
 
             self.polarionReadExcelThread = readPolarionExcelThread()
             myThread = self.polarionReadExcelThread
@@ -2230,6 +2277,80 @@ class App(QMainWindow, Ui_MainWindow):
                 except KeyError:
                     versionDict[ecu] = {}
                     versionDict[ecu][colName] = item.text()
+        except:
+            print(traceback.format_exc())
+
+    def filterModel(self):
+        """display polarion table model based on query search"""
+        class filterModelThread(QThread):
+            showLoadingBarSignal = pyqtSignal()
+            hideLoadingBarSignal = pyqtSignal()
+            appendMessageSignal = pyqtSignal('PyQt_PyObject')
+
+            def __init__(self):
+                QThread.__init__(self)
+
+            def run(self):
+                try:
+                    self.showLoadingBarSignal.emit()
+                    assert len(self.regexEditText) > 0, 'Search query cleared'
+                    self.appendMessageSignal.emit('Searching for test cases')
+                    andSplit = re.split('\s+and\s+', self.regexEditText)
+
+                    for searchQuery in andSplit:
+                        try:
+                            polarionTableViewModel = self.polarionTableView.model()
+                            proxyModel = QSortFilterProxyModel()
+                            proxyModel.setSourceModel(polarionTableViewModel)
+                            m = re.match('(\w+)\s+in\s+([\w].+)', searchQuery)
+                            patternString = m.group(1)
+                            columnName = m.group(2)
+                            assert columnName in self.polarionTableHeader, 'Column {} not found'.format(str(columnName))
+                            column = self.polarionTableHeader.index(columnName)
+                            proxyModel.setFilterKeyColumn(column)
+                            r = QRegExp(patternString, Qt.CaseInsensitive)
+                            proxyModel.setFilterRegExp(r)
+                            self.appendMessageSignal.emit('Search returned {} results'.format(str(proxyModel.rowCount())))
+                            self.polarionTableView.setModel(proxyModel)
+                        except ValueError:
+                            print(traceback.format_exc())
+                            self.appendMessageSignal.emit('Invalid column name')
+                        except AssertionError as err:
+                            self.appendMessageSignal.emit(str(err))
+                        except:
+                            print(traceback.format_exc())
+                            self.appendMessageSignal.emit('Invalid or incomplete search query')
+
+                except AssertionError as err:
+                    self.polarionTableView.setModel(self.polarionTableViewModel)
+                    self.appendMessageSignal.emit('No search query')
+                except:
+                    print(traceback.format_exc())
+                finally:
+                    self.hideLoadingBarSignal.emit()
+
+
+        try:
+            self.filterModelThread = filterModelThread()
+            myThread = self.filterModelThread
+            myThread.polarionTableView = self.polarionTableView
+            myThread.polarionTableViewModel = self.polarionTableViewModel
+            myThread.polarionTableHeader = self.polarionTableHeader
+            myThread.regexEditText = self.regexEdit.text()
+            myThread.showLoadingBarSignal.connect(self.showLoadingBar)
+            myThread.hideLoadingBarSignal.connect(self.hideLoadingBar)
+            myThread.appendMessageSignal.connect(self.appendPolarionLog)
+            myThread.start()
+
+        except:
+            print(traceback.format_exc())
+
+    def clearQuery(self):
+        """Clear the search query text. Display original polarion table"""
+        try:
+            regexEdit = self.regexEdit
+            regexEdit.clear()
+            self.filterModel()
         except:
             print(traceback.format_exc())
 
