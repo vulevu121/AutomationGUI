@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 #!/usr/bin/env python
 
+# 12/12/2019 Changelog
+# Edited Proxy Model of tableview to have exact regex match for Total Steps and Total Wait Time
+# Added tooltips to some buttons
+
 # 10/19/2019 Changelog
 # Added search query to filter out test cases in the polarion table
 # new functions: filterModel() and clearQueryButton()
@@ -128,7 +132,7 @@ if sys.version_info[0] < 3:
     FileNotFoundError = IOError
 
 debug = False
-version = 'v1.6.4'
+version = 'v1.7.0'
 
 def debugPrint(msg):
     if debug:
@@ -240,8 +244,11 @@ class App(QMainWindow, Ui_MainWindow):
         self.versionRemoveButton.clicked.connect(self.versionRemoveRow)
 
         self.batchAddButton.clicked.connect(self.batchAddRow)
+        self.batchAddButton.setToolTip('Add a testcase batch')
         self.batchRemoveButton.clicked.connect(self.batchRemoveRow)
+        self.batchRemoveButton.setToolTip('Remove selected batch')
         self.batchClearButton.clicked.connect(self.batchClearAll)
+        self.batchClearButton.setToolTip('Clear the batch list')
 
 
         self.batchTableView.customContextMenuRequested.connect(self.batchTableContextMenuEvent)
@@ -2303,11 +2310,18 @@ class App(QMainWindow, Ui_MainWindow):
                             proxyModel = QSortFilterProxyModel()
                             proxyModel.setSourceModel(polarionTableViewModel)
                             m = re.match('(\w+)\s+in\s+([\w].+)', searchQuery)
-                            patternString = m.group(1)
-                            columnName = m.group(2)
+                            #patternString = m.group(1).strip()
+                            columnName = m.group(2).strip()
                             assert columnName in self.polarionTableHeader, 'Column {} not found'.format(str(columnName))
                             column = self.polarionTableHeader.index(columnName)
                             proxyModel.setFilterKeyColumn(column)
+                            patternString = None
+
+                            # look for exact match if searching under Steps or Total Wait Time
+                            if columnName in ['Steps', 'Total Wait Time']:
+                                patternString = '^' + m.group(1).strip() + '$'
+                            else:
+                                patternString = m.group(1).strip()
                             r = QRegExp(patternString, Qt.CaseInsensitive)
                             proxyModel.setFilterRegExp(r)
                             self.appendMessageSignal.emit('Search returned {} results'.format(str(proxyModel.rowCount())))
