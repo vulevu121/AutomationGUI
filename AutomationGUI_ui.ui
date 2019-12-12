@@ -110,6 +110,9 @@
           <layout class="QVBoxLayout" name="verticalLayout_14">
            <item>
             <widget class="QTableView" name="batchTableView">
+             <property name="contextMenuPolicy">
+              <enum>Qt::CustomContextMenu</enum>
+             </property>
              <property name="selectionMode">
               <enum>QAbstractItemView::ExtendedSelection</enum>
              </property>
@@ -1005,7 +1008,7 @@ and Additional Signals</string>
          </layout>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_8">
+         <layout class="QVBoxLayout" name="verticalLayout_11">
           <item>
            <widget class="QComboBox" name="batchComboBox"/>
           </item>
@@ -1042,7 +1045,58 @@ and Additional Signals</string>
            </widget>
           </item>
           <item>
+           <widget class="QGroupBox" name="groupBox_6">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="title">
+             <string>Search</string>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <item>
+              <widget class="QLineEdit" name="regexEdit">
+               <property name="placeholderText">
+                <string>Enter regex query...</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QToolButton" name="clearQueryButton">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Clear search query&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="text">
+                <string>Clear search query</string>
+               </property>
+               <property name="icon">
+                <iconset resource="AutomationGUI_white.qrc">
+                 <normaloff>:/icons/filter-remove-outline</normaloff>:/icons/filter-remove-outline</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>24</width>
+                 <height>24</height>
+                </size>
+               </property>
+               <property name="popupMode">
+                <enum>QToolButton::DelayedPopup</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
            <widget class="QSplitter" name="polarionTabSplitter">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="styleSheet">
              <string notr="true">QSplitter::handle {
     image: url(:/icons/dots-vertical);
@@ -1071,7 +1125,7 @@ and Additional Signals</string>
             </property>
             <widget class="QTableView" name="polarionTableView">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
@@ -1112,7 +1166,7 @@ and Additional Signals</string>
             </widget>
             <widget class="QTableWidget" name="logTableWidget">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
                <horstretch>1</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
@@ -1140,9 +1194,6 @@ and Additional Signals</string>
              </property>
             </widget>
            </widget>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_11"/>
           </item>
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -1450,6 +1501,9 @@ and Additional Signals</string>
    <property name="text">
     <string>Save</string>
    </property>
+   <property name="toolTip">
+    <string>Save profile</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
    </property>
@@ -1471,6 +1525,9 @@ and Additional Signals</string>
    <property name="text">
     <string>Profile Dir</string>
    </property>
+   <property name="toolTip">
+    <string>Open profile folder</string>
+   </property>
   </action>
   <action name="actionLoad">
    <property name="icon">
@@ -1479,6 +1536,9 @@ and Additional Signals</string>
    </property>
    <property name="text">
     <string>Load</string>
+   </property>
+   <property name="toolTip">
+    <string>Load existing profile</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -1492,6 +1552,9 @@ and Additional Signals</string>
    <property name="text">
     <string>Save As</string>
    </property>
+   <property name="toolTip">
+    <string>Save profile as</string>
+   </property>
   </action>
   <action name="actionNew">
    <property name="icon">
@@ -1500,6 +1563,9 @@ and Additional Signals</string>
    </property>
    <property name="text">
     <string>New</string>
+   </property>
+   <property name="toolTip">
+    <string>Create new profile</string>
    </property>
   </action>
  </widget>
