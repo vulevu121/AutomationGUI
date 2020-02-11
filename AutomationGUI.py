@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 #!/usr/bin/env python
 
+# 2/11/2020 Changelog
+# Changed WSDL session handling for pushing updated steps and pulling hyperlinks
+
 # 12/12/2019 Changelog
 # Edited Proxy Model of tableview to have exact regex match for Total Steps and Total Wait Time
 # Added tooltips to some buttons
@@ -132,7 +135,7 @@ if sys.version_info[0] < 3:
     FileNotFoundError = IOError
 
 debug = False
-version = 'v1.7.0'
+version = 'v1.7.1'
 
 def debugPrint(msg):
     if debug:
@@ -2701,10 +2704,12 @@ class App(QMainWindow, Ui_MainWindow):
             def run(self):
                 # login session and get session id
                 session = requests.Session()
+                session.verify = False
                 transport = self.TransportSubclass(session=session)
-                loginClientWsdl = 'http://polarion.karmaautomotive.com/polarion/ws/services/SessionWebService?wsdl'
+                settings = zeep.Settings(strict=False, xml_huge_tree=True)
+                loginClientWsdl = 'https://polarion.karmaautomotive.com/polarion/ws/services/SessionWebService?wsdl'
                 try:
-                    loginClient = zeep.Client(wsdl=loginClientWsdl, transport=transport)
+                    loginClient = zeep.Client(wsdl=loginClientWsdl, transport=transport, settings=settings)
 
                     try:
                         loginClient.service.logIn(self.username, self.password)
@@ -2719,12 +2724,12 @@ class App(QMainWindow, Ui_MainWindow):
                         transport = zeep.transports.Transport(session=session)
 
                         # use session id for web service
-                        testWsdl = 'http://polarion.karmaautomotive.com/polarion/ws/services/TestManagementWebService?wsdl'
+                        testWsdl = 'https://polarion.karmaautomotive.com/polarion/ws/services/TestManagementWebService?wsdl'
                         testClient = zeep.Client(testWsdl, transport=transport)
                         testClient._default_soapheaders = [session_id]
 
                         # use session id for web service
-                        trackerClientWsdl = 'http://polarion.karmaautomotive.com/polarion/ws/services/TrackerWebService?wsdl'
+                        trackerClientWsdl = 'https://polarion.karmaautomotive.com/polarion/ws/services/TrackerWebService?wsdl'
                         trackerClient = zeep.Client(trackerClientWsdl, transport=transport)
                         trackerClient._default_soapheaders = [session_id]
 
@@ -2874,12 +2879,13 @@ class App(QMainWindow, Ui_MainWindow):
                 if True:
                     try:
                         self.appendMessageSignal.emit('Connecting to Polarion server')
-
                         # login session and get session id
                         session = requests.Session()
+                        session.verify = False
                         transport = self.TransportSubclass(session=session)
-                        loginClientWsdl = 'http://polarion.karmaautomotive.com/polarion/ws/services/SessionWebService?wsdl'
-                        loginClient = zeep.Client(wsdl=loginClientWsdl, transport=transport)
+                        loginClientWsdl = 'https://polarion.karmaautomotive.com/polarion/ws/services/SessionWebService?wsdl'
+                        settings = zeep.Settings(strict=False, xml_huge_tree=True)
+                        loginClient = zeep.Client(wsdl=loginClientWsdl, transport=transport, settings=settings)
 
                         try:
                             loginClient.service.logIn(self.username, self.password)
@@ -2893,12 +2899,12 @@ class App(QMainWindow, Ui_MainWindow):
                             transport = zeep.transports.Transport(session=session)
 
                             # use session id for web service
-                            testWsdl = 'http://polarion.karmaautomotive.com/polarion/ws/services/TestManagementWebService?wsdl'
+                            testWsdl = 'https://polarion.karmaautomotive.com/polarion/ws/services/TestManagementWebService?wsdl'
                             testClient = zeep.Client(testWsdl, transport=transport)
                             testClient._default_soapheaders = [session_id]
 
                             # use session id for web service
-                            trackerClientWsdl = 'http://polarion.karmaautomotive.com/polarion/ws/services/TrackerWebService?wsdl'
+                            trackerClientWsdl = 'https://polarion.karmaautomotive.com/polarion/ws/services/TrackerWebService?wsdl'
                             trackerClient = zeep.Client(trackerClientWsdl, transport=transport)
                             trackerClient._default_soapheaders = [session_id]
 
