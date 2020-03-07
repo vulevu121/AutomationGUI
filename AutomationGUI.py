@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 #!/usr/bin/env python
 
+# 3/6/2020 Changelog
+# Added toolbutton menu to test case excel file, test case folder, or test case csv log folder
+
 # 2/11/2020 Changelog
 # Changed WSDL session handling for pushing updated steps and pulling hyperlinks
 
@@ -135,7 +138,7 @@ if sys.version_info[0] < 3:
     FileNotFoundError = IOError
 
 debug = False
-version = 'v1.7.1'
+version = 'v1.7.2'
 
 def debugPrint(msg):
     if debug:
@@ -218,20 +221,8 @@ class App(QMainWindow, Ui_MainWindow):
         self.loadSettings()
         self.unsavedChanges = False
 
-        # general tab
-        # self.browsePolarionExcelBtn.clicked.connect(self.browsePolarionExcel)
-        # self.browseTestCaseExcelBtn.clicked.connect(self.browseTestCaseExcel)
-        # self.browseCallFunctionBtn.clicked.connect(self.browseCallFunction)
-        # self.browseCsvReportBtn.clicked.connect(self.browseCsvReport)
         self.browseVariablePoolBtn.clicked.connect(self.browseVariablePool)
-        # self.testCaseExcelEdit.textChanged.connect(self.useTestCaseFolderForLogs)
 
-        # connections for changes
-        # self.polarionExcelEdit.textChanged.connect(self.setUnsavedChanges)
-        # self.polarionExcelEdit.textChanged.connect(self.clearPolarionDict)
-        # self.testCaseExcelEdit.textChanged.connect(self.SetUnsavedChanges)
-        # self.callFunctionEdit.textChanged.connect(self.SetUnsavedChanges)
-        # self.csvReportEdit.textChanged.connect(self.setUnsavedChanges)
         self.versionCheckBox.clicked.connect(self.setUnsavedChanges)
         self.variablePoolEdit.textChanged.connect(self.setUnsavedChanges)
         self.dtcExCheckBox.clicked.connect(self.setUnsavedChanges)
@@ -253,58 +244,7 @@ class App(QMainWindow, Ui_MainWindow):
         self.batchClearButton.clicked.connect(self.batchClearAll)
         self.batchClearButton.setToolTip('Clear the batch list')
 
-
         self.batchTableView.customContextMenuRequested.connect(self.batchTableContextMenuEvent)
-        # self.batchTableSelectionModel = self.batchTableView.selectionModel()
-
-        # polarion excel toolbutton
-        self.polarionExcelMenu = QMenu()
-
-        openPolarionExcelFileAction = QAction(QIcon(':/icon/excel'), 'Open Test Case File', self)
-        openPolarionExcelFileAction.triggered.connect(lambda: self.openFileInPath(self.getCurrentExcelPath()))
-        self.polarionExcelMenu.addAction(openPolarionExcelFileAction)
-
-
-        openPolarionExcelFolderAction = QAction(QIcon(':/icon/folderOpen'), 'Open Test Case Folder', self)
-        openPolarionExcelFolderAction.triggered.connect(lambda: self.openFolderInPath(self.getCurrentExcelPath()))
-        self.polarionExcelMenu.addAction(openPolarionExcelFolderAction)
-
-        # self.polarionExcelToolButton.setMenu(self.polarionExcelMenu)
-
-        # test case excel toolbutton
-        # testCaseExcelMenu = QMenu()
-        #
-        # openTestCaseExcelFileAction = QAction(QIcon(':/icon/excel'), 'Open Test Case File', self)
-        # openTestCaseExcelFileAction.triggered.connect(lambda: self.openFileInPath(self.testCaseExcelEdit.text()))
-        # testCaseExcelMenu.addAction(openTestCaseExcelFileAction)
-        #
-        # openTestCaseExcelFolderAction = QAction(QIcon(':/icon/folderOpen'), 'Open Test Case Folder', self)
-        # openTestCaseExcelFolderAction.triggered.connect(self.openTestCaseExcelFolder)
-        # testCaseExcelMenu.addAction(openTestCaseExcelFolderAction)
-        #
-        # self.testCaseExcelToolButton.setMenu(testCaseExcelMenu)
-
-        # csv report toolbutton
-        csvReportFolderMenu = QMenu()
-
-        openCsvReportFolderAction = QAction(QIcon(':/icon/folderOpen'), 'Open Report Folder', self)
-        openCsvReportFolderAction.triggered.connect(lambda: self.openFolderInPath(self.csvReportEdit.text()))
-        csvReportFolderMenu.addAction(openCsvReportFolderAction)
-
-        useTestCasePathAction = QAction(QIcon(':/icon/folderOpen'), 'Use {TestCaseFolder}\\Logs', self)
-        useTestCasePathAction.triggered.connect(self.useTestCaseFolderForLogs)
-        csvReportFolderMenu.addAction(useTestCasePathAction)
-
-        # self.csvReportFolderToolButton.setMenu(csvReportFolderMenu)
-
-        # call function toolbutton
-        # callFunctionFolderMenu = QMenu()
-        #
-        # openCallFunctionFolderAction = QAction(QIcon(':/icon/folderOpen'), 'Open Call Function Folder', self)
-        # openCallFunctionFolderAction.triggered.connect(lambda: self.openFolderInPath(self.callFunctionEdit.text()))
-        # callFunctionFolderMenu.addAction(openCallFunctionFolderAction)
-        #
-        # self.callFunctionFolderToolButton.setMenu(callFunctionFolderMenu)
 
         # variable pool toolbutton
         variablePoolMenu = QMenu()
@@ -334,7 +274,6 @@ class App(QMainWindow, Ui_MainWindow):
         self.dtcExCheckBox.clicked.connect(self.dtcExToggle)
 
         # dtc tab
-
         self.addDtcExBtn.clicked.connect(self.addDtcEx2)
 
         self.addDtcExEdit.setInputMask('>NN NN NN NN;_')
@@ -342,7 +281,28 @@ class App(QMainWindow, Ui_MainWindow):
         self.addDtcExEdit.returnPressed.connect(self.addDtcEx2)
         self.removeDtcExBtn.clicked.connect(self.removeDtcEx2)
 
+        # polarion excel file tool button
+        polarionExcelMenu = QMenu()
+
+        openPolarionExcelFileAction = QAction(QIcon(':/icons/file-excel-outline'), 'Open Test Cases Excel File', self)
+        openPolarionExcelFileAction.triggered.connect(lambda: self.openFileInPath(self.getCurrentExcelPath()))
+        polarionExcelMenu.addAction(openPolarionExcelFileAction)
+
+        openPolarionExcelFolderAction = QAction(QIcon(':/icons/folder-outline'), 'Open Test Case Folder', self)
+        openPolarionExcelFolderAction.triggered.connect(lambda: self.openFolderInPath(self.getCurrentExcelPath()))
+        polarionExcelMenu.addAction(openPolarionExcelFolderAction)
+
+        openCsvReportFolderAction = QAction(QIcon(':/icons/folder-outline'), 'Open Report Folder', self)
+        openCsvReportFolderAction.triggered.connect(lambda: self.openFolderInPath(self.getCurrentCsvReportFolder()))
+        polarionExcelMenu.addAction(openCsvReportFolderAction)
+
+        self.polarionExcelFileToolButton.setMenu(polarionExcelMenu)
+
+
         # polarion tab
+        self.titleEdit.setReadOnly(True)
+        self.descriptionEdit.setReadOnly(True)
+
         self.polarionReadExcelButton.clicked.connect(self.readPolarionExcel)
         self.polarionTableViewModel = QStandardItemModel()
         self.polarionTableView.setModel(self.polarionTableViewModel)
@@ -355,10 +315,8 @@ class App(QMainWindow, Ui_MainWindow):
         self.polarionUpdatePassedButton.clicked.connect(lambda: self.updatePolarionVerdicts('Passed'))
         self.polarionUpdateAllButton.clicked.connect(lambda: self.updatePolarionVerdicts('All'))
         self.polarionSaveExcelButton.clicked.connect(self.savePolarionExcel)
-        # self.polarionUpdateRevisionButton.clicked.connect(self.udpatePolarionRevision)
         self.updateHyperlinksButton.clicked.connect(self.updateHyperlinks)
         self.updateStepsButton.clicked.connect(self.updatePolarionSteps)
-        # self.polarionCopyRunListButton.clicked.connect(self.polarionCopyRunList)
 
         self.polarionTableView.customContextMenuRequested.connect(self.polarionTableContextMenuEvent)
         self.polarionTableSelectionModel = self.polarionTableView.selectionModel()
@@ -378,25 +336,14 @@ class App(QMainWindow, Ui_MainWindow):
         # Convert sequence tab
         self.sequenceBrowseButton.clicked.connect(self.browseSequenceFile)
         self.sequenceConvertButton.clicked.connect(self.convertSequence)
-        # self.tbxCopyTitleButton.clicked.connect(lambda: self.sequenceCopy(self.tbxTitleLineEdit))
-        # self.tbxCopyDescButton.clicked.connect(lambda: self.sequenceCopy(self.tbxDescLineEdit))
-        # self.tbxCopyTextButton.clicked.connect(lambda: self.sequenceCopy(self.tbxPlainTextEdit))
 
         # file menu
         self.actionLoad.triggered.connect(self.browseProfile)
         self.actionNew.triggered.connect(self.newProfile)
         self.actionSave.triggered.connect(self.saveProfile)
         self.actionSaveAs.triggered.connect(self.saveAsProfile)
-        # self.actionAbout.triggered.connect(lambda: self.tabWidget.setCurrentIndex(5))
         self.actionExit.triggered.connect(self.exit)
         self.actionOpenProfileFolder.triggered.connect(lambda: self.openFolderInPath(str(self.profileFile)))
-
-        # gui layout related
-        # dropShadow = QGraphicsDropShadowEffect()
-        # dropShadow.setXOffset(1)
-        # dropShadow.setYOffset(1)
-        # dropShadow.setBlurRadius(6)
-        # self.tabWidget.setGraphicsEffect(dropShadow)
 
         self.tabWidget.setCurrentIndex(0)
         self.logRadioBtn0.setChecked(True)
@@ -410,15 +357,6 @@ class App(QMainWindow, Ui_MainWindow):
         if self.autorunCheckBox.isChecked():
             self.startTimer.start(1000)
             self.startTimerCount = self.autorunSpinBox.value()
-
-    # def mousePressEvent(self, event):
-    #     print(event.button())
-
-    # def resizeEvent(self, event):
-    #     self.tabWidget.setFixedHeight(self.height()-160)
-    #     self.tabWidget.setFixedWidth(self.width()-40)
-    #     self.gridLayout.width
-    #     # QtGui.QMainWindow.resizeEvent(self, event)
 
     def progressBarAnimation(self):
         """Animate progress bar"""
@@ -494,11 +432,17 @@ class App(QMainWindow, Ui_MainWindow):
         return self.batchComboBox.currentText()
 
     def getCurrentCsvReportFolder(self):
-        header = self.batchTableHeader
-        model = self.batchTableModel
-        combo = self.batchComboBox
-        csvReportFolderCol = header.index('CSV Report Folder')
-        return model.item(combo.currentIndex(), csvReportFolderCol).text()
+        try:
+            header = self.batchTableHeader
+            model = self.batchTableModel
+            combo = self.batchComboBox
+            csvReportFolderCol = header.index('CSV Report Folder')
+            csvReportFolder =  model.item(combo.currentIndex(), csvReportFolderCol).text()
+        except:
+            csvReportFolder = None
+            print(traceback.format_exc())
+        finally:
+            return csvReportFolder
 
     def saveLogResults(self):
         """Save log file results to a pickle file"""
@@ -792,14 +736,6 @@ class App(QMainWindow, Ui_MainWindow):
                 menu.addAction(openLogFileAction)
 
                 menu.addSeparator()
-
-                # checkAllAction = QAction(QIcon(':icon_white/checked'), 'Check All', self)
-                # checkAllAction.triggered.connect(self.checkAllPolarionTable)
-                # menu.addAction(checkAllAction)
-                #
-                # decheckAllAction = QAction(QIcon(':icon_white/notChecked'), 'Check None', self)
-                # decheckAllAction.triggered.connect(self.decheckAllPolarionTable)
-                # menu.addAction(decheckAllAction)
 
                 modifySelectedAction = QAction(QIcon(':/icons/checkbox-marked-outline'), 'Mark as modified', self)
                 modifySelectedAction.triggered.connect(lambda: self.markSelectedModified(True))
@@ -1378,50 +1314,6 @@ class App(QMainWindow, Ui_MainWindow):
         except:
             print(traceback.format_exc())
 
-        # try:
-        #     with open(self.tbxLineEdit.text(), 'r') as f:
-        #         xml_input = f.read()
-        #
-        #         testCase = xmltodict.parse(xml_input)
-        #
-        #         dob = testCase['TemplateBlock']['Block']['DataObjects']['DOB']
-        #         titleDescNames = [x['@Name'].strip('\'') for x in dob]
-        #         title = dob[titleDescNames.index('Title')]['@Value'].strip('\'')
-        #         desc = dob[titleDescNames.index('Desc')]['@Value'].strip('\'')
-        #
-        #         self.tbxTitleLineEdit.setText(title)
-        #         self.tbxDescLineEdit.setText(desc)
-        #
-        #         blocks = testCase['TemplateBlock']['Block']['SubSystems']['Block']
-        #
-        #         for i, block in enumerate(blocks):
-        #             blockLink = block['@CustomLibraryLink'].strip('\'')
-        #             blockName = blockLink.split('')[-1]
-        #             blockEnable = block['@EnableMode']
-        #
-        #             dataObjects = block['InheritedDataObjects']['DOB']
-        #             dataObjectsNames = [x['@Name'].strip('\'') for x in block['InheritedDataObjects']['DOB']]
-        #
-        #             action = dataObjects[dataObjectsNames.index('Action')]['@Value']
-        #             desc = dataObjects[dataObjectsNames.index('Descrip')]['@Value']
-        #             variable = dataObjects[dataObjectsNames.index('Variable')]['@Value']
-        #             settings = dataObjects[dataObjectsNames.index('Settings')]['@Value']
-        #             value = dataObjects[dataObjectsNames.index('Value')]['@Value']
-        #             wait = dataObjects[dataObjectsNames.index('Wait')]['@Value']
-        #             remarks = dataObjects[dataObjectsNames.index('Remarks')]['@Value']
-        #
-        #             def checkValue(s):
-        #                 if isinstance(s, str):
-        #                     s = s.strip('\'')
-        #                     return '-' if len(s) == 0 else s
-        #                 return str(s)
-        #
-        #             if eval(blockEnable):
-        #                 stepList = [checkValue(x) for x in [blockName, desc, variable, settings, value, wait, remarks]]
-        #                 txtEdit.appendPlainText('\t'.join(stepList))
-        # except KeyError as e:
-        #     print(e)
-
     def saveProfile(self):
         """Save current profile as a json"""
         try:
@@ -1536,27 +1428,6 @@ class App(QMainWindow, Ui_MainWindow):
                 except:
                     pass
 
-            # batchDict = {}
-            # batchModel = self.batchTableModel
-            # batchHeader = self.batchTableHeader
-            #
-            # polarionExcelCol = batchHeader.index('Polarion Excel File')
-            # csvReportCol = batchHeader.index('CSV Report Folder')
-
-            # for row in range(0, batchModel.rowCount()):
-            #     csvReport = ''
-            #     try:
-            #         csvReport = batchModel.item(row, csvReportCol).text()
-            #     except:
-            #         pass
-            #     try:
-            #         polarionExcel = batchModel.item(row, polarionExcelCol).text()
-            #         batchDict[polarionExcel] = {
-            #             'CSV Report Folder': csvReport
-            #         }
-            #     except:
-            #         pass
-
             batchList = [] # list of dictionaries
             batchModel = self.batchTableModel
             batchHeader = self.batchTableHeader
@@ -1584,13 +1455,10 @@ class App(QMainWindow, Ui_MainWindow):
                 except:
                     pass
 
+            global version
             self.profileDict = {
                 'Profile': {
-                    '@version': '1.0',
-                    # 'PolarionExcel': self.getCurrentExcelPath(),
-                    # 'TestCaseExcel': self.getCurrentExcelPath(),
-                    # 'CallFunctionFolder': self.callFunctionEdit.text(),
-                    # 'CSVReportFolder': self.csvReportEdit.text(),
+                    '@version': version,
                     'VariablePoolPath': self.variablePoolEdit.text(),
                     'UpdateVariablePool': self.updateVariablePool,
                     'Version': {'@include': self.versionCheckBox.isChecked()},
@@ -1604,14 +1472,12 @@ class App(QMainWindow, Ui_MainWindow):
                         'Except': dtcExList
                     },
                     'Versions': versionDict,
-                    # 'UseGuiRunList': self.useGuiRunListCheckbox.isChecked(),
                     'PauseEnable': self.pauseCheckbox.isChecked(),
                     'PauseStep': str(self.pauseStepSpinbox.value()),
                     'PrintStepsInOutput': self.printStepsInOutputCheckbox.isChecked(),
                     'MaxPrintsInOutput': self.maxPrintsInOutputSpinbox.value(),
                     'IncludeTitle': self.titleCheckBox.isChecked(),
                     'IncludeDescription': self.descriptionCheckBox.isChecked(),
-                    # 'Batch': batchDict
                     'Batch': batchList  # 'Batch' : [ {'Polarion Excel File': ..., 'CSV Report Folder': ...}, {...}]
                 }
             }
@@ -2381,21 +2247,6 @@ class App(QMainWindow, Ui_MainWindow):
             model.setHorizontalHeaderLabels(header)
 
             try:
-                # batchDict = self.profileDict['Profile']['Batch']
-                # polarionExcelCol = header.index('Polarion Excel File')
-                # csvReportCol = header.index('CSV Report Folder')
-                #
-                #
-                # for polarionExcel in batchDict:
-                #     polarionExcelItem = QStandardItem(polarionExcel)
-                #
-                #     try:
-                #         csvReportItem = QStandardItem(batchDict[polarionExcel]['CSV Report Folder'])
-                #     except:
-                #         csvReportItem = QStandardItem('')
-                #
-                #     model.appendRow([polarionExcelItem, csvReportItem])
-
                 batchList = self.profileDict['Profile']['Batch']
                 polarionExcelCol = header.index('Polarion Excel File')
                 csvReportCol = header.index('CSV Report Folder')
@@ -3063,33 +2914,6 @@ class App(QMainWindow, Ui_MainWindow):
         try:
             if 'Profile' in self.profileDict:
                 profile = self.profileDict['Profile']
-                # try:
-                #     polarionExcelPath = profile['TestCaseExcel']
-                #     self.polarionExcelEdit.setText(polarionExcelPath)
-                # except KeyError:
-                #     self.polarionExcelEdit.setText('')
-
-                # try:
-                #     testcasepath = profile['TestCaseExcel']
-                #     self.testCaseExcelEdit.setText(testcasepath)
-                # except KeyError:
-                #     self.testCaseExcelEdit.setText('')
-
-                # try:
-                #     callFunctionFolder = profile['CallFunctionFolder']
-                #     if callFunctionFolder:
-                #         self.callFunctionEdit.setText(callFunctionFolder)
-                #         # self.checkFolderExist(callFunctionFolder)
-                # except KeyError:
-                #     self.callFunctionEdit.setText('')
-
-                # try:
-                #     csvPath = profile['CSVReportFolder']
-                #     if csvPath:
-                #         self.csvReportEdit.setText(csvPath)
-                #         self.checkFolderExist(csvPath)
-                # except KeyError:
-                #     self.csvReportEdit.setText('')
 
                 try:
                     varPoolPath = profile['VariablePoolPath']
@@ -3119,12 +2943,6 @@ class App(QMainWindow, Ui_MainWindow):
                     self.versionCheckBox.setChecked(versionCheckbox)
                 except KeyError:
                     self.versionCheckBox.setChecked(False)
-
-                # try:
-                #     useGuiRunList = profile['UseGuiRunList']
-                #     self.useGuiRunListCheckbox.setChecked(useGuiRunList)
-                # except KeyError:
-                #     self.useGuiRunListCheckbox.setChecked(False)
 
                 try:
                     self.pauseCheckbox.setChecked(profile['PauseEnable'])

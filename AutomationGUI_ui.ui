@@ -10,8 +10,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>762</height>
+    <width>1247</width>
+    <height>1044</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -79,7 +79,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>3</number>
       </property>
       <property name="iconSize">
        <size>
@@ -1010,38 +1010,88 @@ and Additional Signals</string>
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_11">
           <item>
-           <widget class="QComboBox" name="batchComboBox"/>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="titleEdit">
-            <property name="enabled">
-             <bool>true</bool>
+           <widget class="QGroupBox" name="groupBox_7">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
-            <property name="autoFillBackground">
-             <bool>false</bool>
+            <property name="title">
+             <string>Batch Excel Files</string>
             </property>
-            <property name="inputMask">
-             <string/>
-            </property>
-            <property name="placeholderText">
-             <string>Title</string>
-            </property>
-            <property name="cursorMoveStyle">
-             <enum>Qt::LogicalMoveStyle</enum>
-            </property>
-            <property name="clearButtonEnabled">
-             <bool>false</bool>
-            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_16">
+             <item>
+              <widget class="QComboBox" name="batchComboBox"/>
+             </item>
+             <item>
+              <widget class="QToolButton" name="polarionExcelFileToolButton">
+               <property name="text">
+                <string>...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="AutomationGUI_white.qrc">
+                 <normaloff>:/icons/menu</normaloff>:/icons/menu</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>24</width>
+                 <height>24</height>
+                </size>
+               </property>
+               <property name="popupMode">
+                <enum>QToolButton::InstantPopup</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="descriptionEdit">
-            <property name="enabled">
-             <bool>true</bool>
+           <widget class="QGroupBox" name="groupBox_8">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
-            <property name="placeholderText">
-             <string>Description</string>
+            <property name="title">
+             <string>Test Case Info</string>
             </property>
+            <layout class="QVBoxLayout" name="verticalLayout_8">
+             <item>
+              <widget class="QLineEdit" name="titleEdit">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="autoFillBackground">
+                <bool>false</bool>
+               </property>
+               <property name="inputMask">
+                <string/>
+               </property>
+               <property name="placeholderText">
+                <string>Title</string>
+               </property>
+               <property name="cursorMoveStyle">
+                <enum>Qt::LogicalMoveStyle</enum>
+               </property>
+               <property name="clearButtonEnabled">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="descriptionEdit">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="placeholderText">
+                <string>Description</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
           <item>
@@ -1336,7 +1386,7 @@ and Additional Signals</string>
         <item>
          <widget class="QLabel" name="label">
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;:/icons/tools&quot;/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:18pt; font-weight:600;&quot;&gt;AutomationDesk GUI&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Version 1.7.0&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;[Developers]&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Vu Le, Keiser Ruiz&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Do not distribute without permission&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Copyright © 2019&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;:/icons/tools&quot;/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:18pt; font-weight:600;&quot;&gt;AutomationDesk GUI&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Version 1.7.2&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;[Developers]&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Vu Le, Keiser Ruiz&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Do not distribute without permission&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Copyright © 2020&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
          </widget>
         </item>
