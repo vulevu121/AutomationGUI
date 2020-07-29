@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 #!/usr/bin/env python
 
+# 7/29/2020 Changelog
+# Added 'Active' column in DTC Exception Table to enable/disable a DTC.
+
 # 3/6/2020 Changelog
 # Added toolbutton menu to test case excel file, test case folder, or test case csv log folder
 
@@ -214,6 +217,7 @@ class App(QMainWindow, Ui_MainWindow):
             'Hex Code',
             'Description',
             'Module',
+            'Active',
             'OBD',
         ]
         self.dtcTableModel.setHorizontalHeaderLabels(self.dtcTableHeader)
@@ -1385,17 +1389,20 @@ class App(QMainWindow, Ui_MainWindow):
             dtcHexCodeCol = self.dtcTableHeader.index('Hex Code')
             dtcDescCol = self.dtcTableHeader.index('Description')
             dtcModuleCol = self.dtcTableHeader.index('Module')
+            dtcActiveCol = self.dtcTableHeader.index('Active')
             dtcOBDCol = self.dtcTableHeader.index('OBD')
 
             for row in range(0, dtcModel.rowCount()):
                 hexCode = dtcModel.item(row, dtcHexCodeCol).text()
                 desc = dtcModel.item(row, dtcDescCol).text()
                 module = dtcModel.item(row, dtcModuleCol).text()
+                active = dtcModel.item(row, dtcActiveCol).checkState() == Qt.Checked
                 obd = dtcModel.item(row, dtcOBDCol).checkState() == Qt.Checked
                 dtcExList.append({
                     'Hex Code': hexCode,
                     'Description': desc,
                     'Module': module,
+                    'Active': active,
                     'OBD': obd,
                 })
 
@@ -1496,7 +1503,12 @@ class App(QMainWindow, Ui_MainWindow):
                 colName = header[column]
 
                 if column > 0:
-                    if column == header.index('OBD'):
+                    if column == header.index('Active'):
+                        try:
+                            dtcExList[row][colName] = model.item(row, column).checkState()
+                        except:
+                            dtcExList[row][colName] = False
+                    elif column == header.index('OBD'):
                         try:
                             dtcExList[row][colName] = model.item(row,column).checkState()
                         except:
@@ -1554,10 +1566,15 @@ class App(QMainWindow, Ui_MainWindow):
             hexCodeItem = QStandardItem(hexCode)
             descItem = QStandardItem('')
             ecuItem = QStandardItem('')
+            activeItem = QStandardItem(True)
+            activeItem.setCheckable(True)
+            activeItem.setCheckState(Qt.Checked)
             obdItem = QStandardItem(False)
             obdItem.setCheckable(True)
+            obdItem.setCheckState(Qt.Unchecked)
 
-            model.appendRow([hexCodeItem, descItem, ecuItem, obdItem])
+            model.appendRow([hexCodeItem, descItem, ecuItem, activeItem, obdItem])
+
             self.addDtcExEdit.clear()
             self.addDtcExEdit.setFocus()
             self.statusbar.showMessage('DTC exception added...OK!')
@@ -2040,6 +2057,7 @@ class App(QMainWindow, Ui_MainWindow):
             hexCodeCol = header.index('Hex Code')
             descCol = header.index('Description')
             moduleCol = header.index('Module')
+            activeCol = header.index('Active')
             obdCol = header.index('OBD')
 
             try:
@@ -2048,11 +2066,19 @@ class App(QMainWindow, Ui_MainWindow):
                     hexCodeItem = QStandardItem(dtc['Hex Code'])
                     descItem = QStandardItem(dtc['Description'])
                     moduleItem = QStandardItem(dtc['Module'])
+
+                    try:
+                        isActive = dtc['Active']
+                    except:
+                        isActive = False
+                    activeItem = QStandardItem(isActive)
+                    activeItem.setCheckable(True)
+                    activeItem.setCheckState(Qt.Checked if isActive else Qt.Unchecked)
+
                     try:
                         isOBD = dtc['OBD']
                     except:
                         isOBD = False
-
                     obdItem = QStandardItem(isOBD)
                     obdItem.setCheckable(True)
                     obdItem.setCheckState(Qt.Checked if isOBD else Qt.Unchecked)
@@ -2060,8 +2086,10 @@ class App(QMainWindow, Ui_MainWindow):
                     model.setItem(row, hexCodeCol, hexCodeItem)
                     model.setItem(row, descCol, descItem)
                     model.setItem(row, moduleCol, moduleItem)
+                    model.setItem(row, activeCol, activeItem)
                     model.setItem(row, obdCol, obdItem)
             except:
+                print(traceback.format_exc())
                 print('KeyError for updateGuiFromProfileDict, dtcExList2')
 
             view.resizeColumnsToContents()
